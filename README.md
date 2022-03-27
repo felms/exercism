@@ -1,3 +1,3 @@
 ## Exercism
 
-Repositório para os Exercicios do Site [Exercism] https://exercism.org
+Repositório para os Exercicios do Site [Exercism](https://exercism.org)

@@ -10,5 +10,7 @@ LICENSE
 package.json
 config.json
 metadata.json
-
+*.gradle
+*Test.java
+HELP.md
 

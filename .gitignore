@@ -13,4 +13,9 @@ metadata.json
 *.gradle
 *Test.java
 HELP.md
-
+.idea/*
+bin/*
+build/*
+gradle/*
+gradlew
+gradlew.bat

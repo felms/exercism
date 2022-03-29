@@ -4,16 +4,14 @@ class Matrix {
 
     private int[][] matrix;
     private int rows;
-    private int columns;
 
     Matrix(String matrixAsString) {
         String[] lines = matrixAsString.split("\\n");
         rows = lines.length;
         matrix = new int[rows][];
         for (int i = 0; i < lines.length; i++) {
-            String[] row = lines[i].split("\\s+");
-            columns = row.length;
-            matrix[i] = Arrays.stream(row).mapToInt(Integer::parseInt).toArray();
+            matrix[i] = Arrays.stream(lines[i].split("\\s+")).mapToInt(Integer::parseInt).toArray();
+
         }
 
     }

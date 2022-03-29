@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MatrixTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-03-29T17:08:51" hostname="ALMOXARIFADO-04" time="0.01">
+  <properties/>
+  <testcase name="extractRowFromOneNumberMatrixTest" classname="MatrixTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

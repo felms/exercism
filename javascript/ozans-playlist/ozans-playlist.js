@@ -62,14 +62,6 @@ export function deleteTrack(playlist, track) {
  * @returns {string[]} list of artists
  */
 export function listArtists(playlist) {
-  let set =  new Set(playlist);
-
-  let artists = new Set();
-
-  set.forEach(item => {
-    let music = item.split(" - ");
-    artists.add(music[1]);
-  })
-
-  return [...artists];
+  let artists = playlist.map(item => item.split(" - ")[1]);
+  return [...new Set(artists)];
 }

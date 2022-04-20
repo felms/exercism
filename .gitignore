@@ -33,6 +33,6 @@ gradlew.bat
 *.tar.gz
 *.rar
 
-test/*
+elixir/*/test/*
 *.formatter.exs
 mix.exs

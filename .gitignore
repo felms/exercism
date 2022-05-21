@@ -17,6 +17,7 @@ HELP.md
 
 
 */bin/*
+*/build/*
 
 build/*
 gradle/*

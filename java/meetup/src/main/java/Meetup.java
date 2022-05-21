@@ -23,6 +23,8 @@ public class Meetup {
                 return handleOffset(dayOfWeek, 3);
             case LAST:
                 return handleLast(dayOfWeek);
+            case TEENTH:
+                return handleTeenth(dayOfWeek);
         }
 
         return null;
@@ -58,6 +60,25 @@ public class Meetup {
         offset = offset > 0 ? offset - 7 : offset;
 
         return lastDayOfTheMonth.plusDays(offset);
+
+    }
+
+    private LocalDate handleTeenth(DayOfWeek dayOfWeek) {
+
+        LocalDate firstTeenth = LocalDate.of(this.date.getYear(), 
+                                            this.date.getMonth(), 
+                                            13);
+        
+        DayOfWeek teenthDayOfWeek = firstTeenth.getDayOfWeek();
+
+        if (teenthDayOfWeek == dayOfWeek) {
+            return firstTeenth;
+        }
+
+        long offset = dayOfWeek.getValue() - teenthDayOfWeek.getValue();
+        offset = offset > 0 ? offset : offset + 7;
+
+        return firstTeenth.plusDays(offset);
 
     }
 }

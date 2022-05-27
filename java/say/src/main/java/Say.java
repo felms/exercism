@@ -1,11 +1,42 @@
-
 public class Say {
 
     public String say(long number) {
+
+        if (number < 0 || number > 999_999_999_999L) {
+            throw new IllegalArgumentException();
+        }
+
         String s = "";
         if (number == 0) {
             return "zero";
         }
+
+        s = oneToOneThousand(number);
+
+        long th = number % 1_000_000L;
+        th /= 1000;
+        if (th > 0) {
+            s = oneToOneThousand(th) + " thousand " + s;
+        }
+
+        long m = number % 1_000_000_000L;
+        m /= 1_000_000;
+        if (m > 0) {
+            s = oneToOneThousand(m) + " million " + s;
+        }
+
+        long b = number % 1_000_000_000_000L;
+        b /= 1_000_000_000;
+        if (b > 0) {
+            s = oneToOneThousand(b) + " billion " + s;
+        }
+
+        return s.trim();
+    }
+
+    private String oneToOneThousand(long number) {        
+
+        String s = "";
 
         int u = (int) (number % 10);
         s += units(u);

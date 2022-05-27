@@ -25,9 +25,29 @@ public class BowlingGame {
                 int throw1 = this.rollList.remove(0);
                 int currentScore = throw0 + throw1;
 
+
                 // Open frame
                 if (currentScore < 10) {
                     totalScore += currentScore;
+                }
+
+                // Spare
+                if (currentScore == 10) {
+                    int throw2 = this.rollList.size() == 1 
+                                    ? this.rollList.remove(0) : this.rollList.get(0);
+                    totalScore += currentScore + throw2;
+                }
+            } else { // Strike
+                if (this.rollList.size() == 2) {
+                    totalScore += throw0;
+
+                    int throwBonus0 = this.rollList.remove(0);
+                    int throwBonus1 = this.rollList.remove(0);
+                    
+                    totalScore += throwBonus0 + throwBonus1;
+                } else {
+                    totalScore += throw0 
+                                    + this.rollList.get(0) + this.rollList.get(1);
                 }
             }
         }

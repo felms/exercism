@@ -56,6 +56,20 @@ public class Robot {
     }
 
     public void simulate(String string) {
+
+        Arrays.asList(string.split("")).forEach(action -> {
+            switch(action) {
+                case "R":
+                    this.turnRight();
+                    break;
+                case "L":
+                    this.turnLeft();
+                    break;
+                case "A":
+                    this.advance();
+                    break;
+            }
+        });
     }
     
 }

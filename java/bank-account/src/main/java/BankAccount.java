@@ -30,8 +30,10 @@ public class BankAccount {
         if (i < 1) {
             throw new BankAccountActionInvalidException("Cannot deposit or withdraw negative amount");
         }
+        synchronized(this) {
+            this.balance += i;
+        }
 
-        this.balance += i;
     }
 
     public void withdraw(int i) throws BankAccountActionInvalidException {
@@ -52,7 +54,9 @@ public class BankAccount {
             throw new BankAccountActionInvalidException("Cannot withdraw more money than is currently in the account");
         }
 
-        this.balance -= i;
+        synchronized(this) {
+            this.balance -= i;
+        }
     }
 
     public void close() {

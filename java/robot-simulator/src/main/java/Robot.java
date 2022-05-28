@@ -34,6 +34,25 @@ public class Robot {
     }
 
     public void advance() {
+        int x = this.gridPosition.x;
+        int y = this.gridPosition.y;
+
+        switch(this.orientation) {
+            case NORTH:
+                y++;
+                break;
+            case EAST:
+                x++;
+                break;
+            case SOUTH:
+                y--;
+                break;
+            case WEST:
+                x--;
+                break;
+        }
+
+        this.gridPosition = new GridPosition(x, y);
     }
 
     public void simulate(String string) {

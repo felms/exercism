@@ -18,6 +18,17 @@ public class WordProblemSolver {
             result = Integer.parseInt(number);
         }
 
+        if (tokens.length == 3) {
+            int firstNumber = Integer.parseInt(tokens[0]);
+            String oper = tokens[1];
+            int secondNumber = Integer.parseInt(tokens[2].replaceAll("[^-\\d]", ""));
+
+            switch(oper) {
+                case "plus":
+                    result = firstNumber + secondNumber;
+            }
+        }
+
         return result;
     }
 

@@ -11,7 +11,7 @@ public class WordProblemSolver {
         int result = 0;
 
         String operation = string.replace("What is ", "");
-        String[] tokens = operation.split("\\s+");
+        String[] tokens = operation.split("\\s+(by)*\\s*");
 
         if (tokens.length == 1) {            
             String number = tokens[0].replaceAll("[^\\d]", "");
@@ -26,6 +26,16 @@ public class WordProblemSolver {
             switch(oper) {
                 case "plus":
                     result = firstNumber + secondNumber;
+                    break;
+                case "minus":
+                    result = firstNumber - secondNumber;
+                    break;
+                case "multiplied":
+                    result = firstNumber * secondNumber;
+                    break;
+                case "divided":
+                    result = firstNumber / secondNumber;
+                    break;
             }
         }
 

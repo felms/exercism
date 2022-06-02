@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class PrimeCalculator {
@@ -10,13 +11,10 @@ class PrimeCalculator {
             throw new IllegalArgumentException();
         }
 
-        List<Integer> primes = new ArrayList<>();
-
-        for (int i = 0; primes.size() < nth; i++) {
-            if (isPrime(i)) {
-                primes.add(i);
-            }
-        }
+        List<Integer> primes = IntStream.range(0, 1_000_000)
+                                .filter(this::isPrime)
+                                .boxed()
+                                .collect(Collectors.toList());
 
        return primes.get(nth - 1);
     }

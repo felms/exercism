@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 class PrimeCalculator {
 
@@ -26,21 +27,9 @@ class PrimeCalculator {
             return false;
         }
 
-        if (n == 2) {
-            return true;
-        }
-
-        if (n % 2 == 0) {
-            return false;
-        }
-
-        for (int i = 3; i * i <= n; i += 2) {
-            if (n % i == 0) {
-                return false;
-            }
-        }
-
-        return true;
+        return IntStream.rangeClosed(2, (int)Math.sqrt(n))
+                    .noneMatch(number -> (n % number == 0));
+                
     }
 
 }

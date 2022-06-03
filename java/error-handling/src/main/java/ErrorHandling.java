@@ -43,7 +43,12 @@ class ErrorHandling {
     }
 
     Optional<Integer> handleErrorByReturningOptionalInstance(String integer) {
-        throw new UnsupportedOperationException("Delete this statement and write your own implementation.");
+        
+        try {
+            return Optional.of(Integer.parseInt(integer));            
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
 }

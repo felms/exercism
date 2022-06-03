@@ -1,27 +1,20 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 public class PrimeFactorsCalculator {
 
     public List<Long> calculatePrimeFactorsOf(long number) {
         
-        List<Long> primesList = LongStream.rangeClosed(0, number)
-                    .filter(this::isPrime)
-                    .boxed()
-                    .collect(Collectors.toList());
-        
         List<Long> primeFactors = new ArrayList<>();
         long n = number;
-        int pos = 0;
-        while(n > 1 && pos < primesList.size()) {
-            long prime = primesList.get(pos);
-            if (n % prime == 0) {
-                primeFactors.add(prime);
-                n /= prime;
+        long factor = 0;
+        while(n > 1 && factor <= n) {
+            if (isPrime(factor) && n % factor == 0) {
+                primeFactors.add(factor);
+                n /= factor;
             } else {
-                pos++;
+                factor++;
             }
         }
 

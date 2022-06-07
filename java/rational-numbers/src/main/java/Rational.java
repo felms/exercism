@@ -97,7 +97,10 @@ class Rational {
     }
 
     public Rational pow(int exponent) {
-        return null; // TODO
+        int m = Math.abs(exponent);
+        int newNumerator = (int) Math.pow(this.getNumerator(), m);
+        int newDenominator = (int) Math.pow(this.getDenominator(), m);
+        return new Rational(newNumerator, newDenominator);
     }
 
     public double exp(double exponent) {

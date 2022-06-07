@@ -73,8 +73,18 @@ class Rational {
             throw new IllegalArgumentException("The numerator of the second rational can't be zero. (Can't divide by zero)");
         }
 
+        if (a1 < 0 && a2 < 0) {
+            a1 *= -1;
+            a2 *= -1;
+        }
+
         int newNumerator = a1 * b2;
         int newDenominator = a2 * b1;
+
+        if (newDenominator < 0 && newNumerator > 0) {
+            newDenominator *= -1;
+            newNumerator *= -1;
+        }
 
         return new Rational(newNumerator, newDenominator);
     }

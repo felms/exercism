@@ -12,6 +12,13 @@ class Rational {
 
         int den = denominator;
 
+        if (den < 0 && num > 0) {
+            num *= -1;
+            den *= -1;
+        }
+
+        
+
         int gcd = gcd(num, den);
 
         this.numerator = num / gcd;
@@ -81,11 +88,6 @@ class Rational {
         int newNumerator = a1 * b2;
         int newDenominator = a2 * b1;
 
-        if (newDenominator < 0 && newNumerator > 0) {
-            newDenominator *= -1;
-            newNumerator *= -1;
-        }
-
         return new Rational(newNumerator, newDenominator);
     }
 
@@ -104,7 +106,8 @@ class Rational {
     }
 
     public double exp(double exponent) {
-        return -1; // TODO
+
+        return Math.pow(Math.pow(exponent, 1.0 / this.getDenominator()), this.getNumerator());
     }
 
     private int gcd(int a, int b) {

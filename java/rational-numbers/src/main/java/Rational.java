@@ -52,11 +52,31 @@ class Rational {
     }
 
     public Rational multiply(Rational other) {
-        return null; // TODO
+        int a1 = this.getNumerator();
+        int b1 = this.getDenominator();
+        int a2 = other.getNumerator();
+        int b2 = other.getDenominator();
+
+        int newNumerator = a1 * a2;
+        int newDenominator = b1 * b2;
+
+        return new Rational(newNumerator, newDenominator);
     }
 
     public Rational divide(Rational other) {
-        return null; // TODO
+        int a1 = this.getNumerator();
+        int b1 = this.getDenominator();
+        int a2 = other.getNumerator();
+        int b2 = other.getDenominator();
+
+        if (a2 == 0) {
+            throw new IllegalArgumentException("The numerator of the second rational can't be zero. (Can't divide by zero)");
+        }
+
+        int newNumerator = a1 * b2;
+        int newDenominator = a2 * b1;
+
+        return new Rational(newNumerator, newDenominator);
     }
 
     public Rational abs() {

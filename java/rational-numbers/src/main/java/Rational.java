@@ -27,11 +27,28 @@ class Rational {
     }
 
     public Rational add(Rational other) {
-        return null; // TODO
+
+        int a1 = this.getNumerator();
+        int b1 = this.getDenominator();
+        int a2 = other.getNumerator();
+        int b2 = other.getDenominator();
+
+        int newNumerator = a1 * b2 + a2 * b1;
+        int newDenominator = b1 * b2;
+
+        return new Rational(newNumerator, newDenominator);
     }
 
     public Rational subtract(Rational other) {
-        return null; // TODO
+        int a1 = this.getNumerator();
+        int b1 = this.getDenominator();
+        int a2 = other.getNumerator();
+        int b2 = other.getDenominator();
+
+        int newNumerator = a1 * b2 - a2 * b1;
+        int newDenominator = b1 * b2;
+
+        return new Rational(newNumerator, newDenominator);
     }
 
     public Rational multiply(Rational other) {

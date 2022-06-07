@@ -90,7 +90,10 @@ class Rational {
     }
 
     public Rational abs() {
-        return null; // TODO
+        int newNumerator = Math.abs(this.getNumerator());
+        int newDenominator = Math.abs(this.getDenominator());
+
+        return new Rational(newNumerator, newDenominator);
     }
 
     public Rational pow(int exponent) {

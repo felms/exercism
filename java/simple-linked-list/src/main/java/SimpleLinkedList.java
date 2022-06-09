@@ -48,6 +48,7 @@ public class SimpleLinkedList<T> {
     }
 
     // Retorna a lista como um array
+    @SuppressWarnings("unchecked")
     public T[] asArray(Class<T> class1) {
         
         T[] arr = (T[]) new Object[this.numberOfItems];
@@ -61,6 +62,7 @@ public class SimpleLinkedList<T> {
         return arr;
     }
 
+    @SuppressWarnings("unchecked")
     public T[] asArray() {
         T[] arr = (T[]) new Object[this.numberOfItems];
 

@@ -15,8 +15,8 @@ export const meetup = (year, month, descriptor, dayOfweek) => {
         return handleOffset(date, 2, desiredDay);
     case 'fourth':
         return handleOffset(date, 3, desiredDay);
-    // case 'last':
-    //     return handleLast(date, 0);
+    case 'last':
+        return handleLast(date, desiredDay);
     // case 'teenth':
     //     return handleTeenth(date, 0);
   }
@@ -45,6 +45,26 @@ const handleOffset = (date, weeksToAdd, desiredDay) => {
   return date;
 
 }
+
+const handleLast = (date, desiredDay) => {
+
+  let lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  if (lastDayOfMonth.getDay() === desiredDay) {
+    return lastDayOfMonth;
+  }
+  
+  let offset = desiredDay - lastDayOfMonth.getDay();
+  offset = offset > 0 ? offset - 7 : offset;
+
+  let day = lastDayOfMonth.getDate();
+  day += offset;
+  lastDayOfMonth.setDate(day);
+  return lastDayOfMonth;
+  
+}
+
+
 
 const getDayOfWeek = (dayOfweek) => {
 

@@ -26,7 +26,7 @@ public class PalindromeCalculator {
         SortedMap<Long, List<List<Integer>>> map = new TreeMap<>();
 
         for (int i = start; i <= end; i++) {
-            for (int j = start; j <= end; j++) {
+            for (int j = i; j <= end; j++) {
                 List<Integer> factors = List.of(i, j);
                 long product = i * j;
                 

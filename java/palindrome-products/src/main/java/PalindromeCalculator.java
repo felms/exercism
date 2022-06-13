@@ -1,23 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class PalindromeCalculator {
 
-    public PalindromeCalculator() {
-
-    }
-
     public SortedMap<Long, List<List<Integer>>> 
                         getPalindromeProductsWithFactors(int i, int j) {
-        Map<Long, List<List<Integer>>> map = possibleProducts(i, j).entrySet().stream()
-                .filter(value -> isPalindrome(value.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        return new TreeMap<>(map);
+        return possibleProducts(i, j);
     }
 
     private SortedMap<Long, List<List<Integer>>>
@@ -29,15 +19,18 @@ public class PalindromeCalculator {
             for (int j = i; j <= end; j++) {
                 List<Integer> factors = List.of(i, j);
                 long product = i * j;
+
+                if (isPalindrome(product)) {
+                    if (map.containsKey(product)) {
+                        List<List<Integer>> factorsList = map.get(product);
+                        factorsList.add(factors);
+                    } else {
+                        List<List<Integer>> factorsList = new ArrayList<>();
+                        factorsList.add(factors);
+                        map.put(product, factorsList);
+                    }
+                }                
                 
-                if (map.containsKey(product)) {
-                    List<List<Integer>> factorsList = map.get(product);
-                    factorsList.add(factors);
-                } else {
-                    List<List<Integer>> factorsList = new ArrayList<>();
-                    factorsList.add(factors);
-                    map.put(product, factorsList);
-                }
             }
         }
 

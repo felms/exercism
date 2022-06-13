@@ -6,13 +6,12 @@ import java.util.TreeMap;
 public class PalindromeCalculator {
 
     public SortedMap<Long, List<List<Integer>>> 
-                        getPalindromeProductsWithFactors(int i, int j) {
-        return possibleProducts(i, j);
-    }
-
-    private SortedMap<Long, List<List<Integer>>>
-                                    possibleProducts(int start, int end) {
+                        getPalindromeProductsWithFactors(int start, int end) {
         
+        if (start > end) {
+            throw new IllegalArgumentException("invalid input: min must be <= max");
+        }
+
         SortedMap<Long, List<List<Integer>>> map = new TreeMap<>();
 
         for (int i = start; i <= end; i++) {
@@ -35,7 +34,7 @@ public class PalindromeCalculator {
         }
 
         return map;
-  }
+    }
 
     private boolean isPalindrome(long number) {
         

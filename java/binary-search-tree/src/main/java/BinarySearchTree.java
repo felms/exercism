@@ -17,12 +17,30 @@ class BinarySearchTree<T extends Comparable<T>> {
         if (this.root == null) {
             this.root = node;
         } else {
-            T currentNodeData = this.root.getData();
-            if (value.compareTo(currentNodeData) > 0) {
-                this.root.right = node;
-            } else {
-                this.root.left = node;
+            Node<T> currentNode = this.getRoot();
+            boolean inserted = false;
+
+            while (!inserted) {
+                if (value.compareTo(currentNode.getData()) > 0) {
+
+                    if (currentNode.right == null) {
+                        currentNode.right = node;
+                        inserted = true;
+                    } else {
+                        currentNode = currentNode.right;
+                    }
+
+                } else {
+                    if (currentNode.left == null) {
+                        currentNode.left = node;
+                        inserted = true;
+                    } else {
+                        currentNode = currentNode.left;
+                    }
+                }
             }
+
+            
         }
     }
 

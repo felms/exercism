@@ -71,6 +71,12 @@ public class ComplexNumber {
     }
 
     public ComplexNumber exponentialOf() {
-        return null; //TODO
+        double real = this.getReal();
+        double img = this.getImag();
+
+        ComplexNumber a =  new ComplexNumber(Math.pow(Math.E, real), 0);
+        ComplexNumber b  = new ComplexNumber(Math.cos(img), Math.sin(img));
+
+        return a.times(b);
     }
 }

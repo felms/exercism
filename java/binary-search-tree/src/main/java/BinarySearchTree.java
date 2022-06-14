@@ -1,5 +1,7 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 class BinarySearchTree<T extends Comparable<T>> {
@@ -50,14 +52,24 @@ class BinarySearchTree<T extends Comparable<T>> {
 
     List<T> getAsLevelOrderList() {
 
-        ArrayList<Node<T>> nodes = new ArrayList<>();
-        nodes.add(this.root);
+        List<T> treeData = new ArrayList<>();
+        Queue<Node<T>> nodesQueue = new ArrayDeque<>();
+        nodesQueue.add(this.getRoot());
 
-        levelOrderTraversal(this.root, nodes);
+        while (!nodesQueue.isEmpty()) {
+            Node<T> node = nodesQueue.remove();
+            treeData.add(node.getData());
 
-        return nodes.stream()
-                .map(n -> n.getData())
-                .collect(Collectors.toList());
+            if (node.getLeft() != null) {
+                nodesQueue.add(node.getLeft());
+            }
+
+            if (node.getRight() != null) {
+                nodesQueue.add(node.getRight());
+            }
+        }
+
+        return treeData;
 
     }
 
@@ -74,25 +86,6 @@ class BinarySearchTree<T extends Comparable<T>> {
         inOrderTraversal(node.getLeft(), treeData);
         treeData.add(node.getData());
         inOrderTraversal(node.getRight(), treeData);
-    }
-
-    private void levelOrderTraversal(Node<T> node, ArrayList<Node<T>> nodes) {
-
-        if (node == null) {
-            return;
-        }
-
-        if (node.getLeft() != null) {
-            nodes.add(node.getLeft());
-        }
-
-        if (node.getRight() != null) {
-            nodes.add(node.getRight());
-
-        }
-
-        levelOrderTraversal(node.getLeft(), nodes);
-        levelOrderTraversal(node.getRight(), nodes);
     }
 
     static class Node<T> {

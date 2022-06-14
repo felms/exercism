@@ -1,11 +1,14 @@
+import java.util.ArrayList;
 import java.util.List;
 
 class BinarySearchTree<T extends Comparable<T>> {
 
     private Node<T> root;
+    private List<T> treeData;
 
     public BinarySearchTree() {
         this.root = null;
+        treeData = new ArrayList<>();
     }
 
     void insert(T value) {
@@ -24,7 +27,9 @@ class BinarySearchTree<T extends Comparable<T>> {
     }
 
     List<T> getAsSortedList() {
-        throw new UnsupportedOperationException("Delete this statement and write your own implementation.");
+        this.treeData = new ArrayList<>();
+        inOrderTraversal(this.root);
+        return new ArrayList<T>(this.treeData);
     }
 
     List<T> getAsLevelOrderList() {
@@ -33,6 +38,17 @@ class BinarySearchTree<T extends Comparable<T>> {
 
     Node<T> getRoot() {
         return this.root;
+    }
+
+    private void inOrderTraversal(Node<T> node) {
+
+        if (node == null) {
+            return;
+        }
+
+        inOrderTraversal(node.left);
+        this.treeData.add(node.getData());
+        inOrderTraversal(node.right);
     }
 
     static class Node<T> {

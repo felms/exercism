@@ -5,11 +5,9 @@ import java.util.stream.Collectors;
 class BinarySearchTree<T extends Comparable<T>> {
 
     private Node<T> root;
-    private List<T> treeData;
 
     public BinarySearchTree() {
         this.root = null;
-        treeData = new ArrayList<>();
     }
 
     void insert(T value) {
@@ -45,9 +43,9 @@ class BinarySearchTree<T extends Comparable<T>> {
     }
 
     List<T> getAsSortedList() {
-        this.treeData = new ArrayList<>();
-        inOrderTraversal(this.root);
-        return new ArrayList<T>(this.treeData);
+        List<T> treeData = new ArrayList<>();
+        inOrderTraversal(this.root, treeData);
+        return treeData;
     }
 
     List<T> getAsLevelOrderList() {
@@ -67,15 +65,15 @@ class BinarySearchTree<T extends Comparable<T>> {
         return this.root;
     }
 
-    private void inOrderTraversal(Node<T> node) {
+    private void inOrderTraversal(Node<T> node, List<T> treeData) {
 
         if (node == null) {
             return;
         }
 
-        inOrderTraversal(node.getLeft());
-        this.treeData.add(node.getData());
-        inOrderTraversal(node.getRight());
+        inOrderTraversal(node.getLeft(), treeData);
+        treeData.add(node.getData());
+        inOrderTraversal(node.getRight(), treeData);
     }
 
     private void levelOrderTraversal(Node<T> node, ArrayList<Node<T>> nodes) {

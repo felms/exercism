@@ -33,11 +33,29 @@ public class ComplexNumber {
     }
 
     public ComplexNumber times(ComplexNumber other) {
-        return null; //TODO
+        double real = this.getReal();
+        double img = this.getImag();
+        double otherReal = other.getReal();
+        double otherImg = other.getImag();
+
+        double newReal = real * otherReal - img * otherImg;
+        double newImg = img * otherReal + real * otherImg;
+
+        return new ComplexNumber(newReal, newImg);
     }
 
     public ComplexNumber div(ComplexNumber other) {
-        return null; //TODO
+        double real = this.getReal();
+        double img = this.getImag();
+        double otherReal = other.getReal();
+        double otherImg = other.getImag();
+
+        double newReal = (real * otherReal + img * otherImg) 
+                            / (Math.pow(otherReal, 2) + Math.pow(otherImg, 2));
+        double newImg = (img * otherReal - real * otherImg) 
+                            / (Math.pow(otherReal, 2) + Math.pow(otherImg, 2));
+
+        return new ComplexNumber(newReal, newImg);
     }
 
     public double abs() {

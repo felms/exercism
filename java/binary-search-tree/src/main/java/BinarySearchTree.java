@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class BinarySearchTree<T extends Comparable<T>> {
 
@@ -39,7 +40,6 @@ class BinarySearchTree<T extends Comparable<T>> {
                     }
                 }
             }
-
             
         }
     }
@@ -51,7 +51,16 @@ class BinarySearchTree<T extends Comparable<T>> {
     }
 
     List<T> getAsLevelOrderList() {
-        throw new UnsupportedOperationException("Delete this statement and write your own implementation.");
+
+        ArrayList<Node<T>> nodes = new ArrayList<>();
+        nodes.add(this.root);
+
+        levelOrderTraversal(this.root, nodes);
+
+        return nodes.stream()
+                .map(n -> n.getData())
+                .collect(Collectors.toList());
+
     }
 
     Node<T> getRoot() {
@@ -64,9 +73,28 @@ class BinarySearchTree<T extends Comparable<T>> {
             return;
         }
 
-        inOrderTraversal(node.left);
+        inOrderTraversal(node.getLeft());
         this.treeData.add(node.getData());
-        inOrderTraversal(node.right);
+        inOrderTraversal(node.getRight());
+    }
+
+    private void levelOrderTraversal(Node<T> node, ArrayList<Node<T>> nodes) {
+
+        if (node == null) {
+            return;
+        }
+
+        if (node.getLeft() != null) {
+            nodes.add(node.getLeft());
+        }
+
+        if (node.getRight() != null) {
+            nodes.add(node.getRight());
+
+        }
+
+        levelOrderTraversal(node.getLeft(), nodes);
+        levelOrderTraversal(node.getRight(), nodes);
     }
 
     static class Node<T> {

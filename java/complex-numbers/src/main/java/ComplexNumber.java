@@ -59,11 +59,15 @@ public class ComplexNumber {
     }
 
     public double abs() {
-        return -1; //TODO
+        double real = this.getReal();
+        double img = this.getImag();
+        return Math.sqrt(real * real + img * img);
     }
 
     public ComplexNumber conjugate() {
-        return null; //TODO
+        double real = this.getReal();
+        double img = this.getImag();
+        return new ComplexNumber(real, -1 * img);
     }
 
     public ComplexNumber exponentialOf() {

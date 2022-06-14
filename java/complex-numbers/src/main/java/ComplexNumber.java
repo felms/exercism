@@ -17,11 +17,19 @@ public class ComplexNumber {
     }
 
     public ComplexNumber add(ComplexNumber other) {
-        return null; //TODO
+        double real = this.getReal();
+        double img = this.getImag();
+        double otherReal = other.getReal();
+        double otherImg = other.getImag();
+        return new ComplexNumber(real + otherReal, img + otherImg);
     }
 
     public ComplexNumber minus(ComplexNumber other) {
-        return null; //TODO
+        double real = this.getReal();
+        double img = this.getImag();
+        double otherReal = other.getReal();
+        double otherImg = other.getImag();
+        return new ComplexNumber(real - otherReal, img - otherImg);
     }
 
     public ComplexNumber times(ComplexNumber other) {

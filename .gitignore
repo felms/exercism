@@ -13,14 +13,14 @@ metadata.json
 *.gradle
 *Test.java
 HELP.md
-.idea/*
+*.xml
+*.iml
+*.properties
 
-
-*/bin/*
-*/build/*
-
-build/*
-gradle/*
+.idea/
+bin/
+build/
+gradle/
 gradlew
 gradlew.bat
 *.class

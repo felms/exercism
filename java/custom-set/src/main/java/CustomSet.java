@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CustomSet<T> {
 
@@ -93,6 +94,29 @@ public class CustomSet<T> {
         allItems.addAll(other.getValues());
 
         return new CustomSet<>(allItems);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        CustomSet<T> other = (CustomSet<T>) o;
+        if (this.size != other.size) {
+            return false;
+        }
+
+        return this.isSubset(other) && other.isSubset(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size, setItems);
     }
 
     @Override

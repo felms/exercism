@@ -1,5 +1,7 @@
 public class Clock {
 
+    private final int DAY_IN_MINUTES = 1440;
+
     private int minutes;
 
     public Clock(int hours, int minutes) {
@@ -15,7 +17,7 @@ public class Clock {
             m = minutes;
         } else {
             m = -Math.abs(minutes) % 60;
-            h += -(Math.abs(minutes) % 1440) / 60;
+            h += -(Math.abs(minutes) % DAY_IN_MINUTES) / 60;
             h = h < 0 ? 24 + h : h;
         }
 
@@ -24,7 +26,9 @@ public class Clock {
     }
 
     public void add(int minutes) {
-        // TODO
+        minutes = minutes < 0 ? -(Math.abs(minutes) % DAY_IN_MINUTES) : minutes;
+        this.minutes += minutes;
+        this.minutes = this.minutes < 0 ? this.minutes + DAY_IN_MINUTES : this.minutes % DAY_IN_MINUTES;
     }
 
     @Override

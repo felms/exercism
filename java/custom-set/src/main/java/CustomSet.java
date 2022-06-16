@@ -1,11 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CustomSet<T> {
 
     private int size;
     private final List<T> setItems;
+
     public CustomSet() {
         this(new ArrayList<>());
     }
@@ -13,13 +15,7 @@ public class CustomSet<T> {
     public CustomSet(List<T> items) {
         this.size = 0;
         this.setItems = new ArrayList<>();
-
-        items.forEach(item -> {
-            if (!this.setItems.contains(item)) {
-                this.setItems.add(item);
-                this.size++;
-            }
-        });
+        items.forEach(this::add);
     }
 
     public boolean isEmpty() {
@@ -34,7 +30,6 @@ public class CustomSet<T> {
         if (!this.setItems.contains(item)) {
             this.setItems.add(item);
             this.size++;
-            System.out.println(this.toString());
             return true;
         }
 
@@ -51,26 +46,16 @@ public class CustomSet<T> {
             return true;
         }
 
-        boolean containsAll = true;
-        for (T item : other.getValues()){
-            containsAll = containsAll && this.setItems.contains(item);
-        }
-
-        return containsAll;
+        return other.getValues().stream()
+                    .allMatch(this::contains);
     }
 
-    public CustomSet<T>  getIntersection(CustomSet<T> other) {
-        List<T> allItems = new ArrayList<>(this.getValues());
-        allItems.addAll(other.getValues());
-
-        CustomSet<T> intersection = new CustomSet<>();
-        for (T item : allItems) {
-            if (this.contains(item) && other.contains(item)) {
-                intersection.add(item);
-            }
-        }
-
-        return intersection;
+    public CustomSet<T> getIntersection(CustomSet<T> other) {
+        return new CustomSet<>(
+            this.getValues().stream()
+                    .filter(other::contains)
+                    .collect(Collectors.toList())
+        );
     }
 
     public boolean isDisjoint(CustomSet<T> other) {
@@ -78,15 +63,11 @@ public class CustomSet<T> {
     }
 
     public CustomSet<T> getDifference(CustomSet<T> other) {
-        CustomSet<T> difference = new CustomSet<>();
-
-        for (T item : this.getValues()) {
-            if (!other.contains(item)) {
-                difference.add(item);
-            }
-        }
-
-        return difference;
+        return new CustomSet<>(
+                this.getValues().stream()
+                        .filter(item -> !other.contains(item))
+                        .collect(Collectors.toList())
+        );
     }
 
     public CustomSet<T> getUnion(CustomSet<T> other) {
@@ -106,6 +87,7 @@ public class CustomSet<T> {
             return false;
         }
 
+        @SuppressWarnings("unchecked")
         CustomSet<T> other = (CustomSet<T>) o;
         if (this.size != other.size) {
             return false;
@@ -123,7 +105,7 @@ public class CustomSet<T> {
     public String toString() {
         return "CustomSet{" +
                 "size=" + size +
-                ", setItems=" + setItems +
+                ", Items=" + setItems +
                 '}';
     }
 }

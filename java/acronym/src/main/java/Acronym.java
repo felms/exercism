@@ -10,7 +10,7 @@ class Acronym {
     }
 
     String get() {
-        return Arrays.asList(this.phrase.split("\\s+"))
+        return Arrays.asList(this.phrase.split("(\\s+|-|_)+"))
                         .stream()
                         .map(word -> word.toUpperCase().substring(0, 1))
                         .collect(Collectors.joining());

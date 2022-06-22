@@ -30,9 +30,9 @@ export const score = (dice, category) => {
          case 'full house':
             result += calcFullHouse(count); 
             break;
-//         case 'ones':
-//            result += 1 * count[1];
-//            break;
+         case 'four of a kind':
+            result += calcFourOfAKind(count);
+            break;
 
     }
 
@@ -45,7 +45,7 @@ const calcFullHouse = (dice) => {
     let gotTrio = false;
     let gotPair = false;
 
-    for (let i = 0; i < dice.length; i++) {
+    for (let i = 1; i < dice.length; i++) {
         if (dice[i] === 3) {
             result += 3 * i;
             gotTrio = true;
@@ -57,6 +57,19 @@ const calcFullHouse = (dice) => {
 
     if (gotPair && gotTrio) {
         return result;
+    }
+
+    return 0;
+}
+
+const calcFourOfAKind = (dice) => {
+
+    let result = 0;
+    for (let i = 1; i < dice.length; i++) {
+        if (dice[i] >= 4) {
+            result += 4 * i;
+            return result;
+        }
     }
 
     return 0;

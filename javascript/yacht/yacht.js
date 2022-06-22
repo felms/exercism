@@ -44,6 +44,9 @@ export const score = (dice, category) => {
          case 'choice':
             result += dice.reduce((prev, curr) => prev + curr, 0);
             break;
+          case 'yacht':
+            result += count.filter(n => n === 5).length > 0 ? 50 : 0;
+            break;
  
     }
 

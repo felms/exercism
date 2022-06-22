@@ -33,6 +33,11 @@ export const score = (dice, category) => {
          case 'four of a kind':
             result += calcFourOfAKind(count);
             break;
+         case 'little straight':
+            result += (count[1] === 1 && count[2] === 1 && count[3] === 1
+                        && count[4] === 1 && count[5] === 1) ? 30 : 0; 
+            break;
+ 
 
     }
 

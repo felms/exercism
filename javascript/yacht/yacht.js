@@ -41,7 +41,10 @@ export const score = (dice, category) => {
             result += (count[2] === 1 && count[3] === 1 && count[4] === 1
                         && count[5] === 1 && count[6] === 1) ? 30 : 0; 
             break;
-
+         case 'choice':
+            result += dice.reduce((prev, curr) => prev + curr, 0);
+            break;
+ 
     }
 
     return result;

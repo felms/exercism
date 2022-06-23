@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Tournament {
 	
-	private List<Team> teams;
+	private final List<Team> teams;
 
 	public Tournament(){
 		
@@ -14,8 +14,7 @@ public class Tournament {
 	
 	public void applyResults(String inputTable) {
 		
-		Arrays.asList(inputTable.split("\\n"))
-					.stream()
+		Arrays.stream(inputTable.split("\\n"))
 					.forEach(this::processGame);
 	}
 
@@ -25,13 +24,12 @@ public class Tournament {
 		StringBuilder sb = new StringBuilder();
 		sb.append( "Team                           | MP |  W |  D |  L |  P\n");
 		this.teams.forEach(t -> {
-							sb.append(t.getName());
-							sb.append("             ");
-							sb.append("|  " + t.getMatches() + " ");
-							sb.append("|  " + t.getWins() + " ");
-							sb.append("|  " + t.getDraws() + " ");
-							sb.append("|  " + t.getLosses() + " ");
-							sb.append("|  " + t.getPoints() + "\n");
+							sb.append(String.format("%1$-31s", t.getName()));
+							sb.append("|  ").append(t.getMatches()).append(" ");
+							sb.append("|  ").append(t.getWins()).append(" ");
+							sb.append("|  ").append(t.getDraws()).append(" ");
+							sb.append("|  ").append(t.getLosses()).append(" ");
+							sb.append("|  ").append(t.getPoints()).append("\n");
 					});
 
 		return sb.toString();

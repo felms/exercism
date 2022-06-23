@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class RunLengthEncoding {
 	
 	public String encode(String inputString){
@@ -28,7 +31,32 @@ public class RunLengthEncoding {
 	}
 	
 	public String decode(String inputString){
-		return null;
+		
+		StringBuilder sb = new StringBuilder();
+		List<Character> letters = inputString.chars()
+									.mapToObj(c -> Character.valueOf((char) c))
+									.collect(Collectors.toList());
+
+		while (!letters.isEmpty()) {
+			char letter = letters.remove(0);
+			
+			if (Character.isDigit(letter)) {
+				StringBuilder number = new StringBuilder();
+				number.append(letter);
+				while (Character.isDigit(letters.get(0))) {
+					number.append(letters.remove(0));
+				}
+				letter = letters.remove(0);
+				int n = Integer.parseInt(number.toString());
+				for (int i = 0; i < n; i++) {
+					sb.append(letter);
+				}
+			} else {
+				sb.append(letter);
+			}
+		}				
+
+		return sb.toString();
 	}
 
 }

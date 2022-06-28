@@ -26,7 +26,59 @@ public class ForthEvaluator{
             .forEach(item -> {
                     if (item.matches("\\d+")) {
                         this.stack.add(Integer.parseInt(item));
+                    } else if (item.matches("[-+*/]")) {
+                        processOperation(item);
                     }
             });
     }
+
+    private void processOperation(String operation) {
+
+        if (this.stack.size() < 2) {
+            String operationName = "";
+
+            switch(operation) {
+                case "+":
+                    operationName = "Addition";
+                    break;
+                case "-":
+                    operationName = "Subtraction";
+                    break;
+                case "*":
+                    operationName = "Multiplication";
+                    break;
+                case "/":
+                    operationName = "Division";
+                    break;
+
+            };
+
+            String message = String.format("%s requires that the stack contain at least 2 values"
+                    , operationName);
+            throw new IllegalArgumentException(message);
+        }
+
+        int a = this.stack.remove(this.stack.size() - 1);
+        int b = this.stack.remove(this.stack.size() - 1);
+        switch(operation) {
+            case "+":
+                this.stack.add(b + a);
+                break;
+            case "-":
+                this.stack.add(b - a);
+                break;
+            case "*":
+                this.stack.add(b * a);
+                break;
+            case "/":
+                if (a == 0) {
+                    throw new IllegalArgumentException("Division by 0 is not allowed");
+                }
+                this.stack.add(b / a);
+                break;
+
+        };
+
+    }
+
 }

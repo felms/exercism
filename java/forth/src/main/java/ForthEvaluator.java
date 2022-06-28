@@ -28,7 +28,7 @@ public class ForthEvaluator{
                         this.stack.add(Integer.parseInt(item));
                     } else if (item.matches("[-+*/]")) {
                         arithmeticOperation(item);
-                    } else if (item.matches("(dup|drop)")) {
+                    } else if (item.matches("(dup|drop|swap|over)")) {
                         stackManipulation(item);
                     }
             });
@@ -92,10 +92,11 @@ public class ForthEvaluator{
             case "drop":
                 this.drop();
                 break;
-            case "*":
-                //this.stack.add(b * a);
+            case "swap":
+                this.swap();
                 break;
-            case "/":
+            case "over":
+                this.over();
                 break;
 
         };
@@ -121,6 +122,30 @@ public class ForthEvaluator{
         
         this.stack.remove(this.stack.size() - 1);
 
+    }
+
+    private void swap() {
+        
+        if (this.stack.size() < 2) {
+            throw new IllegalArgumentException("Swapping requires that the stack"
+                           + " contain at least 2 values");
+        }
+        
+        int a = this.stack.remove(this.stack.size() - 1);
+        int b = this.stack.remove(this.stack.size() - 1);
+        this.stack.add(a);
+        this.stack.add(b);
+    }
+    
+    private void over() {
+        
+        if (this.stack.size() < 2) {
+            throw new IllegalArgumentException("Overing requires that the stack"
+                           + " contain at least 2 values");
+        }
+        
+        int a = this.stack.get(this.stack.size() - 2);
+        this.stack.add(a);
     }
 
 }

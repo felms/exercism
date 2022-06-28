@@ -27,12 +27,14 @@ public class ForthEvaluator{
                     if (item.matches("\\d+")) {
                         this.stack.add(Integer.parseInt(item));
                     } else if (item.matches("[-+*/]")) {
-                        processOperation(item);
+                        arithmeticOperation(item);
+                    } else if (item.matches("(dup|drop)")) {
+                        stackManipulation(item);
                     }
             });
     }
 
-    private void processOperation(String operation) {
+    private void arithmeticOperation(String operation) {
 
         if (this.stack.size() < 2) {
             String operationName = "";
@@ -78,6 +80,46 @@ public class ForthEvaluator{
                 break;
 
         };
+
+    }
+
+    private void stackManipulation(String operation) {
+        
+        switch(operation) {
+            case "dup":
+                this.dup();
+                break;
+            case "drop":
+                this.drop();
+                break;
+            case "*":
+                //this.stack.add(b * a);
+                break;
+            case "/":
+                break;
+
+        };
+
+    }
+    
+    private void dup() {
+        
+        if (this.stack.size() < 1) {
+            throw new IllegalArgumentException("Duplicating requires that the stack"
+                           + " contain at least 1 value");
+        }
+        
+        int a = this.stack.get(this.stack.size() - 1);
+        this.stack.add(a);
+    }
+    
+    private void drop() {
+        if (this.stack.size() < 1) {
+            throw new IllegalArgumentException("Dropping requires that the stack"
+                           + " contain at least 1 value");
+        }
+        
+        this.stack.remove(this.stack.size() - 1);
 
     }
 

@@ -23,6 +23,8 @@ public class ForthEvaluator{
     }
 
     private void evaluateExpression(String expression) {
+
+        expression = expression.toLowerCase();
         
         if (expression.matches(":.+;")) { // Se for definição de novo comando
 
@@ -44,6 +46,7 @@ public class ForthEvaluator{
                 }
 
             }
+
             userDefinedCommands.put(newCommand, cmdList);
 
         } else { // Se for execução de comando
@@ -52,7 +55,6 @@ public class ForthEvaluator{
                 .forEach(item -> {
                         if (userDefinedCommands.containsKey(item)) {
                             List<String> command = userDefinedCommands.get(item); 
-                            //Collections.reverse(command);
                             command.forEach(this::evaluateExpression);
                         } else if (item.matches("\\d+")) {
                             this.stack.add(Integer.parseInt(item));
@@ -60,7 +62,10 @@ public class ForthEvaluator{
                             arithmeticOperation(item);
                         } else if (item.matches("(dup|drop|swap|over)")) {
                             stackManipulation(item);
-                        } 
+                        } else {
+                            throw new IllegalArgumentException("No definition available for " 
+                                                + "operator \"" + item + "\"");
+                        }
             });
         }
     }

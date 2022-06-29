@@ -1,37 +1,68 @@
 import java.util.Arrays;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ForthEvaluator{
 
     private final List<Integer> stack;
+    private final Map<String, List<String>> userDefinedCommands;
 
     public ForthEvaluator() {
 
         this.stack = new ArrayList<>();
+        this.userDefinedCommands = new HashMap<>();
     }
 
-    public List<Integer> evaluateProgram(List<String> inputStack) {
+    public List<Integer> evaluateProgram(List<String> input) {
 
-        inputStack.forEach(this::evaluateExpression);
-
+        input.forEach(this::evaluateExpression);
         return this.stack;
+
     }
 
     private void evaluateExpression(String expression) {
+        
+        if (expression.matches(":.+;")) { // Se for definição de novo comando
 
-        Arrays.stream(expression.split("\\s+"))
-            .forEach(item -> {
-                    if (item.matches("\\d+")) {
-                        this.stack.add(Integer.parseInt(item));
-                    } else if (item.matches("[-+*/]")) {
-                        arithmeticOperation(item);
-                    } else if (item.matches("(dup|drop|swap|over)")) {
-                        stackManipulation(item);
-                    }
+            String[] s = expression.replaceAll("[:;]", "").trim().split("\\s+");
+            String newCommand = s[0];
+            
+            if (newCommand.matches("\\d+")) {
+                throw new IllegalArgumentException("Cannot redefine numbers");
+            }
+
+            List<String> cmdList = new ArrayList<>();
+            
+            for (int i = 1; i < s.length; i++) {
+                String str = s[i];
+                if (userDefinedCommands.containsKey(str)) {
+                    cmdList.addAll(userDefinedCommands.get(str));
+                } else {
+                    cmdList.add(str);
+                }
+
+            }
+            userDefinedCommands.put(newCommand, cmdList);
+
+        } else { // Se for execução de comando
+
+            Arrays.stream(expression.split("\\s+"))
+                .forEach(item -> {
+                        if (userDefinedCommands.containsKey(item)) {
+                            List<String> command = userDefinedCommands.get(item); 
+                            //Collections.reverse(command);
+                            command.forEach(this::evaluateExpression);
+                        } else if (item.matches("\\d+")) {
+                            this.stack.add(Integer.parseInt(item));
+                        } else if (item.matches("[-+*/]")) {
+                            arithmeticOperation(item);
+                        } else if (item.matches("(dup|drop|swap|over)")) {
+                            stackManipulation(item);
+                        } 
             });
+        }
     }
 
     private void arithmeticOperation(String operation) {
@@ -53,7 +84,7 @@ public class ForthEvaluator{
                     operationName = "Division";
                     break;
 
-            };
+            }
 
             String message = String.format("%s requires that the stack contain at least 2 values"
                     , operationName);
@@ -79,7 +110,7 @@ public class ForthEvaluator{
                 this.stack.add(b / a);
                 break;
 
-        };
+        }
 
     }
 
@@ -99,7 +130,7 @@ public class ForthEvaluator{
                 this.over();
                 break;
 
-        };
+        }
 
     }
     

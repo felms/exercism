@@ -1,47 +1,62 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Transpose {
 
-    public String transpose(String string) {
+    private List<List<String>> matrix;
 
-        if ("".equals(string)) {
+    public String transpose(String inputString) {
+
+        if ("".equals(inputString)) {
             return "";
         }
 
-        List<List<String>> matrix = Arrays.asList(string.split(System.lineSeparator()))
-                .stream()
-                .map(item -> Arrays.asList(item.split("")))
+        // Cria uma matriz com as strings
+        this.matrix = Arrays.stream(inputString.split(System.lineSeparator()))
+                .map(row -> Arrays.stream(row.split("")).collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        int maxSize = matrix.stream()
-                .mapToInt(item -> item.size())
-                .max().orElse(0);
-        
-        StringBuilder sb = new StringBuilder();
+        // Retorna o tamanho da maior string do array
+        int maxSize = this.matrix.stream().map(List::size)
+                .max(Integer::compare).orElseThrow();
 
+        // Deixa todas as linhas da matriz do mesmo tamanho
+        this.padRows(maxSize);
+        List<String> transposed = new ArrayList<>();
+
+        // "Transpõe" a matriz
         for (int i = 0; i < maxSize; i++) {
-            sb.append(getColumn(matrix, i));
+            transposed.add(String.join("", this.getColumn(i)));
         }
 
-        
-        return sb.toString().trim();
+        // Remove o "padding" da string. Gambiarra das brabas
+        for (int i = transposed.size() - 1; i >= 0; i--) {
+            // remove o "padding" do fim
+            String str = transposed.get(i).replaceAll("#+$", "");
+
+            // remove o "padding" do meio da string
+            str = str.replaceAll("#", " ");
+            
+            transposed.set(i, str);
+        }
+
+        return String.join("\n", transposed).trim();
     }
 
-    public String getColumn(List<List<String>> matrix, int column) {
+    private List<String> getColumn(int column) {
+        return this.matrix.stream().map(row -> row.get(column))
+                .collect(Collectors.toList());
+    }
 
-        StringBuilder sb = new StringBuilder();        
-        
-        for (int i = 0; i < matrix.size(); i++) {
-            List<String> list = matrix.get(i);
-            String s = list.size() > column ? list.get(column) : " ";
-            sb.append(s);
-        }
+    private void padRows(int padTo) {
 
-        sb.append("\n");
-
-        return sb.toString();
+        this.matrix.forEach(item -> {
+                    while (item.size() < padTo) {
+                        item.add("#");
+                    }
+                });
     }
 
 }

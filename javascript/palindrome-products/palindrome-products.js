@@ -48,18 +48,7 @@ export class Palindromes {
 
     static isPalindrome(number) {
 
-        if (number > 0 && number < 10) {
-            return true;
-        }
-
-        let n = number;
-        let reversed = 0;
-
-        while(n > 0){
-            let digit = n % 10;
-            reversed = 10 * reversed + digit;
-            n = Math.trunc(n / 10);
-        }
+        let reversed = parseInt(number.toString().split('').reverse().join(''));
 
         return reversed === number;
     }

@@ -48,9 +48,19 @@ export class Palindromes {
 
     static isPalindrome(number) {
 
-        let reversed = parseInt(number.toString().split('').reverse().join(''));
+        // Transforma o número para string
+        let string = number.toString();
 
-        return reversed === number;
+        // Itera sobre a primeira metade da string
+        for (let i = 0; i < string.length / 2; i++) {
+
+            // Checa se os itens 'espelhados' nas duas
+            // metades da string são iguais
+            if (string[i] !== string[string.length - 1 - i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

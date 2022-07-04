@@ -11,12 +11,17 @@ public class WordSearcher{
         this.getColumns(puzzle);
         Map<String, Optional<WordLocation>> searchResults = new HashMap<>();
 
-        searchWords.forEach(word -> searchResults.put(word, checkrows(word)));
+        searchWords.forEach(word -> searchResults.put(word, searchWord(word)));
 
         return searchResults;
     }
 
-    private Optional<WordLocation> checkrows(String word) {
+    private Optional<WordLocation> searchWord(String word) {
+        Optional<WordLocation> location = this.checkRows(word);
+        return location.isPresent() ? location : this.checkColumns(word); 
+    }
+
+    private Optional<WordLocation> checkRows(String word) {
 
         for (int i = 0; i < this.rows.size(); i++) {
             // Testa a palavra no sentido correto
@@ -41,6 +46,33 @@ public class WordSearcher{
         return Optional.empty();
     }
 
+    private Optional<WordLocation> checkColumns(String word) {
+        
+        for (int i = 0; i < this.columns.size(); i++) {
+            // Testa a palavra de cima pra baixo
+            int x = this.columns.get(i).indexOf(word);
+            if (x >= 0) {
+                Pair start = new Pair(i + 1, x + 1);
+                int x2 = x + word.length();
+                Pair end = new Pair(i + 1, x2);
+                return Optional.of(new WordLocation(start, end));
+            }
+            
+    
+            // Testa a palavra de baixo pra cima
+            String wordReversed = new StringBuilder(word).reverse().toString();
+            x = this.columns.get(i).indexOf(wordReversed);
+            if (x >= 0) {
+                Pair start = new Pair(i + 1, x + 1);
+                int x2 = x + wordReversed.length();
+                Pair end = new Pair(i + 1, x2);
+                return Optional.of(new WordLocation(end, start));
+            }
+        }
+        
+        return Optional.empty();
+    }
+
     public void getRows(char[][] puzzle) {
         this.rows = Arrays.stream(puzzle)
                 .map(String::new)
@@ -56,11 +88,6 @@ public class WordSearcher{
             }
             this.columns.add(sb.toString());
         }
-    }
-
-    private Optional<WordLocation> searchWord(String word) {
-
-        return Optional.empty(); // TODO change this
     }
 
     public static void main(String[] args) {

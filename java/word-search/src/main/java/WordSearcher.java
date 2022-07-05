@@ -1,26 +1,40 @@
-import java.util.*;
+import jdk.swing.interop.SwingInterOpUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class WordSearcher{
 
     public List<String> rows;
     public List<String> columns;
+    public List<String> leftToBottonRDiagonal;
 
     public Map<String, Optional<WordLocation>> search(Set<String> searchWords, char[][] puzzle) {
         this.getRows(puzzle);
         this.getColumns(puzzle);
-        Map<String, Optional<WordLocation>> searchResults = new HashMap<>();
+        this.getLeftToBottonRightDiagonal(puzzle);
 
-        searchWords.forEach(word -> searchResults.put(word, searchWord(word)));
-
-        return searchResults;
+        return searchWords.stream()
+                .collect(Collectors.toMap(Function.identity(), this::searchWord));
     }
 
+    // Procura pelas palavras
     private Optional<WordLocation> searchWord(String word) {
-        Optional<WordLocation> location = this.checkRows(word);
-        return location.isPresent() ? location : this.checkColumns(word); 
+        Optional<WordLocation> rowsLocation = this.checkRows(word);
+        Optional<WordLocation> columnsLocation = this.checkColumns(word);
+        Optional<WordLocation> leftDiagonalLocation = this.checkLeftDiagonal(word);
+        return rowsLocation.isPresent() ? rowsLocation
+                : columnsLocation.isPresent() ? columnsLocation
+                : leftDiagonalLocation;
     }
 
+    // Procura pela palavra nas linhas
     private Optional<WordLocation> checkRows(String word) {
 
         for (int i = 0; i < this.rows.size(); i++) {
@@ -46,8 +60,9 @@ public class WordSearcher{
         return Optional.empty();
     }
 
+    // Procura pela palavra nas colunas
     private Optional<WordLocation> checkColumns(String word) {
-        
+
         for (int i = 0; i < this.columns.size(); i++) {
             // Testa a palavra de cima pra baixo
             int x = this.columns.get(i).indexOf(word);
@@ -57,8 +72,8 @@ public class WordSearcher{
                 Pair end = new Pair(i + 1, x2);
                 return Optional.of(new WordLocation(start, end));
             }
-            
-    
+
+
             // Testa a palavra de baixo pra cima
             String wordReversed = new StringBuilder(word).reverse().toString();
             x = this.columns.get(i).indexOf(wordReversed);
@@ -69,16 +84,46 @@ public class WordSearcher{
                 return Optional.of(new WordLocation(end, start));
             }
         }
-        
+
         return Optional.empty();
     }
 
+    // Procura pela palavra na diagonal
+    // que vai do topp esquerda até a direita
+    private Optional<WordLocation> checkLeftDiagonal(String word) {
+
+        for (int i = 0; i < this.leftToBottonRDiagonal.size(); i++) {
+
+            // Testa a palavra no sentido correto
+            int x = this.leftToBottonRDiagonal.get(i).indexOf(word);
+            if (x >= 0) {
+                Pair start = new Pair(x + 1,  i + 1);
+                int x2 = x + word.length();
+                Pair end = new Pair(x2, i + 1);
+                return Optional.of(new WordLocation(start, end));
+            }
+
+            // Testa a palavra ao contrário
+            String wordReversed = new StringBuilder(word).reverse().toString();
+            x = this.leftToBottonRDiagonal.get(i).indexOf(wordReversed);
+            if (x >= 0) {
+                Pair start = new Pair(x + 1, i + 1);
+                int x2 = x + wordReversed.length();
+                Pair end = new Pair(x2, i + 1);
+                return Optional.of(new WordLocation(end, start));
+            }
+        }
+        return Optional.empty();
+    }
+
+    // Preenche a lista das linhas
     public void getRows(char[][] puzzle) {
         this.rows = Arrays.stream(puzzle)
                 .map(String::new)
                 .collect(Collectors.toList());
     }
 
+    // Preenche a lista das colunas
     public void getColumns(char[][] puzzle) {
         this.columns = new ArrayList<>();
         for (int j = 0; j < puzzle[0].length; j++) {
@@ -88,6 +133,54 @@ public class WordSearcher{
             }
             this.columns.add(sb.toString());
         }
+    }
+
+    // Preenche a diagonal do topo esquerda para 
+    // baixo direita.
+    public void getLeftToBottonRightDiagonal(char[][] puzzle) {
+        this.leftToBottonRDiagonal = new ArrayList<>();
+
+        // Crio uma lista das linhas
+        List<StringBuilder> list = Arrays.stream(puzzle)
+                .map(String::new)
+                .map(StringBuilder::new)
+                .collect(Collectors.toList());
+
+        // Coloco um padding em todas as palavras para
+        // poder retirar apenas os trechos necessários;
+        int newSize = puzzle.length * 2 - 1;
+        int prependSize = puzzle.length - 1;
+        int appendSize = 0;
+        while (prependSize >= 0) {
+
+            StringBuilder sb = list.get(appendSize);
+            while (sb.length() < puzzle.length + prependSize) {
+                sb.insert(0, " ");
+            }
+
+            while (sb.length() < newSize) {
+                sb.append(" ");
+            }
+            prependSize--;
+            appendSize++;
+        }
+
+        // Crio uma nova list com as palavras formadas pelas colunas
+        // das palavras com o padding
+        List<String> diagonalColumns = new ArrayList<>();
+        for (int j = 0; j < newSize; j++) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < puzzle.length; i++) {
+                sb.append(list.get(i).charAt(j));
+            }
+            diagonalColumns.add(sb.toString());
+        }
+
+        this.leftToBottonRDiagonal.addAll(diagonalColumns
+                .stream()
+                .map(String::trim)
+                .collect(Collectors.toList())
+        );
     }
 
     public static void main(String[] args) {
@@ -106,8 +199,10 @@ public class WordSearcher{
         };
         wordSearcher.getRows(puzzle);
         wordSearcher.getColumns(puzzle);
+        wordSearcher.getLeftToBottonRightDiagonal(puzzle);
 
         System.out.println(wordSearcher.rows);
         System.out.println(wordSearcher.columns);
+        System.out.println(wordSearcher.leftToBottonRDiagonal);
     }
 }

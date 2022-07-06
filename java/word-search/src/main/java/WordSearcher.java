@@ -16,7 +16,7 @@ public class WordSearcher{
     public Map<String, Optional<WordLocation>> search(Set<String> searchWords, char[][] puzzle) {
         this.getRows(puzzle);
         this.getColumns(puzzle);
-        this.getLeftToBottonRightDiagonal(puzzle);
+//        this.getLeftToBottonRightDiagonal(puzzle);
 
         return searchWords.stream()
                 .collect(Collectors.toMap(Function.identity(), this::searchWord));
@@ -27,9 +27,11 @@ public class WordSearcher{
         Optional<WordLocation> rowsLocation = this.checkRows(word);
         Optional<WordLocation> columnsLocation = this.checkColumns(word);
         Optional<WordLocation> leftDiagonalLocation = this.checkLeftDiagonal(word);
+        Optional<WordLocation> rightDiagonalLocation = this.checkRightDiagonal(word);
         return rowsLocation.isPresent() ? rowsLocation
                 : columnsLocation.isPresent() ? columnsLocation
-                : leftDiagonalLocation;
+                : leftDiagonalLocation.isPresent() ? leftDiagonalLocation
+                : rightDiagonalLocation;
     }
 
     // Procura pela palavra nas linhas
@@ -108,7 +110,7 @@ public class WordSearcher{
                     List<String> currentRow = Arrays.asList(this.rows.get(wordIter + 1).split(""));
                     currentLetter = wordAsList.remove(0);
                     if (currentLetter.equals(currentRow.get(pos + 1))) {
-                       end = new Pair(wordIter + 2, pos + 2);
+                        end = new Pair(wordIter + 2, pos + 2);
                     } else {
                         break;
                     }
@@ -162,6 +164,88 @@ public class WordSearcher{
         return Optional.empty();
     }
 
+    // Procura pela palavra na diagonal
+    // que vai do top direira até a esquerda
+    private Optional<WordLocation> checkRightDiagonal(String word) {
+
+        System.out.println("\nWord: " + word);
+        // Testa a palavra ao contrário
+        for (int i = 0; i < this.rows.size(); i++) {
+
+            List<String> row = Arrays.asList(this.rows.get(i).split(""));
+            String wordReversed = new StringBuilder(word).reverse().toString();
+            List<String> wordAsList = new ArrayList<>(Arrays.asList(wordReversed.split("")));
+            String currentLetter = wordAsList.remove(0);
+            if (row.contains(currentLetter)) {
+
+                int pos = row.indexOf(currentLetter);
+                Pair start = new Pair(i + 1, pos + 1);
+                System.out.println("StartPair: " + start);
+                Pair end = new Pair(i + 1, pos + 1);
+                int wordIter = i;
+                while (!wordAsList.isEmpty()
+                        && wordIter + wordAsList.size() < this.rows.size()
+                        && pos - 1 > 0) {
+                    List<String> currentRow = Arrays.asList(this.rows.get(wordIter + 1).split(""));
+                    System.out.println(currentRow);
+                    currentLetter = wordAsList.remove(0);
+                    if (currentLetter.equals(currentRow.get(pos - 1))) {
+                        end = new Pair(wordIter + 2, pos);
+                        System.out.println("EndPair: " + end);
+                    } else {
+                        break;
+                    }
+                    wordIter++;
+                    pos--;
+                }
+
+                if (wordAsList.isEmpty()) {
+                    return Optional.of(new WordLocation(start, end));
+                }
+
+            }
+
+        }
+
+        // Testa a palavra no sentido correto
+        for (int i = 0; i < this.rows.size(); i++) {
+
+            List<String> row = Arrays.asList(this.rows.get(i).split(""));
+            List<String> wordAsList = new ArrayList<>(Arrays.asList(word.split("")));
+            String currentLetter = wordAsList.remove(0);
+            if (row.contains(currentLetter)) {
+
+                int pos = row.indexOf(currentLetter);
+                Pair start = new Pair(pos + 1, i + 1);
+                System.out.println("StartPair: " + start);
+                Pair end = new Pair(pos + 1, i + 1);
+                int wordIter = i;
+                while (!wordAsList.isEmpty()
+                        && wordIter + wordAsList.size() < this.rows.size()
+                        && pos - 1 > 0) {
+                    List<String> currentRow = Arrays.asList(this.rows.get(wordIter + 1).split(""));
+                    System.out.println(currentRow);
+                    currentLetter = wordAsList.remove(0);
+                    if (currentLetter.equals(currentRow.get(pos - 1))) {
+                        end = new Pair(pos, wordIter + 2);
+                        System.out.println("EndPair: " + end);
+                    } else {
+                        break;
+                    }
+                    wordIter++;
+                    pos--;
+                }
+
+                if (wordAsList.isEmpty()) {
+                    return Optional.of(new WordLocation(start, end));
+                }
+
+            }
+        }
+
+        return Optional.empty();
+    }
+
     // Preenche a lista das linhas
     public void getRows(char[][] puzzle) {
         this.rows = Arrays.stream(puzzle)
@@ -181,54 +265,6 @@ public class WordSearcher{
         }
     }
 
-    // Preenche a diagonal do topo esquerda para 
-    // baixo direita.
-    public void getLeftToBottonRightDiagonal(char[][] puzzle) {
-        this.leftToBottonRDiagonal = new ArrayList<>();
-
-        // Crio uma lista das linhas
-        List<StringBuilder> list = Arrays.stream(puzzle)
-                .map(String::new)
-                .map(StringBuilder::new)
-                .collect(Collectors.toList());
-
-        // Coloco um padding em todas as palavras para
-        // poder retirar apenas os trechos necessários;
-        int newSize = puzzle.length * 2 - 1;
-        int prependSize = puzzle.length - 1;
-        int appendSize = 0;
-        while (prependSize >= 0) {
-
-            StringBuilder sb = list.get(appendSize);
-            while (sb.length() < puzzle.length + prependSize) {
-                sb.insert(0, " ");
-            }
-
-            while (sb.length() < newSize) {
-                sb.append(" ");
-            }
-            prependSize--;
-            appendSize++;
-        }
-
-        // Crio uma nova list com as palavras formadas pelas colunas
-        // das palavras com o padding
-        List<String> diagonalColumns = new ArrayList<>();
-        for (int j = 0; j < newSize; j++) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < puzzle.length; i++) {
-                sb.append(list.get(i).charAt(j));
-            }
-            diagonalColumns.add(sb.toString());
-        }
-
-        this.leftToBottonRDiagonal.addAll(diagonalColumns
-                .stream()
-                .map(String::trim)
-                .collect(Collectors.toList())
-        );
-    }
-
     public static void main(String[] args) {
         WordSearcher wordSearcher = new WordSearcher();
         char[][] puzzle = new char[][]{
@@ -245,7 +281,7 @@ public class WordSearcher{
         };
         wordSearcher.getRows(puzzle);
         wordSearcher.getColumns(puzzle);
-        wordSearcher.getLeftToBottonRightDiagonal(puzzle);
+//        wordSearcher.getLeftToBottonRightDiagonal(puzzle);
 
         System.out.println(wordSearcher.rows);
         System.out.println(wordSearcher.columns);

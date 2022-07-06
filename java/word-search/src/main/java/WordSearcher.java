@@ -1,5 +1,3 @@
-import jdk.swing.interop.SwingInterOpUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,30 +87,78 @@ public class WordSearcher{
     }
 
     // Procura pela palavra na diagonal
-    // que vai do topp esquerda até a direita
+    // que vai do top esquerda até a direita
     private Optional<WordLocation> checkLeftDiagonal(String word) {
 
-        for (int i = 0; i < this.leftToBottonRDiagonal.size(); i++) {
+        // Testa a palavra no sentido correto
+        for (int i = 0; i < this.rows.size(); i++) {
 
-            // Testa a palavra no sentido correto
-            int x = this.leftToBottonRDiagonal.get(i).indexOf(word);
-            if (x >= 0) {
-                Pair start = new Pair(x + 1,  i + 1);
-                int x2 = x + word.length();
-                Pair end = new Pair(x2, i + 1);
-                return Optional.of(new WordLocation(start, end));
+            List<String> row = Arrays.asList(this.rows.get(i).split(""));
+            List<String> wordAsList = new ArrayList<>(Arrays.asList(word.split("")));
+            String currentLetter = wordAsList.remove(0);
+            if (row.contains(currentLetter)) {
+
+                int pos = row.indexOf(currentLetter);
+                Pair start = new Pair(i + 1, pos + 1);
+                Pair end = new Pair(i + 1, pos + 1);
+                int wordIter = i;
+                while (!wordAsList.isEmpty()
+                        && wordIter + wordAsList.size() < this.rows.size()
+                        && pos + 1 < this.rows.size()) {
+                    List<String> currentRow = Arrays.asList(this.rows.get(wordIter + 1).split(""));
+                    currentLetter = wordAsList.remove(0);
+                    if (currentLetter.equals(currentRow.get(pos + 1))) {
+                       end = new Pair(wordIter + 2, pos + 2);
+                    } else {
+                        break;
+                    }
+                    wordIter++;
+                    pos++;
+                }
+
+                if (wordAsList.isEmpty()) {
+                    return Optional.of(new WordLocation(start, end));
+                }
+
             }
 
-            // Testa a palavra ao contrário
-            String wordReversed = new StringBuilder(word).reverse().toString();
-            x = this.leftToBottonRDiagonal.get(i).indexOf(wordReversed);
-            if (x >= 0) {
-                Pair start = new Pair(x + 1, i + 1);
-                int x2 = x + wordReversed.length();
-                Pair end = new Pair(x2, i + 1);
-                return Optional.of(new WordLocation(end, start));
-            }
         }
+
+        // Testa a palavra ao contrário
+        for (int i = 0; i < this.rows.size(); i++) {
+
+            String wordReversed = new StringBuilder(word).reverse().toString();
+            List<String> row = Arrays.asList(this.rows.get(i).split(""));
+            List<String> wordAsList = new ArrayList<>(Arrays.asList(wordReversed.split("")));
+            String currentLetter = wordAsList.remove(0);
+            if (row.contains(currentLetter)) {
+
+                int pos = row.indexOf(currentLetter);
+                Pair start = new Pair(pos + 1, i + 1);
+                Pair end = new Pair(pos + 1, i + 1);
+                int wordIter = i;
+                while (!wordAsList.isEmpty()
+                        && wordIter + wordAsList.size() < this.rows.size()
+                        && pos + 1 < this.rows.size()) {
+                    List<String> currentRow = Arrays.asList(this.rows.get(wordIter + 1).split(""));
+                    currentLetter = wordAsList.remove(0);
+                    if (currentLetter.equals(currentRow.get(pos + 1))) {
+                        end = new Pair(pos + 2, wordIter + 2);
+                    } else {
+                        break;
+                    }
+                    wordIter++;
+                    pos++;
+                }
+
+                if (wordAsList.isEmpty()) {
+                    return Optional.of(new WordLocation(end, start));
+                }
+
+            }
+
+        }
+
         return Optional.empty();
     }
 

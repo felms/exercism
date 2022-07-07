@@ -1,16 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CryptoSquare {
 
-    private String normalizedInput;
-    private int columns;
-    private int rows;
+    private final String normalizedInput;
+    private final int columns;
+    private final int rows;
 
     public CryptoSquare(String inputText) {
 
-        this.normalizedInput = inputText.toLowerCase().replaceAll("[^\\w]", "");
+        this.normalizedInput = inputText.toLowerCase().replaceAll("\\W", "");
         this.columns = this.getNumberOfColumns(); 
         this.rows = this.getNumberOfRows();
 
@@ -23,21 +22,21 @@ public class CryptoSquare {
         }
 
         // Adding padding to the string
-        String text = this.normalizedInput;
+        StringBuilder text = new StringBuilder(this.normalizedInput);
         while (text.length() < this.rows * this.columns) {
-            text += " ";
+            text.append(" ");
         }
 
         // Dividing the string in equal sized chunks
         List<String> chunks = new ArrayList<>();
 
         int begin = 0;
-        int end = this.rows;
+        int end = this.columns;
 
         while (end <= text.length()) {
             chunks.add(text.substring(begin, end));
-            begin += this.rows;
-            end += this.rows;
+            begin += this.columns;
+            end += this.columns;
         }
 
         // Create the encoded string
@@ -51,7 +50,7 @@ public class CryptoSquare {
             esList.add(cString.toString());
         }
 
-        return esList.stream().collect(Collectors.joining(" "));
+        return String.join(" ", esList);
     }
 
     private int getNumberOfColumns() {

@@ -1,8 +1,8 @@
 import java.util.Objects;
 
 class Domino {
-    private int left;
-    private int right;
+    private final int left;
+    private final int right;
     Domino(int left, int right) {
         this.left = left;
         this.right = right;

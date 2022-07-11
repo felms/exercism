@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ChangeCalculator {
 
-    private List<Integer> coins;
+    private final List<Integer> coins;
 
     public ChangeCalculator(List<Integer> coins) {
         this.coins = coins;
@@ -23,20 +23,27 @@ public class ChangeCalculator {
             return List.of(change);
         }
 
-
-
+        // Pega todas as soluções possíveis
         List<List<Integer>> solutions = new ArrayList<>();
         computeAllChangeOptions(solutions, new ArrayList<>(), change);
+
+        // Retorna erro não tenha sido encontrada nenhuma solução
         if (solutions.isEmpty()) {
             throw new IllegalArgumentException(
                     String.format("The total %d cannot be represented in the given currency.",
                             change));
         }
-        solutions.sort(Comparator.comparingInt(List::size));
 
+        // Ordena as soluções pelo número de moedas gasto
+        // e retona o menor
+        solutions.sort(Comparator.comparingInt(List::size));
         return solutions.get(0);
+
     }
 
+    // Computa todas a combinaçãoes de moedas possíveis com as
+    // moedas fornecidas e salva as que tem a soma igual ao
+    // valor procurado
     private void computeAllChangeOptions(List<List<Integer>> solutions,
                                             List<Integer> currentSolution, int change) {
 
@@ -48,11 +55,9 @@ public class ChangeCalculator {
             }
 
             for (int coin : this.coins) {
-
                 List<Integer> newSolution = new ArrayList<>(currentSolution);
                 newSolution.add(coin);
                 computeAllChangeOptions(solutions, newSolution, change - coin);
-
             }
         }
     }

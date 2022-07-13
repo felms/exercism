@@ -23,42 +23,44 @@ public class ChangeCalculator {
             return List.of(change);
         }
 
-        // Pega todas as soluções possíveis
-        List<List<Integer>> solutions = new ArrayList<>();
-        computeAllChangeOptions(solutions, new ArrayList<>(), change);
+        List<Integer> solution = computeAllChangeOptions(new ArrayList<>(), change);
 
         // Retorna erro não tenha sido encontrada nenhuma solução
-        if (solutions.isEmpty()) {
+        if (solution == null) {
             throw new IllegalArgumentException(
                     String.format("The total %d cannot be represented in the given currency.",
                             change));
         }
 
-        // Ordena as soluções pelo número de moedas gasto
-        // e retona o menor
-        solutions.sort(Comparator.comparingInt(List::size));
-        return solutions.get(0);
+        return solution;
 
     }
 
     // Computa todas a combinaçãoes de moedas possíveis com as
     // moedas fornecidas e salva as que tem a soma igual ao
-    // valor procurado
-    private void computeAllChangeOptions(List<List<Integer>> solutions,
-                                            List<Integer> currentSolution, int change) {
+    // valor procurado e depois retorna a com a menor qtde
+    //  de moedas (ou null caso não seja possível calcular)
+    private List<Integer> computeAllChangeOptions(List<Integer> currentSolution, int change) {
 
         if (change == 0) {
-            solutions.add(currentSolution);
+            return currentSolution;
         } else {
             if (change < 0) {
-                return;
+                return null;
             }
 
+            List<List<Integer>> solutions = new ArrayList<>();
             for (int coin : this.coins) {
                 List<Integer> newSolution = new ArrayList<>(currentSolution);
                 newSolution.add(coin);
-                computeAllChangeOptions(solutions, newSolution, change - coin);
+                List<Integer> sol = computeAllChangeOptions(newSolution, change - coin);
+                if (sol != null) {
+                    solutions.add(sol);
+                }
             }
+
+            solutions.sort(Comparator.comparingInt(List::size));
+            return solutions.isEmpty() ? null : solutions.get(0);
         }
     }
 

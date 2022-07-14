@@ -23,6 +23,8 @@ public class ChangeCalculator {
             return List.of(change);
         }
 
+        this.coins.sort((a, b) -> b - a);
+
         List<Integer> solution = computeAllChangeOptions(new ArrayList<>(), change);
 
         // Retorna erro não tenha sido encontrada nenhuma solução
@@ -32,6 +34,7 @@ public class ChangeCalculator {
                             change));
         }
 
+        solution.sort(Comparator.comparingInt(a -> a));
         return solution;
 
     }
@@ -49,18 +52,18 @@ public class ChangeCalculator {
                 return null;
             }
 
-            List<List<Integer>> solutions = new ArrayList<>();
+            List<Integer> bestSolution = new ArrayList<>();
             for (int coin : this.coins) {
                 List<Integer> newSolution = new ArrayList<>(currentSolution);
                 newSolution.add(coin);
                 List<Integer> sol = computeAllChangeOptions(newSolution, change - coin);
-                if (sol != null) {
-                    solutions.add(sol);
+                if (sol != null
+                        && (bestSolution.isEmpty() || sol.size() < bestSolution.size())) {
+                    bestSolution = new ArrayList<>(sol);
                 }
             }
 
-            solutions.sort(Comparator.comparingInt(List::size));
-            return solutions.isEmpty() ? null : solutions.get(0);
+            return bestSolution.isEmpty() ? null: bestSolution;
         }
     }
 

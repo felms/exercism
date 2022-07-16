@@ -1,10 +1,11 @@
 export class Forth {
     constructor() {
         this._stack = [];
+        this.userDefinedCommands = new Map();
     }
 
     evaluate(input) {
-        input.split(' ').forEach(expression => this.evaluateExpression(expression));
+        this.evaluateExpression(input);
     }
 
     get stack() {
@@ -12,13 +13,50 @@ export class Forth {
     }
 
     evaluateExpression(expression) {
+        
+        expression = (expression + '').toLowerCase();
 
-        if (/\d+/.test(expression)) {
-            this._stack.push(parseInt(expression));
-        } else if (/[-+*/]/.test(expression)) {
-            this.arithmeticOperation(expression);
-        } else if (/(dup|drop|swap|over)/.test(expression)) {
-            this.stackManipulation(expression);
+        if (/:.+;/.test(expression)) {
+
+            let s = expression.replaceAll(/[:;]/g, '').trim().split(/\s+/);
+            let newCommand = s[0];
+
+            if (/\d+/.test(newCommand)) {
+                throw new Error('Invalid definition');
+            }
+
+            let cmdList = [];
+
+            for (let i = 1; i < s.length; i++) {
+                let str = s[i];
+                if (this.userDefinedCommands.has(str)) {
+                    cmdList.push(this.userDefinedCommands.get(str));
+                } else {
+                    cmdList.push(str);
+                }
+
+            }
+
+            this.userDefinedCommands.set(newCommand, cmdList);
+            console.log(this.userDefinedCommands);
+
+        } else {
+
+            expression.split(/\s+/).forEach(item => {
+
+                if (this.userDefinedCommands.has(item)) {
+                    let command = this.userDefinedCommands.get(item); 
+                    command.forEach(cmmd => this.evaluateExpression(cmmd));
+                } else if (/\d+/.test(item)) {
+                    this._stack.push(parseInt(item));
+                } else if (/[-+*/]/.test(item)) {
+                    this.arithmeticOperation(item);
+                } else if (/(dup|drop|swap|over)/.test(item)) {
+                    this.stackManipulation(item);
+                }else {
+                    throw new Error('Unknown command');
+                }
+            });
         }
     }
 

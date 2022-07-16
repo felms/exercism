@@ -38,7 +38,6 @@ export class Forth {
             }
 
             this.userDefinedCommands.set(newCommand, cmdList);
-            console.log(this.userDefinedCommands);
 
         } else {
 

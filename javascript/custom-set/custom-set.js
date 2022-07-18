@@ -8,13 +8,15 @@ export class CustomSet {
     }
 
     contains(item) {
-        return this.items.indexOf(item) >= 0;
+        return this.items.includes(item);
     }
 
     add(item) {
+        let arr = [...this.items];
         if (!this.contains(item)) {
-            this.items.push(item);
+            arr.push(item);
         }
+        return new CustomSet(arr);
     }
 
     subset(otherSet) {
@@ -22,17 +24,11 @@ export class CustomSet {
             return true;
         }
 
-        for (let item of this.items) {
-            if (!otherSet.contains(item)) {
-                return false;
-            }
-        }
-
-        return true;
+        return this.items.every(item => otherSet.contains(item));
     }
 
     disjoint(otherSet) {
-        return this.intersection(otherSet).empty(); 
+        return this.items.every(item => !otherSet.contains(item));
     }
 
     eql(otherSet) {
@@ -41,14 +37,15 @@ export class CustomSet {
 
     union(otherSet) {
 
-        for (let item of this.items) {
-            if (!otherSet.contains(item)) {
-                otherSet.add(item);
+        let thisArr = [...this.items];
+
+        otherSet.values().forEach(item => {
+            if (!thisArr.includes(item)) {
+                thisArr.push(item);
             }
-        }
+        });
 
-        return otherset;
-
+        return new CustomSet(thisArr);
     }
 
     intersection(otherSet) {
@@ -59,7 +56,6 @@ export class CustomSet {
                 interArr.push(item);
             }
         }
-
 
         return new CustomSet(interArr);
     }
@@ -73,7 +69,11 @@ export class CustomSet {
             }
         }
 
-
         return new CustomSet(interArr);
+    }
+
+    values() {
+        let arr = [...this.items];
+        return arr;
     }
 }

@@ -52,12 +52,27 @@ export class List {
         return this._items.length;
     }
 
-    foldl() {
-        throw new Error('Remove this statement and implement this function');
+    foldl(callbackFunction, acc) {
+        let arr = [...this._items];
+        let res = acc;
+
+        for (let item of arr) {
+            res = callbackFunction(res, item);
+        }
+
+        return res;
     }
 
-    foldr() {
-        throw new Error('Remove this statement and implement this function');
+    foldr(callbackFunction, acc) {
+        let arr = [...this._items];
+        let res = acc;
+
+        while (arr.length > 0) {
+            let item = arr.pop();
+            res = callbackFunction(res, item);
+        }
+
+        return res;
     }
 
     reverse() {

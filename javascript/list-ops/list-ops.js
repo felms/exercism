@@ -21,14 +21,20 @@ export class List {
         let newArr = [];
 
         for (let item of otherList.values) {
-                arr.push(...item.values);
+            arr.push(...item.values);
         }
         return new List(arr);
-
     }
 
-    filter() {
-        throw new Error('Remove this statement and implement this function');
+    filter(predicate) {
+        let arr = [];
+
+        for (let item of this.values) {
+            if (predicate(item)) {
+                arr.push(item);
+            }
+        }
+        return new List(arr);
     }
 
     map() {
@@ -36,7 +42,7 @@ export class List {
     }
 
     length() {
-        throw new Error('Remove this statement and implement this function');
+        return this._items.length;
     }
 
     foldl() {

@@ -37,8 +37,15 @@ export class List {
         return new List(arr);
     }
 
-    map() {
-        throw new Error('Remove this statement and implement this function');
+    map(callbackFunction) {
+        let arr = [];
+
+        for (let item of this.values) {
+            let mappedItem = callbackFunction(item);
+            arr.push(mappedItem);
+        }
+        return new List(arr);
+
     }
 
     length() {
@@ -54,7 +61,14 @@ export class List {
     }
 
     reverse() {
-        throw new Error('Remove this statement and implement this function');
+        let arr = [...this._items];
+        let newArr = [];
+
+        while(arr.length > 0) {
+            newArr.push(arr.pop());
+        }
+
+        return new List(newArr);
     }
 
 }

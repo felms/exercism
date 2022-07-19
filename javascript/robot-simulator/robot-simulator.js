@@ -33,18 +33,19 @@ export class Robot {
 
     evaluate(instructions) {
 
-        switch (instructions) {
-            case 'R':
-                this.turnRight();
-                break;
-            case 'L':
-                this.turnLeft();
-                break;
-            case 'A':
-                this.advance();
-                break;
-
-        };
+        instructions.split('').forEach(item => {
+            switch (item) {
+                case 'R':
+                    this.turnRight();
+                    break;
+                case 'L':
+                    this.turnLeft();
+                    break;
+                case 'A':
+                    this.advance();
+                    break;
+            };
+        });
     }
 
     turnRight() {

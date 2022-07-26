@@ -1,11 +1,10 @@
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RelationshipComputer<T> {
 
     public Relationship computeRelationship(List<T> a, List<T> b) {
-        
+
         if (a.size() > b.size()) {
             if (Collections.indexOfSubList(a, b) >= 0) {
                 return Relationship.SUPERLIST;

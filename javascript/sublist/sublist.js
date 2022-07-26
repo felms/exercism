@@ -4,73 +4,22 @@ export class List {
   }
 
   compare(otherList) {
+    let thisArr = this.values().toString();
+    let otherArr = otherList.values().toString();
 
-    let len = this.size();
-    let otherLen = otherList.size();
-
-    if (len === otherLen) {
-
-      if (len === 0) {
-        return 'EQUAL';
-      }
-
-      for (let i = 0; i < len; i++) {
-        if (this.values()[i] !== otherList.values()[i]) {
-          return 'UNEQUAL';
-        }
-      }
-
+    if (thisArr === otherArr) {
       return 'EQUAL';
-
     }
 
-    if (len === 0) {
-      return 'SUBLIST';
-    }
-
-    if (otherLen === 0) {
+    if (thisArr.includes(otherArr)) {
       return 'SUPERLIST';
     }
 
-    if (len > otherLen) {
-
-      let diff = len - otherLen;
-      let prev = diff;
-      let post = 0;
-
-      while (prev >= 0) {
-
-        let arr = [...this.values()].slice(prev);
-        arr = arr.slice(0, arr.length - post);
-
-        if (JSON.stringify(arr) === JSON.stringify(otherList.values())) {
-          return 'SUPERLIST';
-        }
-        prev--;
-        post++;
-      }
-
-    } else if (len < otherLen) {
-
-      let diff = otherLen - len;
-      let prev = diff;
-      let post = 0;
-
-      while (prev >= 0) {
-
-        let arr = [...otherList.values()].slice(prev);
-        arr = arr.slice(0, arr.length - post);
-
-        if (JSON.stringify(arr) === JSON.stringify(this.values())) {
-          return 'SUBLIST';
-        }
-        prev--;
-        post++;
-      }
+    if (otherArr.includes(thisArr)) {
+      return 'SUBLIST';
     }
 
     return 'UNEQUAL';
-
   }
 
   size() {

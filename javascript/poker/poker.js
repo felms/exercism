@@ -10,22 +10,20 @@ export const bestHands = (hands) => {
 // Returns the highest card hand
 const highCardHands = (hands) => {
 
-  let highestCard = highCard(hands);
-  let highHands = [];
+  let highCard = getHighCard(hands);
 
-  hands.forEach(hand => {
-    if (hand.includes(highestCard)) {
-      highHands.push(hand);
-    }
-  });
+  let highHands = hands.filter(hand => hand.includes(highCard));
 
-  console.log('HCard: ' + highestCard);
-  console.log('HHand: ' + highHands);
-  return highHands;
+  if (highHands.length === 1) {
+    return highHands;
+  }
+
+  // Tries to break tie
+  return breakTie(highHands);
 };
 
 // Returns the highest card from all hands
-const highCard = (hands) => {
+const getHighCard = (hands) => {
 
   let allCards = hands.join(' ');
 
@@ -52,4 +50,49 @@ const highCard = (hands) => {
 
   return Math.max(...numbers).toString();
 
+};
+
+const breakTie = (hands) => {
+
+  let h = [...hands];
+
+  h = [...hands];
+  h = h.filter(hand => hand.includes('A'));
+  if (h.length === 1) {
+    return h;
+  }
+
+  h = [...hands];
+  h = h.filter(hand => hand.includes('K'));
+  if (h.length === 1) {
+    return h;
+  }
+
+  h = [...hands];
+  h = h.filter(hand => hand.includes('Q'));
+  if (h.length === 1) {
+    return h;
+  }
+
+  h = [...hands];
+  h = h.filter(hand => hand.includes('J'));
+  if (h.length === 1) {
+    return h;
+  }
+
+  h = [...hands];
+  let cards = h.map(hand => hand.replaceAll(/[A-Z]/g, '')).join(' ').split(' ');
+  let setCards = new Set(cards);
+  cards = [...setCards].sort().reverse();
+
+  while(cards.length > 0) {
+    let highCard = cards.shift();
+    h = [...hands];
+    h = h.filter(hand => hand.includes(highCard));
+    if (h.length === 1) {
+      return h;
+    }
+  }
+
+  return h;
 };

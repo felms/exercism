@@ -4,8 +4,25 @@ export const bestHands = (hands) => {
     return hands;
   }
 
-  let highHands = hands.filter(hand => isPair(hand));
+  let highHands = hands.filter(hand => isThreeOfAKind(hand));
+  if (highHands.length > 0) {
+    if (highHands.length > 1) {
+      highHands = breakTieTriples(highHands);
+    }
 
+    return highHands;
+  }
+
+  highHands = hands.filter(hand => isTwoPairs(hand));
+  if (highHands.length > 0) {
+    if (highHands.length > 1) {
+      highHands = breakTiePair(highHands);
+    }
+
+    return highHands;
+  }
+
+  highHands = hands.filter(hand => isPair(hand));
   if (highHands.length > 0) {
     if (highHands.length > 1) {
       highHands = breakTiePair(highHands);
@@ -15,6 +32,38 @@ export const bestHands = (hands) => {
   }
 
   return highCardHands(hands);
+};
+
+const isThreeOfAKind = (hand) => {
+
+  // Gets the frequency of each card for the hand
+  let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+  let cardFrequency = {};
+  cards.forEach(card => {
+    cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+  });
+
+  // If some card has a frequency of three
+  // the hand is a three of a kind
+  let threeOAK = Object.values(cardFrequency).filter(value => value === 3);
+  return threeOAK.length === 1;
+
+}
+
+const isTwoPairs = (hand) => {
+
+  // Gets the frequency of each card for the hand
+  let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+  let cardFrequency = {};
+  cards.forEach(card => {
+    cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+  });
+
+  // If some card has a frequency of two
+  // the hand is a pair
+  let pairs = Object.values(cardFrequency).filter(value => value === 2);
+  return pairs.length === 2;
+
 };
 
 const isPair = (hand) => {
@@ -54,6 +103,54 @@ const getHighCard = (hands) => {
   let allCards = hands.join(' ').replace(/[SHCD]/g,'').split(' ');
 
   return highCardFromList(allCards);
+
+};
+
+const breakTieTriples = (hands) => {
+
+  let h = [...hands];
+
+  // Creates a set with all TOAK's
+  // and a list of objects relating 
+  // them to the hands.
+  let triples = new Set();
+  let handTriples = [];
+  h.forEach(hand => {
+    
+    let objHand = {theHand: hand, theTriple: ''};
+
+    // Gets the frequency of each card for the hand
+    let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+    let cardFrequency = {};
+    cards.forEach(card => {
+      cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+    });
+
+    //Gets the card(s) of the pair(s)
+    for (let [key, value] of Object.entries(cardFrequency)) {
+      if (value === 3) {
+        triples.add(key);
+        objHand.theTriple = key;
+      }
+    }
+
+    handTriples.push(objHand);
+
+  });
+
+  // Filters the list for the hand(s)
+  // containing the triples(s)
+  let orderedTriples = [...triples].sort(compareCards).reverse();
+  while(orderedTriples.length > 0) {
+    let highCard = orderedTriples.shift();
+    h = [...handTriples];
+    h = h.filter(handTriple => handTriple.theTriple === highCard);
+    if (h.length === 1) {
+      return [h[0].theHand];
+    }
+  }
+
+  return breakTieKicker(hands);
 
 };
 
@@ -101,7 +198,55 @@ const breakTiePair = (hands) => {
     }
   }
 
-  return breakTie(hands);
+  return breakTieKicker(hands);
+
+};
+
+const breakTieKicker = (hands) => {
+
+  let h = [...hands];
+
+  // Creates a set with all 'kickers'
+  // and a list of objects relating 
+  // them and hands.
+  let kickers = new Set();
+  let handKickers = [];
+  h.forEach(hand => {
+    
+    let objHand = {theHand: hand, theKickers: []};
+
+    // Gets the frequency of each card for the hand
+    let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+    let cardFrequency = {};
+    cards.forEach(card => {
+      cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+    });
+
+    //Gets the card(s) of the kickers(s)
+    for (let [key, value] of Object.entries(cardFrequency)) {
+      if (value === 1) {
+        kickers.add(key);
+        objHand.theKickers.push(key);
+      }
+    }
+
+    handKickers.push(objHand);
+
+  });
+
+  // Filters the list for the hand(s)
+  // containing the kickers(s)
+  let orderedKickers = [...kickers].sort(compareCards).reverse();
+  while(orderedKickers.length > 0) {
+    let highCard = orderedKickers.shift();
+    h = [...handKickers];
+    h = h.filter(handKicker => handKicker.theKickers.some(card => card === highCard));
+    if (h.length === 1) {
+      return [h[0].theHand];
+    }
+  }
+
+  return hands;
 
 };
 
@@ -109,34 +254,9 @@ const breakTie = (hands) => {
 
   let h = [...hands];
 
-  h = [...hands];
-  h = h.filter(hand => hand.includes('A'));
-  if (h.length === 1) {
-    return h;
-  }
-
-  h = [...hands];
-  h = h.filter(hand => hand.includes('K'));
-  if (h.length === 1) {
-    return h;
-  }
-
-  h = [...hands];
-  h = h.filter(hand => hand.includes('Q'));
-  if (h.length === 1) {
-    return h;
-  }
-
-  h = [...hands];
-  h = h.filter(hand => hand.includes('J'));
-  if (h.length === 1) {
-    return h;
-  }
-
-  h = [...hands];
-  let cards = h.map(hand => hand.replaceAll(/[A-Z]/g, '')).join(' ').split(' ');
+  let cards = h.map(hand => hand.replaceAll(/[SHCD]/g, '')).join(' ').split(' ');
   let setCards = new Set(cards);
-  cards = [...setCards].sort().reverse();
+  cards = [...setCards].sort(compareCards).reverse();
 
   while(cards.length > 0) {
     let highCard = cards.shift();

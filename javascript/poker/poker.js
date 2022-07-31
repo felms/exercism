@@ -4,7 +4,16 @@ export const bestHands = (hands) => {
     return hands;
   }
 
-  let highHands = hands.filter(hand => isFlush(hand));
+  let highHands = hands.filter(hand => (isThreeOfAKind(hand) && isPair(hand)));
+  if (highHands.length > 0) {
+    if (highHands.length > 1) {
+      highHands = breakTieFullHouse(highHands);
+    }
+
+    return highHands;
+  }
+
+  highHands = hands.filter(hand => isFlush(hand));
   if (highHands.length > 0) {
     if (highHands.length > 1) {
       highHands = breakTie(highHands);
@@ -12,7 +21,6 @@ export const bestHands = (hands) => {
 
     return highHands;
   }
-
 
   highHands = hands.filter(hand => isStraight(hand));
   if (highHands.length > 0) {
@@ -171,6 +179,96 @@ const getHighCard = (hands) => {
   let allCards = hands.join(' ').replace(/[SHCD]/g,'').split(' ');
 
   return highCardFromList(allCards);
+
+};
+
+const breakTieFullHouse = (hands) => {
+  let h = [...hands];
+
+  // Creates a set with all TOAK's
+  // and a list of objects relating 
+  // them to the hands.
+  let triples = new Set();
+  let handTriples = [];
+  h.forEach(hand => {
+
+    let objHand = {theHand: hand, theTriple: ''};
+
+    // Gets the frequency of each card for the hand
+    let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+    let cardFrequency = {};
+    cards.forEach(card => {
+      cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+    });
+
+    //Gets the card(s) of the pair(s)
+    for (let [key, value] of Object.entries(cardFrequency)) {
+      if (value === 3) {
+        triples.add(key);
+        objHand.theTriple = key;
+      }
+    }
+
+    handTriples.push(objHand);
+
+  });
+
+  // Filters the list for the hands
+  // containing the tripless
+  let orderedTriples = [...triples].sort(compareCards).reverse();
+  while(orderedTriples.length > 0) {
+    let highCard = orderedTriples.shift();
+    h = [...handTriples];
+    h = h.filter(handTriple => handTriple.theTriple === highCard);
+    if (h.length === 1) {
+      return [h[0].theHand];
+    }
+  }
+
+  //
+  // === In case the is still tied for the triple we go for the pair ===
+  //
+  h = [...hands];
+
+  // Creates a set with all pairs
+  // and a list of objects relating 
+  // pairs and hands.
+  let pairs = new Set();
+  let handPairs = [];
+  h.forEach(hand => {
+
+    let objHand = {theHand: hand, thePairs: []};
+
+    // Gets the frequency of each card for the hand
+    let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+    let cardFrequency = {};
+    cards.forEach(card => {
+      cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+    });
+
+    //Gets the card(s) of the pair(s)
+    for (let [key, value] of Object.entries(cardFrequency)) {
+      if (value === 2) {
+        pairs.add(key);
+        objHand.thePairs.push(key);
+      }
+    }
+
+    handPairs.push(objHand);
+
+  });
+
+  // Filters the list for the hand(s)
+  // containing the pair(s)
+  let orderedPairs = [...pairs].sort(compareCards).reverse();
+  while(orderedPairs.length > 0) {
+    let highCard = orderedPairs.shift();
+    h = [...handPairs];
+    h = h.filter(handPair => handPair.thePairs.some(card => card === highCard));
+    if (h.length === 1) {
+      return [h[0].theHand];
+    }
+  }
 
 };
 

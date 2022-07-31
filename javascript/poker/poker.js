@@ -4,7 +4,17 @@ export const bestHands = (hands) => {
     return hands;
   }
 
-  let highHands = hands.filter(hand => isThreeOfAKind(hand));
+  let highHands = hands.filter(hand => isStraight(hand));
+  if (highHands.length > 0) {
+    if (highHands.length > 1) {
+      highHands = breakTieStraight(highHands);
+    }
+
+    return highHands;
+  }
+
+  
+  highHands = hands.filter(hand => isThreeOfAKind(hand));
   if (highHands.length > 0) {
     if (highHands.length > 1) {
       highHands = breakTieTriples(highHands);
@@ -32,6 +42,46 @@ export const bestHands = (hands) => {
   }
 
   return highCardHands(hands);
+};
+
+const isStraight = (hand) => {
+
+  let cards = hand.replaceAll(/[SHCD]/g,'').split(' ').sort(compareCards);
+
+  if (/[KQJA]/g.test(hand)) {
+
+    let i0 = cards[0];
+    let i1 = cards[1];
+    let i2 = cards[2];
+    let i3 = cards[3];
+    let i4 = cards[4];
+
+    if (i0 === '10' && i1 === 'J' && i2 === 'Q'
+      && i3 === 'K' && i4 === 'A') {
+      return true;
+    }
+
+    if (i0 === '2' && i1 === '3' && i2 === '4'
+      && i3 === '5' && i4 === 'A') {
+      return true;
+    }
+
+  } else {
+
+    let i0 = parseInt(cards[0]);
+    let i1 = parseInt(cards[1]);
+    let i2 = parseInt(cards[2]);
+    let i3 = parseInt(cards[3]);
+    let i4 = parseInt(cards[4]);
+
+    if (i1 === i0 + 1 && i2 === i1 + 1 
+        && i3 === i2 + 1 && i4 === i3 + 1) {
+      return true;
+    }
+
+  }
+  
+  return false;
 };
 
 const isThreeOfAKind = (hand) => {
@@ -106,6 +156,21 @@ const getHighCard = (hands) => {
 
 };
 
+const breakTieStraight = (hands) => {
+
+  let h = hands.filter(hand => !(/A.*2|2.*A/g.test(hand)));
+
+  if (h.length === 0) {
+    return hands;
+  }
+
+  if (h.length === 1) {
+    return h;
+  }
+
+  return breakTie(h);
+};
+
 const breakTieTriples = (hands) => {
 
   let h = [...hands];
@@ -116,7 +181,7 @@ const breakTieTriples = (hands) => {
   let triples = new Set();
   let handTriples = [];
   h.forEach(hand => {
-    
+
     let objHand = {theHand: hand, theTriple: ''};
 
     // Gets the frequency of each card for the hand
@@ -164,7 +229,7 @@ const breakTiePair = (hands) => {
   let pairs = new Set();
   let handPairs = [];
   h.forEach(hand => {
-    
+
     let objHand = {theHand: hand, thePairs: []};
 
     // Gets the frequency of each card for the hand
@@ -212,7 +277,7 @@ const breakTieKicker = (hands) => {
   let kickers = new Set();
   let handKickers = [];
   h.forEach(hand => {
-    
+
     let objHand = {theHand: hand, theKickers: []};
 
     // Gets the frequency of each card for the hand

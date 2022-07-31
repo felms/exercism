@@ -4,7 +4,16 @@ export const bestHands = (hands) => {
     return hands;
   }
 
-  let highHands = hands.filter(hand => (isThreeOfAKind(hand) && isPair(hand)));
+  let highHands = hands.filter(hand => isFourOfAKind(hand));
+  if (highHands.length > 0) {
+    if (highHands.length > 1) {
+      highHands = breakTieFourOfAKind(highHands);
+    }
+
+    return highHands;
+  }
+
+  highHands = hands.filter(hand => (isThreeOfAKind(hand) && isPair(hand)));
   if (highHands.length > 0) {
     if (highHands.length > 1) {
       highHands = breakTieFullHouse(highHands);
@@ -60,6 +69,22 @@ export const bestHands = (hands) => {
   }
 
   return highCardHands(hands);
+};
+
+const isFourOfAKind = (hand) => {
+  
+  // Gets the frequency of each card for the hand
+  let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+  let cardFrequency = {};
+  cards.forEach(card => {
+    cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+  });
+
+  // If some card has a frequency of three
+  // the hand is a three of a kind
+  let fourOAK = Object.values(cardFrequency).filter(value => value === 4);
+  return fourOAK.length === 1;
+
 };
 
 const isFlush = (hand) => {
@@ -180,6 +205,53 @@ const getHighCard = (hands) => {
 
   return highCardFromList(allCards);
 
+};
+
+const breakTieFourOfAKind = (hands) => {
+
+  let h = [...hands];
+
+  // Creates a set with all FOAK's
+  // and a list of objects relating 
+  // them to the hands.
+  let f = new Set();
+  let handF = [];
+  h.forEach(hand => {
+
+    let objHand = {theHand: hand, theF: ''};
+
+    // Gets the frequency of each card for the hand
+    let cards = hand.replaceAll(/[SHCD]/g,'').split(' ');
+    let cardFrequency = {};
+    cards.forEach(card => {
+      cardFrequency[card] = cardFrequency[card] ? ++cardFrequency[card] : 1;
+    });
+
+    //Gets the card(s) of the pair(s)
+    for (let [key, value] of Object.entries(cardFrequency)) {
+      if (value === 4) {
+        f.add(key);
+        objHand.theF = key;
+      }
+    }
+
+    handF.push(objHand);
+
+  });
+
+  // Filters the list for the hand(s)
+  // containing the four of a kind(s)
+  let orderedF = [...f].sort(compareCards).reverse();
+  while(orderedF.length > 0) {
+    let highCard = orderedF.shift();
+    h = [...handF];
+    h = h.filter(hf => hf.theF === highCard);
+    if (h.length === 1) {
+      return [h[0].theHand];
+    }
+  }
+
+  return breakTieKicker(hands);
 };
 
 const breakTieFullHouse = (hands) => {

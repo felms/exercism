@@ -4,7 +4,16 @@ export const bestHands = (hands) => {
     return hands;
   }
 
-  let highHands = hands.filter(hand => isFourOfAKind(hand));
+  let highHands = hands.filter(hand => (isStraight(hand) && isFlush(hand)));
+  if (highHands.length > 0) {
+    if (highHands.length > 1) {
+      highHands = breakTieStraight(highHands);
+    }
+
+    return highHands;
+  }
+
+  highHands = hands.filter(hand => isFourOfAKind(hand));
   if (highHands.length > 0) {
     if (highHands.length > 1) {
       highHands = breakTieFourOfAKind(highHands);

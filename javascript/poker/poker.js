@@ -4,7 +4,17 @@ export const bestHands = (hands) => {
     return hands;
   }
 
-  let highHands = hands.filter(hand => isStraight(hand));
+  let highHands = hands.filter(hand => isFlush(hand));
+  if (highHands.length > 0) {
+    if (highHands.length > 1) {
+      highHands = breakTie(highHands);
+    }
+
+    return highHands;
+  }
+
+
+  highHands = hands.filter(hand => isStraight(hand));
   if (highHands.length > 0) {
     if (highHands.length > 1) {
       highHands = breakTieStraight(highHands);
@@ -42,6 +52,14 @@ export const bestHands = (hands) => {
   }
 
   return highCardHands(hands);
+};
+
+const isFlush = (hand) => {
+
+  let suitsList = hand.replaceAll(/[^SHCD ]/g,'').split(' ');
+  let suits = new Set(suitsList);
+  
+  return suits.size === 1;
 };
 
 const isStraight = (hand) => {

@@ -22,9 +22,9 @@ const printTable = () => {
 
   let teamsArray = [...teams.entries()].sort(comparingFunction);
   teamsArray.forEach(team => {
-    results += `${team[0].padEnd(31)}|${team[1].mp}.toString().padStart(3)} ` 
-      + `|${team[1].w}.toString().padStart(3)} |${team[1].d.toString().padStart(3)} ` 
-      + `|${team[1].l}.toString().padStart(3)} |${team[1].p.toString().padStart(3)}\n`;
+    results += `${team[0].padEnd(31)}|${team[1].mp.toString().padStart(3)} ` 
+      + `|${team[1].w.toString().padStart(3)} |${team[1].d.toString().padStart(3)} ` 
+      + `|${team[1].l.toString().padStart(3)} |${team[1].p.toString().padStart(3)}\n`;
   });
 
   return results.trim();

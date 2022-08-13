@@ -63,7 +63,8 @@ let files = params.filter(item => /.+\.txt$/g.test(item));
 //  + `flags: ${flags}\n`
 //  + `files: ${files}`);
 
-const searchForMatches = (file) => {
+// Procurando pelos matches no arquivo
+const searchForMatches = (file, multipleFiles) => {
   let match = '';
   let lineNumber = 1;
 
@@ -78,23 +79,25 @@ const searchForMatches = (file) => {
       if (flags.includes('-v')) {
         if (!regex.test(line)) {
           if (flags.includes('-l')) {
-            m = m + file;
+            m += file;
           } else {
+            m += multipleFiles ? file + ':' : '';
             if (flags.includes('-n')){
-              m = `${lineNumber}:`;
+              m += `${lineNumber}:`;
             }
-            m = m + line;
+            m += line;
           }
         }
 
       } else if (regex.test(line)) {
         if (flags.includes('-l')) {
-          m = m + file;
+          m += file;
         } else {
+          m += multipleFiles ? file + ':' : '';
           if (flags.includes('-n')){
-            m = `${lineNumber}:`;
+            m += `${lineNumber}:`;
           }
-          m = m + line;
+          m += line;
         }
       }
 
@@ -105,36 +108,48 @@ const searchForMatches = (file) => {
       if (flags.includes('-v')) {
         if (!regex.test(line)){
           if (flags.includes('-l')) {
-            m = m + file;
+            m += file;
           } else {
+            m += multipleFiles ? file + ':' : '';
             if (flags.includes('-n')){
-              m = `${lineNumber}:`;
+              m += `${lineNumber}:`;
             }
-            m = m + line;
+            m += line;
           }
         }
 
       } else if (regex.test(line)){
         if (flags.includes('-l')) {
-          m = m + file;
+          m += file;
         } else {
+          m += multipleFiles ? file + ':' : '';
           if (flags.includes('-n')){
-            m = `${lineNumber}:`;
+            m += `${lineNumber}:`;
           }
-          m = m + line;
+          m += line;
         }
       }
     }
 
     lineNumber++;
-    match = match + (m.length > 0 ? m + '\n' : '');
+    let regex = new RegExp(m);
+    if (m.length > 0 && !regex.test(match)) {
+      match += m + '\n';
+    }
 
   });
 
-  match = match.trim();
-  console.log(match);
+  return match = match.trim();
 };
 
-files.forEach(file => searchForMatches(file));
-
+// Gerando e formatando o output
+let multipleFiles = files.length > 1;
+let output = '';
+files.forEach(file => {
+  let result = searchForMatches(file, multipleFiles)
+  if (result.length > 0) {
+    output += result + '\n';
+  }
+});
+console.log(output);
 

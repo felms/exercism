@@ -57,11 +57,12 @@ let pattern = params.filter(item => !(/(.+\.txt$)|(^-.+)/g.test(item)));
 let flags = params.filter(item => /^-.+/g.test(item));
 let files = params.filter(item => /.+\.txt$/g.test(item));
 
+let addLineNumbers = flags.includes('-n');
+let printFileNames = flags.includes('-l');
+let ignoreCase = flags.includes('-i');
+let reverseResults = flags.includes('-v');
+let matchEntireLine = flags.includes('-x');
 
-//console.log(`Params: ${params}\n`
-//  + `pattern: ${pattern}\n`
-//  + `flags: ${flags}\n`
-//  + `files: ${files}`);
 
 // Procurando pelos matches no arquivo
 const searchForMatches = (file, multipleFiles) => {
@@ -72,17 +73,17 @@ const searchForMatches = (file, multipleFiles) => {
   lines.forEach(line => {
 
     let m = '';
-    if (flags.includes('-i')) {
-      let p = flags.includes('-x') ? `^${pattern}$` : pattern;
+    if (ignoreCase) {
+      let p = matchEntireLine ? `^${pattern}$` : pattern;
       let regex = new RegExp(p, 'i');
 
-      if (flags.includes('-v')) {
+      if (reverseResults) {
         if (!regex.test(line)) {
-          if (flags.includes('-l')) {
+          if (printFileNames) {
             m += file;
           } else {
             m += multipleFiles ? file + ':' : '';
-            if (flags.includes('-n')){
+            if (addLineNumbers){
               m += `${lineNumber}:`;
             }
             m += line;
@@ -90,11 +91,11 @@ const searchForMatches = (file, multipleFiles) => {
         }
 
       } else if (regex.test(line)) {
-        if (flags.includes('-l')) {
+        if (printFileNames) {
           m += file;
         } else {
           m += multipleFiles ? file + ':' : '';
-          if (flags.includes('-n')){
+          if (addLineNumbers){
             m += `${lineNumber}:`;
           }
           m += line;
@@ -102,16 +103,16 @@ const searchForMatches = (file, multipleFiles) => {
       }
 
     } else {
-      let p = flags.includes('-x') ? `^${pattern}$` : pattern;
+      let p = matchEntireLine ? `^${pattern}$` : pattern;
       let regex = new RegExp(p);
 
-      if (flags.includes('-v')) {
+      if (reverseResults) {
         if (!regex.test(line)){
-          if (flags.includes('-l')) {
+          if (printFileNames) {
             m += file;
           } else {
             m += multipleFiles ? file + ':' : '';
-            if (flags.includes('-n')){
+            if (addLineNumbers){
               m += `${lineNumber}:`;
             }
             m += line;
@@ -119,11 +120,11 @@ const searchForMatches = (file, multipleFiles) => {
         }
 
       } else if (regex.test(line)){
-        if (flags.includes('-l')) {
+        if (printFileNames) {
           m += file;
         } else {
           m += multipleFiles ? file + ':' : '';
-          if (flags.includes('-n')){
+          if (addLineNumbers){
             m += `${lineNumber}:`;
           }
           m += line;

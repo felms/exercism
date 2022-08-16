@@ -1,4 +1,5 @@
 let dominoChain;
+
 export const chain = (dominoes) => {
 
   dominoChain = [];
@@ -57,6 +58,8 @@ const formChain = (currentChain, remainingDominoes) => {
 // Insere um dominó na lista fornecida
 const insertInChain = (chainToInsert, domino) => {
 
+  // Se lista está vazia o dominó
+  // é inserido sem problemas
   if (chainToInsert.length === 0) {
     chainToInsert.push(domino);
     return true;
@@ -87,9 +90,12 @@ const insertInChain = (chainToInsert, domino) => {
     return true;
   }
 
+  // retorna false caso não consiga inserir
+  // o dominó na lista
   return false;
 };
 
+// inverte o dominó
 const flipDomino = (domino) => {
 
   let [left, right] = domino;

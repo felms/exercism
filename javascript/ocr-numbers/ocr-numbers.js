@@ -12,21 +12,30 @@ const NINE = '_ |_| _|';
 export const convert = (grid) => {
 
   let lines = grid.split('\n');
-  let numbers = [];
+  let sequences = [];
 
-  for (let column = 0; column < lines[0].length; column += 3) {
-    let number = []
-    for (let row = 0; row < lines.length - 1; row++) {
-      number.push(lines[row].slice(column, column + 3));
+  let quantityOfSequences = lines.length / 4;
+
+  for (let seq = 0; seq < quantityOfSequences; seq++) {
+    let numbers = [];
+    for (let column = 0; column < lines[0].length; column += 3) {
+      let number = []
+      for (let row = seq * 4; row < (seq + 1) * 4; row++) {
+        number.push(lines[row].slice(column, column + 3));
+      }
+      numbers.push(number.join('').trim());
     }
-    numbers.push(number.join('').trim());
+    sequences.push(numbers);
   }
 
-
   let result = '';
-  numbers.forEach(number => result += ocrNumber(number));
 
-  return result;
+  for (let numbers of sequences) {
+    numbers.forEach(number => result += ocrNumber(number));
+    result += ',';
+  }
+
+  return result.slice(0, -1);
 
 };
 

@@ -10,8 +10,27 @@ const EIGHT = '_ |_||_|';
 const NINE = '_ |_| _|';
 
 export const convert = (grid) => {
-  let number = grid.trim().split('\n').join('');
 
+  let lines = grid.split('\n');
+  let numbers = [];
+
+  for (let column = 0; column < lines[0].length; column += 3) {
+    let number = []
+    for (let row = 0; row < lines.length - 1; row++) {
+      number.push(lines[row].slice(column, column + 3));
+    }
+    numbers.push(number.join('').trim());
+  }
+
+
+  let result = '';
+  numbers.forEach(number => result += ocrNumber(number));
+
+  return result;
+
+};
+
+const ocrNumber = (number) => {
   switch(number) {
     case ZERO:
       return '0';
@@ -33,6 +52,8 @@ export const convert = (grid) => {
       return '8';
     case NINE:
       return '9';
+    default:
+      return '?';
   }
 
 };

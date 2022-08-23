@@ -32,8 +32,6 @@ public class RestApi{
             jsonObject.put("users", this.userList);
         }
 
-        System.out.println(jsonObject);
-
         return jsonObject.toString();
     }
 
@@ -65,31 +63,91 @@ public class RestApi{
         boolean usersAlreadyInDB = this.userList.stream()
                 .anyMatch(user -> user.name().equals(lenderName));
 
-
         if (usersAlreadyInDB) {
+
             for (int i = 0; i < this.userList.size(); i++) {
                 User currentUser = this.userList.get(i);
                if (currentUser.name().equals(lenderName)) {
+
                    List<Iou> owes = new ArrayList<>(currentUser.owes());
                    List<Iou> owedBy = new ArrayList<>(currentUser.owedBy());
+
                    User.Builder builder = User.builder();
                    builder.setName(lenderName);
-                   owes.forEach(iou -> builder.owes(iou.name, iou.amount));
-                   owedBy.forEach(iou -> builder.owedBy(iou.name, iou.amount));
-                   builder.owedBy(borrowerName, amount);
+
+                   boolean alreadyInIous = false;
+
+                   for (Iou iou : owes) {
+                       if (iou.name.equals(borrowerName)) {
+                           alreadyInIous = true;
+                           double newAmount = amount - iou.amount;
+                           if (newAmount > 0) {
+                               builder.owedBy(borrowerName, newAmount);
+                           } else if (newAmount < 0) {
+                               builder.owes(borrowerName, Math.abs(newAmount));
+                           }
+                       } else {
+                           builder.owes(iou.name, iou.amount);
+                       }
+                   }
+
+                   for (Iou iou : owedBy) {
+                       if (iou.name.equals(borrowerName)) {
+                           alreadyInIous = true;
+                           double newAmount = amount + iou.amount;
+                           builder.owedBy(borrowerName, newAmount);
+                       } else {
+                           builder.owedBy(iou.name, iou.amount);
+                       }
+                   }
+
+                   if (!alreadyInIous) {
+                       builder.owedBy(borrowerName, amount);
+                   }
+
                    User lender = builder.build();
                    this.userList.remove(i);
                    this.userList.add(i, lender);
                    jsonArray.put(userToJSON(lender));
-                   System.out.println("Lender added: " + jsonArray);
+
                } else if (currentUser.name().equals(borrowerName)) {
+
                    List<Iou> owes = new ArrayList<>(currentUser.owes());
                    List<Iou> owedBy = new ArrayList<>(currentUser.owedBy());
+
                    User.Builder builder = User.builder();
                    builder.setName(borrowerName);
-                   owes.forEach(iou -> builder.owes(iou.name, iou.amount));
-                   owedBy.forEach(iou -> builder.owedBy(iou.name, iou.amount));
-                   builder.owes(lenderName, amount);
+
+                   boolean alreadyInIous = false;
+
+                   for (Iou iou: owes) {
+                       if (iou.name.equals(lenderName)) {
+                           alreadyInIous = true;
+                           double newAmount = amount + iou.amount;
+                           builder.owes(lenderName, newAmount);
+                       } else {
+                           builder.owes(iou.name, iou.amount);
+                       }
+                   }
+
+                   for (Iou iou: owedBy) {
+                       if (iou.name.equals(lenderName)) {
+                           alreadyInIous = true;
+                           double newAmount = iou.amount - amount;
+                           if (newAmount > 0) {
+                               builder.owedBy(lenderName, newAmount);
+                           } else if (newAmount < 0) {
+                               builder.owes(lenderName, Math.abs(newAmount));
+                           }
+                       } else {
+                           builder.owedBy(iou.name, iou.amount);
+                       }
+                   }
+
+                   if (!alreadyInIous) {
+                       builder.owes(lenderName, amount);
+                   }
+
                    User borrower = builder.build();
                    this.userList.remove(i);
                    this.userList.add(i, borrower);
@@ -98,7 +156,6 @@ public class RestApi{
             }
 
         } else {
-            System.out.println("Aqui||");
             User.Builder builder = User.builder();
             builder.setName(lenderName);
             builder.owedBy(borrowerName, amount);

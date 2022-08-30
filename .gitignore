@@ -38,3 +38,7 @@ gradlew.bat
 elixir/*/test/*
 *.formatter.exs
 mix.exs
+
+
+.ccls*
+c/*/test*

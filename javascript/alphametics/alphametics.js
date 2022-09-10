@@ -7,10 +7,10 @@ export const solve = (puzzle) => {
   let [operation, result] = puzzle.split(' == ');
   let terms = operation.split(' + ');
 
-  let letters = puzzle.split('').filter(letter => letter !== ' ' && letter !== '=' && letter !== '+');
+  let letters = puzzle.split('').filter(letter => /[A-Z]/g.test(letter));
   letters = Array.from(new Set(letters));
 
-  let numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   let solution = {};
 
   solvePuzzle(terms, result, letters, numbers, solution);
@@ -39,7 +39,6 @@ const validSolution = (terms, result, solution) => {
 
 
 // gera todas as soluções possíveis com backtracking
-
 const solvePuzzle = (terms, result, remainingLetters, remainingNumbers, currentSolution) => {
 
   // --- Caso base --- 
@@ -60,7 +59,6 @@ const solvePuzzle = (terms, result, remainingLetters, remainingNumbers, currentS
   // Para cada uma das letras ainda não 
   // testadas procura-se um número candidato
   // com backtracking
-
   let letter = remainingLetters.shift();
 
   for (let i = 0; i < remainingNumbers.length; i++) {

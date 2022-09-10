@@ -23,10 +23,18 @@ export const solve = (puzzle) => {
 // testa se essa é uma solução válida
 const validSolution = (terms, result, solution) => {
 
-  let newTerms = terms.map(term => parseInt(term.split('').map(l => solution[l]).join('')));
-  let newResult = parseInt(result.split('').map(l => solution[l]).join(''));
+  let t = terms.map(term => term.split('').map(l => solution[l]).join(''));
+  let leadingZerosInTerms = t.some(term => term.split('')[0] === '0'); // Testa para 'leading zeros'
+  let newTerms = t.map(term => parseInt(term));
 
-  return newTerms.reduce((acc, i) => i + acc, 0) === newResult;
+
+  let r = result.split('').map(l => solution[l]).join('');
+  let leadingZerosInResult = r.split('')[0] === '0';  // Testa para 'leading zeros'
+  let newResult = parseInt(r);
+
+
+  return newTerms.reduce((acc, i) => i + acc, 0) === newResult 
+    && !leadingZerosInTerms && !leadingZerosInResult;
 };
 
 
@@ -63,7 +71,6 @@ const solvePuzzle = (terms, result, remainingLetters, remainingNumbers, currentS
 
     if (solvePuzzle(terms, result, remainingLetters, remainingNumbers, newSolution)) {
       currentSolution = JSON.parse(JSON.stringify(newSolution));
-      console.log('DEU CERTO: ' + JSON.stringify(currentSolution));
       return true;
     }
 

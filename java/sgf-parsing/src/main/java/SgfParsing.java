@@ -21,43 +21,47 @@ public class SgfParsing {
         List<String> characters = Arrays.stream(n.split(""))
                 .collect(Collectors.toList());
 
-        return this.getNode(characters);
+        SgfNode rootNode = this.getNode(characters);
+
+        while(!characters.isEmpty()) {
+            rootNode.appendChild(this.getNode(characters));
+        }
+
+        return rootNode;
     }
 
     private SgfNode getNode(List<String> input) throws SgfParsingException {
 
+        input.remove(0);
+
         SgfNode node = new SgfNode();
 
         Map<String, List<String>> properties = new HashMap<>();
-        while (!input.isEmpty()) {
+        while (!input.isEmpty() && !input.get(0).equals(";")) {
 
-            if (input.get(0).equals(";")) {
-                input.remove(0);
 
-                if (!input.isEmpty()) {
-                    String key = this.getKey(input);
+            String key = this.getKey(input);
 
-                    if (input.isEmpty()) {
-                        throw new SgfParsingException("properties without delimiter");
-                    }
-                    List<String> values = new ArrayList<>();
+            if (input.isEmpty()) {
+                throw new SgfParsingException("properties without delimiter");
+            }
+            List<String> values = new ArrayList<>();
 
-                    while (!input.isEmpty() && !input.get(0).equals(";")) {
+            while (!input.isEmpty() && !input.get(0).equals(";")) {
 
-                        values.addAll(this.getValues(input));
+                values.addAll(this.getValues(input));
 
-                        if (!input.isEmpty() && !input.get(0).equals("[")) {
-                            properties.put(key, values);
-                            key = this.getKey(input);
-                            values = new ArrayList<>();
-                        }
-
-                    }
-
+                if (!input.isEmpty() && !input.get(0).equals("[")
+                        && !input.get(0).equals(";")) {
                     properties.put(key, values);
+                    key = this.getKey(input);
+                    values = new ArrayList<>();
                 }
 
             }
+
+            properties.put(key, values);
+
         }
 
         node.setProperties(properties);

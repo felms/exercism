@@ -18,66 +18,78 @@ public class SgfParsing {
             throw new SgfParsingException("tree with no nodes");
         }
 
-        SgfNode rootNode = new SgfNode();
-
         List<String> characters = Arrays.stream(n.split(""))
                 .collect(Collectors.toList());
+
+        return this.getNode(characters);
+    }
+
+    private SgfNode getNode(List<String> input) throws SgfParsingException {
+
+        SgfNode node = new SgfNode();
+
         Map<String, List<String>> properties = new HashMap<>();
-        while (!characters.isEmpty()) {
+        while (!input.isEmpty()) {
 
-            if (characters.get(0).equals(";")) {
-                characters.remove(0);
+            if (input.get(0).equals(";")) {
+                input.remove(0);
 
-                if (!characters.isEmpty()) {
-                    StringBuilder key = new StringBuilder();
-                    while(!characters.isEmpty() && !characters.get(0).equals("[")) {
-                        String s = characters.remove(0);
-                        if (!s.toUpperCase().equals(s)) {
-                            throw new SgfParsingException("property must be in uppercase");
-                        }
-                        key.append(s);
-                    }
+                if (!input.isEmpty()) {
+                    String key = this.getKey(input);
 
-                    if (characters.isEmpty()) {
+                    if (input.isEmpty()) {
                         throw new SgfParsingException("properties without delimiter");
                     }
                     List<String> values = new ArrayList<>();
 
-                    while (!characters.isEmpty() && !characters.get(0).equals(";")) {
-                        if (characters.get(0).equals("[")) {
-                            characters.remove(0);
-                        }
+                    while (!input.isEmpty() && !input.get(0).equals(";")) {
 
-                        StringBuilder currentValue = new StringBuilder();
-                        do {
-                            currentValue.append(characters.remove(0));
-                        } while (!characters.get(0).equals("]"));
-                        characters.remove(0);
+                        values.addAll(this.getValues(input));
 
-                        values.add(currentValue.toString());
-
-                        if (!characters.isEmpty() && !characters.get(0).equals("[")) {
-                            properties.put(key.toString(), values);
-                            key = new StringBuilder();
-                            while(!characters.get(0).equals("[")) {
-                                String s = characters.remove(0);
-                                if (!s.toUpperCase().equals(s)) {
-                                    throw new SgfParsingException("property must be in uppercase");
-                                }
-                                key.append(s);
-                            }
+                        if (!input.isEmpty() && !input.get(0).equals("[")) {
+                            properties.put(key, values);
+                            key = this.getKey(input);
                             values = new ArrayList<>();
                         }
 
                     }
 
-                    properties.put(key.toString(), values);
+                    properties.put(key, values);
                 }
 
             }
         }
 
-        rootNode.setProperties(properties);
-        return rootNode;
+        node.setProperties(properties);
+        return node;
+    }
+
+    private String getKey(List<String> input) throws SgfParsingException {
+        StringBuilder key = new StringBuilder();
+        while(!input.isEmpty() && !input.get(0).equals("[")) {
+            String s = input.remove(0);
+            if (!s.toUpperCase().equals(s)) {
+                throw new SgfParsingException("property must be in uppercase");
+            }
+            key.append(s);
+        }
+
+        return key.toString();
+    }
+
+    private List<String> getValues(List<String> input) {
+        List<String> values = new ArrayList<>();
+        if (input.get(0).equals("[")) {
+            input.remove(0);
+        }
+
+        StringBuilder currentValue = new StringBuilder();
+        do {
+            currentValue.append(input.remove(0));
+        } while (!input.get(0).equals("]"));
+        input.remove(0);
+
+        values.add(currentValue.toString());
+        return values;
     }
 }

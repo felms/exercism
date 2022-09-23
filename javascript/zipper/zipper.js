@@ -45,12 +45,14 @@ export class Zipper {
     return new Zipper(this.#tree, this.#root, this.#parent);
   }
 
-  setLeft(left) {
-    this.#tree.left = left;
+  setLeft(newLeft) {
+    this.#tree.left = newLeft;
     return new Zipper(this.#tree, this.#root, this.#parent);
   }
 
-  setRight() {
-    throw new Error('Remove this statement and implement this function');
+  setRight(newRight) {
+    this.#tree.right = newRight;
+    return new Zipper(this.#tree, this.#root, this.#parent);
   }
+
 }

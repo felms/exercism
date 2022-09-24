@@ -27,8 +27,7 @@ export class GoCounting {
       if (this.board[py][px] === ' ') {
         if (!this.containsItem(territory, p)) {
           territory.push(p);
-          let neighbors = this.getNeighbors(p);
-          neighbors.forEach(point => queue.push(point)); // TODO sub por push
+          queue.push(...this.getNeighbors(p));
         }
       }
     } 

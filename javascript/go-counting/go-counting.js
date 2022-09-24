@@ -24,7 +24,7 @@ export class GoCounting {
       let p = queue.shift();
       let [px, py] = p;
 
-      if (this.board[px][py] === ' ') {
+      if (this.board[py][px] === ' ') {
         if (!this.containsItem(territory, p)) {
           territory.push(p);
           let neighbors = this.getNeighbors(p);
@@ -76,7 +76,40 @@ export class GoCounting {
   }
 
   getTerritories() {
-    throw new Error('Remove this statement and implement this function');
+
+    let territories = {
+      territoryBlack: [],
+      territoryWhite: [],
+      territoryNone: []
+    };
+
+
+    for (let i = 0; i < this.columns; i++) {
+      for (let j = 0; j < this.rows; j++) {
+
+        let {owner, territory} = this.getTerritory(i, j);
+
+        switch (owner) {
+          case 'BLACK':
+            if (!this.containsTerritory(territories.territoryBlack, territory)) {
+              territories.territoryBlack.push(...territory);
+            }
+            break;
+          case 'WHITE':
+            if (!this.containsTerritory(territories.territoryWhite, territory)) {
+              territories.territoryWhite.push(...territory);
+            }
+            break;
+          case 'NONE':
+            if (!this.containsTerritory(territories.territoryNone, territory)) {
+              territories.territoryNone.push(...territory);
+            }
+            break;
+        }
+      }
+    }
+
+    return territories;
   }
 
   getNeighbors(point) {
@@ -89,7 +122,7 @@ export class GoCounting {
       neighbors.push([x - 1, y]);
     }
 
-    if (x < this.rows - 1) {
+    if (x < this.columns - 1) {
       neighbors.push([x + 1, y]);
     }
 
@@ -97,11 +130,15 @@ export class GoCounting {
       neighbors.push([x, y - 1]);
     }
 
-    if (y < this.columns - 1) {
+    if (y < this.rows - 1) {
       neighbors.push([x, y + 1]);
     }
 
     return neighbors;
+  }
+
+  containsTerritory(territories, newTerritory) {
+    return newTerritory.some(t => this.containsItem(territories, t));
   }
 
   containsItem(array, item) {

@@ -1,13 +1,9 @@
 export class Zipper {
 
-  #tree;
-  #root;
-  #parent;
-
   constructor(tree, root, parent) {
-    this.#tree = tree;
-    this.#root = root || tree;
-    this.#parent = parent || null;
+    this.tree = tree;
+    this.root = root || tree;
+    this.parent = parent || null;
   }
 
   static fromTree(tree) {
@@ -15,44 +11,44 @@ export class Zipper {
   }
 
   toTree() {
-    return this.#root;
+    return this.root;
   }
 
   value() {
-    return this.#tree.value;
+    return this.tree.value;
   }
 
   left() {
-    return this.#tree.left 
-      ? new Zipper(this.#tree.left, this.#root, this.#tree)
+    return this.tree.left 
+      ? new Zipper(this.tree.left, this.root, this.tree)
       : null;
   }
 
   right() {
-    return this.#tree.right
-      ? new Zipper(this.#tree.right, this.#root, this.#tree)
+    return this.tree.right
+      ? new Zipper(this.tree.right, this.root, this.tree)
       : null;
   }
 
   up() {
-    return this.#parent
-      ? new Zipper(this.#parent, this.#root)
+    return this.parent
+      ? new Zipper(this.parent, this.root)
       : null;
   }
 
   setValue(newValue) {
-    this.#tree.value = newValue;
-    return new Zipper(this.#tree, this.#root, this.#parent);
+    this.tree.value = newValue;
+    return new Zipper(this.tree, this.root, this.parent);
   }
 
   setLeft(newLeft) {
-    this.#tree.left = newLeft;
-    return new Zipper(this.#tree, this.#root, this.#parent);
+    this.tree.left = newLeft;
+    return new Zipper(this.tree, this.root, this.parent);
   }
 
   setRight(newRight) {
-    this.#tree.right = newRight;
-    return new Zipper(this.#tree, this.#root, this.#parent);
+    this.tree.right = newRight;
+    return new Zipper(this.tree, this.root, this.parent);
   }
 
 }

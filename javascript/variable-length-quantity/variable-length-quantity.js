@@ -1,14 +1,29 @@
 export const encode = (numbers) => {
 
   let res = [];
-
   numbers.forEach(number => res.push(...encodeNumber(number)));
 
   return res;
 };
 
-export const decode = () => {
-  throw new Error('Remove this statement and implement this function');
+export const decode = (numbers) => {
+
+  let res = [];
+  let sum = [];
+  numbers.forEach(number => {
+    console.log(`number: ${number}`)
+    let strRep = number.toString(2);
+    console.log(`strRep: ${strRep}`);
+    if (strRep.length === 8) {
+      strRep = strRep.substring(1);
+    }
+    sum.push(strRep.padStart(7, '0'));
+    console.log(`sum: ${sum}`);
+  });
+
+  res.push(parseInt(sum.join(''), 2));
+  return res;
+
 };
 
 const encodeNumber = (number) => {
@@ -35,11 +50,11 @@ const encodeNumber = (number) => {
     currentChunk = currentChunk.padStart(7, '0');
     chunks.push(currentChunk);
     strRep = strRep.substring(0, size - 7);
-    console.log(`strRep ${strRep}`);
   }
   chunks.reverse();
-  console.log(`chunks: ${chunks}`);
 
+  // adiciona o 'most significant bit'
+  // e monta a resposta
   let res = [];
   chunks.forEach((chunk, index) => {
     let n;
@@ -52,6 +67,23 @@ const encodeNumber = (number) => {
     res.push(parseInt(n, 2));
   });
 
-  console.log(res);
   return res;
+};
+
+const decodeNumber = (number) => {
+
+  // não precisa fazer nada em numeros
+  // de apenas um byte
+  if (number < 128) {
+    return number;
+  }
+
+  // para numeros > 1 byte
+  
+  // transforma o numero para uma string binaria,
+  // retira o 'most significant bit',
+  // converte para int de novo e retorna
+  let strRep = number.toString(2).substring(1);
+
+  return parseInt(strRep, 2);
 };

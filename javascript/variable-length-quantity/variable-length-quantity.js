@@ -47,39 +47,25 @@ const encodeNumber = (number) => {
     return [number];
   }
 
-  // para numeros > 1 byte
-
-  // transoforma o numero para 
-  // uma string binario
-  let strRep = number.toString(2);
-
-
-  // separa em pedaços de 7 bits cada
-  let chunks = [];
-
-  while(strRep.length > 0) {
-    let size = strRep.length;
-    let currentChunk = strRep.substring(size - 7);
-    currentChunk = currentChunk.padStart(7, '0');
-    chunks.push(currentChunk);
-    strRep = strRep.substring(0, size - 7);
-  }
-  chunks.reverse();
-
-  // adiciona o 'most significant bit'
-  // e monta a resposta
+  let MASK = 127;
   let res = [];
-  chunks.forEach((chunk, index) => {
-    let n;
-    if (index < chunks.length - 1) {
-      n = '1' + chunk;
-    } else {
-      n = '0' + chunk;
+  let num = number;
+
+  while (num > 0) {
+
+    let digits = num & MASK;
+
+    if (res.length > 0) {
+      digits = digits | (MASK + 1);
     }
 
-    res.push(parseInt(n, 2));
-  });
+    res.unshift(digits);
 
+    num = num >>> 7;
+
+  }
+  
   return res;
+
 };
 

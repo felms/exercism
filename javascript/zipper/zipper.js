@@ -1,157 +1,54 @@
 export class Zipper {
 
-  #value;
-  #left;
-  #right;
-  #parent;
-
-  constructor(value, parent = null) {
-    this.#value = value;
-    this.#parent = parent;
-    this.#left = null;
-    this.#right = null;
+  constructor(tree, root, parent) {
+    this.tree = tree;
+    this.root = root || tree;
+    this.parent = parent || null;
   }
 
-  static fromTree(tree, parent = null) {
-    let {value, left, right} = tree;
-    let zipper = new Zipper(value, parent);
-
-
-    if (left) {
-      zipper.setLeft(Zipper.fromTree(left, zipper));
-    }
-
-    if (right) {
-      zipper.setRight(Zipper.fromTree(right, zipper));
-    }
-
-    return zipper;
-
+  static fromTree(tree) {
+    return new Zipper(JSON.parse(JSON.stringify(tree)));
   }
 
   toTree() {
-
-    let rootNode = this.clone();
-
-    if (rootNode.up() !== null) {
-      while (rootNode.up() !== null) {
-        rootNode = rootNode.up();
-      }
-    }
-
-    return Zipper.bt(rootNode);
-
+    return this.root;
   }
 
   value() {
-    return this.#value;
+    return this.tree.value;
   }
 
   left() {
-
-    if (this.#left !== null) {
-      return this.#left.clone();
-    }
-
-    return null;
+    return this.tree.left 
+      ? new Zipper(this.tree.left, this.root, this.tree)
+      : null;
   }
 
   right() {
-
-    if (this.#right !== null) {
-      return this.#right.clone();
-    }
-
-    return null;
+    return this.tree.right
+      ? new Zipper(this.tree.right, this.root, this.tree)
+      : null;
   }
 
   up() {
-
-    let zipper = null;
-
-    if (this.#parent !== null) {
-      zipper = this.#parent.clone();
-    }
-
-    return zipper;
+    return this.parent
+      ? new Zipper(this.parent, this.root)
+      : null;
   }
 
-  setValue(value) {
-
-    if (this.#parent === null) {
-      this.#value = value;
-      return this.clone();
-    }
-
-    let focusNode = this.#parent;
-    let thisNode = this.clone();
-
-    if (thisNode.equals(focusNode.left())) {
-      thisNode.#value = value;
-      focusNode.setLeft(thisNode);
-      return focusNode.left();
-    }
-
-    if (thisNode.equals(focusNode.right())) {
-      thisNode.#value = value;
-      focusNode.setRight(thisNode);
-      return focusNode.right();
-    }
-
+  setValue(newValue) {
+    this.tree.value = newValue;
+    return new Zipper(this.tree, this.root, this.parent);
   }
 
-  setLeft(left) {
-
-
-    this.#left = left;
-
-    if (this.#left !== null) {
-      this.#left.setParent(this);
-    }
+  setLeft(newLeft) {
+    this.tree.left = newLeft;
+    return new Zipper(this.tree, this.root, this.parent);
   }
 
-  setRight(right) {
-
-    this.#right = right;
-
-    if (this.#right !== null) {
-      this.#right.setParent(this);
-    }
-
+  setRight(newRight) {
+    this.tree.right = newRight;
+    return new Zipper(this.tree, this.root, this.parent);
   }
 
-  setParent(parent) {
-    this.#parent = parent;
-  }
-
-  static bt(zipper) {
-    let value = zipper.value();
-    let left = zipper.left() === null ? null : Zipper.bt(zipper.left());
-    let right = zipper.right() === null ? null : Zipper.bt(zipper.right());
-
-    return  {value, left, right};
-  }
-
-  clone() {
-    let zipper = new Zipper(this.#value, this.#parent);
-    let left = this.#left === null ? null : this.#left.clone();
-    let right = this.#right === null ? null : this.#right.clone();
-    zipper.setLeft(left);
-    zipper.setRight(right);
-
-    return zipper;
-  }
-
-  equals(otherZipper) {
-
-    return JSON.stringify(Zipper.bt(this)) === JSON.stringify(Zipper.bt(otherZipper));
-
-  }
-
-  toString() {
-    return "value: " + this.#value + ", " +
-      "parent: " + (this.#parent == null ? "null" : "{ " + this.#parent.value() + " }") + ", " +
-      "left: " + (this.#left == null ? "null" : "{ " + this.#left + " }") + ", " +
-      "right: " + (this.#right == null ? "null" : "{ " + this.#right + " }");
-  }
 }

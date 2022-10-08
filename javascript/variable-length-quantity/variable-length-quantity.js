@@ -9,30 +9,33 @@ export const encode = (numbers) => {
 export const decode = (numbers) => {
 
   let res = [];
-  let sum = [];
+  let sum = 0;
+  let MASK = 127;
+
   numbers.forEach((number, index) => {
 
-    // converte o número para a uma string
-    // da representação em binário.
-    // o padStart é para os casos em que o número
-    // é menor que 1 byte
-    let strRep = number.toString(2).padStart(8, '0');
+    // pego o 'most significant bit'
+    let msb = number >>> 7;
 
-    // cria uma nova string sem o 'most significant bit'
-    // e adiciona à soma
-    let n = strRep.substring(1);
-    sum.push(n.padStart(7, '0'));
+    // pego os ultimos 7 bits
+    let current = number & MASK;
 
-    // se o MSB é '0' soma-se os itens 
-    // armazena o número
-    // e zera o array
-    if (strRep.charAt(0) === '0') {
-      res.push(parseInt(sum.join(''), 2));
-      sum = [];
-    } else if (strRep.charAt(0) === '1' && index === numbers.length - 1) {
-      // caso o MSB for '1' no último item de uma sequencia
+    // adicionando current à soma
+    sum = sum << 7;
+    sum = sum | current;
+
+    if (msb === 0) {
+      sum = sum >>> 0; // falando para o JS que o número de 32 bits é positivo
+                       // por que é desse jeito?
+                       // não tenho a minima idéia!
+      
+      res.push(sum);
+      sum = 0;
+    } else if (msb === 1 && index === numbers.length - 1) {
       throw new Error('Incomplete sequence');
     }
+
+
   });
 
   return res;
@@ -47,20 +50,29 @@ const encodeNumber = (number) => {
     return [number];
   }
 
+
+  // para numeros maiores 
+  // que 128 
+
   let MASK = 127;
   let res = [];
   let num = number;
 
   while (num > 0) {
 
+    // pego os ultimos 7 bits
     let digits = num & MASK;
 
     if (res.length > 0) {
+      // apos o primeiro byte eu insiro 
+      // o 'most significant bit' para
+      // indicar que teremos outros bytes depois.
       digits = digits | (MASK + 1);
     }
 
     res.unshift(digits);
 
+    // elimino do numero os bits já utilizados
     num = num >>> 7;
 
   }

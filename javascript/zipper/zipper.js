@@ -7,7 +7,7 @@ export class Zipper {
   }
 
   static fromTree(tree) {
-    return new Zipper(tree);
+    return new Zipper(JSON.parse(JSON.stringify(tree)));
   }
 
   toTree() {

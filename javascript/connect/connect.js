@@ -1,5 +1,3 @@
-import {log} from "console";
-
 export class Board {
 
   #board;
@@ -95,8 +93,6 @@ export class Board {
     let c = 0;
     let finished = false;
 
-    console.log(`===== START =====\ncurrent: [${index}][${c}]`);
-
     while (!finished) {
 
       this.#board[index][c] = '*';
@@ -111,7 +107,7 @@ export class Board {
         index--;
       } else if (index < this.#rows - 1 && this.#board[index + 1][c] === 'X') {
         index++;
-      } else if (index < this.#rows - 1 && this.#board[index + 1][c + 1] === 'X') {
+      } else if (index < this.#rows - 1 && (index !== c) && this.#board[index + 1][c + 1] === 'X') {
         c++;
         index++;
       } else if (index > 0 && this.#board[index - 1][c + 1] === 'X') {

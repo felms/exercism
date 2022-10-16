@@ -6,7 +6,6 @@ export class InputCell {
 
   setValue(value) {
     this.value = value;
-
     this.computeCells.forEach(cell => cell.update());
   }
 
@@ -20,24 +19,31 @@ export class ComputeCell {
     this.callback = fn;
     this.inputCells = inputCells;
     this.computeCells = [];
+    this.callbacks = [];
 
     this.inputCells.forEach(cell => cell.registerComputeCell(this));
-
-
     this.value = this.callback(this.inputCells); 
   }
 
   addCallback(cb) {
-    // TODO
+    this.callbacks.push(cb);
   }
 
   removeCallback(cb) {
-    // TODO
+    let index = this.callbacks.indexOf(cb);
+    if (index >= 0) {
+      this.callbacks.splice(index, 1);
+    }
   }
 
   update() {
-    this.value = this.callback(this.inputCells); 
-    this.computeCells.forEach(cell => cell.update());
+    let newValue = this.callback(this.inputCells); 
+
+    if (newValue !== this.value) {
+      this.value = newValue;
+      this.computeCells.forEach(cell => cell.update());
+      this.callbacks.forEach(callbackFn => callbackFn.execute(this));
+    }
   }
 
   registerComputeCell(computeCell) {
@@ -47,6 +53,11 @@ export class ComputeCell {
 
 export class CallbackCell {
   constructor(fn) {
-    throw new Error('Remove this statement and implement this function');
+    this.cbFunction = fn;
+    this.values = [];
+  }
+
+  execute(args) {
+    this.values.push(this.cbFunction(args));
   }
 }

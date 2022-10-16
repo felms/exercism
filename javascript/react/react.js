@@ -19,24 +19,29 @@ export class ComputeCell {
   constructor(inputCells, fn) {
     this.callback = fn;
     this.inputCells = inputCells;
+    this.computeCells = [];
 
     this.inputCells.forEach(cell => cell.registerComputeCell(this));
 
 
-    this.value = fn(this.inputCells);
+    this.value = this.callback(this.inputCells); 
   }
 
   addCallback(cb) {
-    this.callbacks.push(cb);
+    // TODO
   }
 
   removeCallback(cb) {
-    let index = this.callbacks.indexOf(cb);
-    this.callbacks.splice(index, 1);
+    // TODO
   }
 
   update() {
-    this.value = this.callback(this.inputCells);
+    this.value = this.callback(this.inputCells); 
+    this.computeCells.forEach(cell => cell.update());
+  }
+
+  registerComputeCell(computeCell) {
+    this.computeCells.push(computeCell);
   }
 }
 

@@ -16,38 +16,43 @@ export class InputCell {
 
 export class ComputeCell {
   constructor(inputCells, fn) {
-    this.callback = fn;
-    this.inputCells = inputCells;
-    this.computeCells = [];
-    this.callbacks = [];
+    this._callback = fn;
+    this._inputCells = inputCells;
+    this._computeCells = [];
+    this._callbacks = [];
 
-    this.inputCells.forEach(cell => cell.registerComputeCell(this));
-    this.value = this.callback(this.inputCells); 
+    this._inputCells.forEach(cell => cell.registerComputeCell(this));
+    this._value = this.value;
+  }
+
+  get value() {
+    this._value = this._callback(this._inputCells); 
+    return this._value;
   }
 
   addCallback(cb) {
-    this.callbacks.push(cb);
+    this._callbacks.push(cb);
   }
 
   removeCallback(cb) {
-    let index = this.callbacks.indexOf(cb);
+    let index = this._callbacks.indexOf(cb);
     if (index >= 0) {
-      this.callbacks.splice(index, 1);
+      this._callbacks.splice(index, 1);
     }
   }
 
   update() {
-    let newValue = this.callback(this.inputCells); 
+    let newValue = this._callback(this._inputCells); 
 
-    if (newValue !== this.value) {
-      this.value = newValue;
-      this.computeCells.forEach(cell => cell.update());
-      this.callbacks.forEach(callbackFn => callbackFn.execute(this));
+    if (newValue !== this._value) {
+      this._value = newValue;
+      this._computeCells.forEach(cell => cell.update());
+      this._callbacks.forEach(callbackFn => callbackFn.execute(this));
     }
   }
 
   registerComputeCell(computeCell) {
-    this.computeCells.push(computeCell);
+    this._computeCells.push(computeCell);
   }
 }
 

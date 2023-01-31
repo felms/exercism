@@ -12,16 +12,10 @@ defmodule Hamming do
     do: {:error, "strands must be of equal length"}
 
   def hamming_distance(strand1, strand2) do
-    dist(strand1, strand2, 0)
-  end
+    dist =
+      Enum.zip(strand1, strand2)
+      |> Enum.count(fn {a, b} -> a != b end)
 
-  defp dist([], [], dist), do: {:ok, dist}
-
-  defp dist([h_str_01 | t_str_01], [h_str_02 | t_str_02], curr_dist) do
-    if h_str_01 == h_str_02 do
-      dist(t_str_01, t_str_02, curr_dist)
-    else
-      dist(t_str_01, t_str_02, curr_dist + 1)
-    end
+    {:ok, dist}
   end
 end

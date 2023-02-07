@@ -21,6 +21,7 @@ defmodule School do
   @spec add(school, String.t(), integer) :: {:ok | :error, school}
   def add(school, name, grade) do
     current_roster = roster(school)
+
     if name in current_roster do
       {:error, school}
     else
@@ -35,6 +36,7 @@ defmodule School do
   @spec grade(school, integer) :: [String.t()]
   def grade(school, grade) do
     Map.get(school, grade, [])
+    |> Enum.sort()
   end
 
   @doc """
@@ -42,8 +44,10 @@ defmodule School do
   """
   @spec roster(school) :: [String.t()]
   def roster(school) do
-    Map.values(school)
-    |> List.flatten()
+    Map.keys(school)
     |> Enum.sort()
+    |> Enum.reduce([], fn key, students ->
+      students ++ grade(school, key)
+    end)
   end
 end

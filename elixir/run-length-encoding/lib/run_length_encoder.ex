@@ -10,15 +10,9 @@ defmodule RunLengthEncoder do
   def encode(""), do: ""
 
   def encode(string) do
-    letters = String.graphemes(string)
-
-    do_encode(Enum.dedup(letters), letters, [], 0)
-    |> Enum.map(fn {counter, letter} ->
-      cond do
-        counter == 1 -> letter
-        true -> "#{counter}#{letter}"
-      end
-    end)
+    String.graphemes(string)
+    |> Enum.chunk_by(fn item -> item end)
+    |> Enum.map(&do_encode/1)
     |> Enum.join()
   end
 
@@ -31,27 +25,14 @@ defmodule RunLengthEncoder do
     |> Enum.join()
   end
 
-  defp do_encode([letter | _], [], acc, counter),
-    do: List.insert_at(acc, -1, {counter, letter})
-
-  defp do_encode([letter | letters], [letter | other_chars], acc, counter),
-    do: do_encode([letter | letters], other_chars, acc, counter + 1)
-
-  defp do_encode([letter | letters], [repeated_char | other_chars], acc, counter) do
-    do_encode(
-      letters,
-      [repeated_char | other_chars],
-      List.insert_at(acc, -1, {counter, letter}),
-      0
-    )
-  end
+  defp do_encode([letter]), do: letter
+  defp do_encode(list), do: "#{length(list)}#{hd(list)}"
 
   defp do_decode(string) do
     cond do
       string =~ ~r{\d+\D} ->
         [repetitions, letter] = String.split(string, ~r{\d+}, include_captures: true, trim: true)
-        list = for _ <- 1..String.to_integer(repetitions), do: letter
-        Enum.join(list)
+        String.duplicate(letter, String.to_integer(repetitions))
 
       true ->
         string

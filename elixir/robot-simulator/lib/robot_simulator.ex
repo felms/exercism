@@ -1,4 +1,12 @@
 defmodule RobotSimulator do
+
+  defmodule Robot do
+    defstruct [direction: :north, position: {0, 0}]
+  end
+
+  defguardp is_direction(direction) when direction in [:north, :east, :south, :west]
+  defguardp is_position(x, y) when is_integer(x) and is_integer(y)
+
   @type direction() :: :north | :east | :south | :west
   @type position() :: {integer(), integer()}
   @type robot() :: {direction(), position()}
@@ -9,15 +17,10 @@ defmodule RobotSimulator do
   Valid directions are: `:north`, `:east`, `:south`, `:west`
   """
   @spec create(direction, position) :: robot() | {:error, String.t()}
-  def create(direction \\ :north, position \\ {0, 0})
-
-  def create(direction, _) when direction not in [:north, :east, :south, :west],
-    do: {:error, "invalid direction"}
-
-  def create(direction, {x, y} = position) when is_integer(x) and is_integer(y) do
-    {direction, position}
-  end
-
+  def create(), do: %Robot{}
+  def create(direction, _) when not is_direction(direction), do: {:error, "invalid direction"}
+  def create(direction, position = {x, y}) when is_position(x, y), 
+    do: %Robot{direction: direction, position: position}
   def create(_, _), do: {:error, "invalid position"}
 
   @doc """
@@ -48,30 +51,31 @@ defmodule RobotSimulator do
     end
   end
 
-  defp rotate_right({direction, position}) do
-    case direction do
-      :north -> {:east, position}
-      :east -> {:south, position}
-      :south -> {:west, position}
-      :west -> {:north, position}
+  defp rotate_right(robot) do
+    case robot.direction do
+      :north -> %{robot | direction: :east}
+      :east -> %{robot | direction: :south}
+      :south -> %{robot | direction: :west}
+      :west -> %{robot | direction: :north}
     end
   end
 
-  defp rotate_left({direction, position}) do
-    case direction do
-      :north -> {:west, position}
-      :west -> {:south, position}
-      :south -> {:east, position}
-      :east -> {:north, position}
+  defp rotate_left(robot) do
+    case robot.direction do
+      :north -> %{robot | direction: :west}
+      :west -> %{robot | direction: :south}
+      :south -> %{robot | direction: :east}
+      :east -> %{robot | direction: :north}
     end
   end
 
-  defp advance({direction, {x, y}}) do
-    case direction do
-      :north -> {direction, {x, y + 1}}
-      :west -> {direction, {x - 1, y}}
-      :south -> {direction, {x, y - 1}}
-      :east -> {direction, {x + 1, y}}
+  defp advance(robot) do
+    {x, y} = robot.position
+    case robot.direction do
+      :north -> %{robot | position: {x, y + 1}}
+      :west -> %{robot | position: {x - 1, y}}
+      :south -> %{robot | position: {x, y - 1}}
+      :east -> %{robot | position: {x + 1, y}}
     end
   end
 
@@ -81,15 +85,12 @@ defmodule RobotSimulator do
   Valid directions are: `:north`, `:east`, `:south`, `:west`
   """
   @spec direction(robot) :: direction()
-  def direction({direction, _position}) do
-    direction
-  end
+  def direction(robot), do: robot.direction
 
   @doc """
   Return the robot's position.
   """
   @spec position(robot) :: position()
-  def position({_direction, position}) do
-    position
-  end
+  def position(robot), do: robot.position
+
 end

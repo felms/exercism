@@ -22,27 +22,13 @@ let of_codon codon =
     | "UGA" -> "STOP"
     | _ -> ""
 
-let rec do_translate (input, acc) = 
-
-    match input with
-    | [] -> acc
-    | x :: xs -> 
-        match of_codon x with 
-        | "STOP" -> acc
-        | codon -> do_translate(xs, acc @ [codon])
-
-let translate(input) = do_translate(input, [])
-
 let proteins rna = 
 
-    match rna with
-    | "" -> []
-    | protein -> protein 
-                            |> Seq.toList 
-                            |> Seq.chunkBySize(3) 
-                            |> Seq.map(fun s -> new string(s)) 
-                            |> Seq.toList
-                            |> translate
+    rna 
+    |> Seq.chunkBySize(3) 
+    |> Seq.map(fun s -> new string(s) |> of_codon) 
+    |> Seq.takeWhile((<>) "STOP")
+    |> Seq.toList
     
 
 

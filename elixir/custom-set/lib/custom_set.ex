@@ -1,5 +1,5 @@
 defmodule CustomSet do
-  @opaque t :: %__MODULE__{items: map}
+  @opaque t :: %__MODULE__{items: list}
   defstruct items: []
 
   @spec new(Enum.t()) :: t

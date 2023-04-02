@@ -1,10 +1,23 @@
 defmodule Grep do
   @spec grep(String.t(), [String.t()], [String.t()]) :: String.t()
+  def grep(pattern, flags, files) when length(files) == 1 do
+    files
+    |> hd()
+    |> grep_file(pattern, flags)
+  end
+
   def grep(pattern, flags, files) do
     files
-    |> Enum.map(&search_in_file(&1, pattern, flags))
+    |> Enum.map(fn file_name -> {file_name, grep_file(file_name, pattern, flags)} end)
+    |> Enum.reject(fn {_file_name, text} -> text == "" end)
+    |> Enum.map(&prepend_filename/1)
     |> Enum.join("\n")
-    |> IO.inspect()
+    |> then(&if String.length(&1) > 0, do: &1 <> "\n", else: "")
+  end
+
+  defp grep_file(file, pattern, flags) do
+    file
+    |> search_in_file(pattern, flags)
     |> then(&if String.length(&1) > 0, do: &1 <> "\n", else: "")
   end
 
@@ -53,5 +66,12 @@ defmodule Grep do
       true ->
         lines |> Enum.filter(fn {text, _index} -> String.contains?(text, pattern) end)
     end
+  end
+
+  defp prepend_filename({file_name, lines}) do
+    lines
+    |> String.split("\n", trim: true)
+    |> Enum.map(&if &1 == file_name, do: file_name, else: "#{file_name}:#{&1}")
+    |> Enum.join("\n")
   end
 end

@@ -16,48 +16,42 @@ defmodule Grep do
 
     cond do
       "-l" in flags ->
-        if lines |> filter_lines(pattern) |> length() > 0, do: file_name, else: ""
+        if lines |> match_lines(pattern, flags) |> length() > 0, do: file_name, else: ""
 
       "-n" in flags ->
         lines
-        |> filter_lines(pattern)
+        |> match_lines(pattern, flags)
         |> Enum.map(fn {text, index} -> "#{index}:#{text}" end)
-        |> Enum.join("\n")
-
-      "-i" in flags ->
-        lines
-        |> filter_lines(pattern, true)
-        |> Enum.map(fn {text, _index} -> text end)
-        |> Enum.join("\n")
-
-      "-x" in flags ->
-        lines |> Enum.map(&match_entire_line(&1, pattern)) |> Enum.join("\n") |> String.trim()
-
-      "-v" in flags ->
-        lines
-        |> Enum.reject(fn {text, _index} -> String.contains?(text, pattern) end)
-        |> Enum.map(fn {text, _index} -> text end)
         |> Enum.join("\n")
 
       true ->
         lines
-        |> filter_lines(pattern)
+        |> match_lines(pattern, flags)
         |> Enum.map(fn {text, _index} -> text end)
         |> Enum.join("\n")
     end
   end
 
-  defp filter_lines(lines, pattern, case_insensitive \\ false) do
-    if case_insensitive do
-      lines
-      |> Enum.filter(fn {text, _index} ->
-        String.downcase(text) |> String.contains?(String.downcase(pattern))
-      end)
-    else
-      lines |> Enum.filter(fn {text, _index} -> String.contains?(text, pattern) end)
+  defp match_lines(lines, pattern, flags) do
+    cond do
+      "-i" in flags and "-x" in flags ->
+        lines
+        |> Enum.filter(fn {text, _index} -> String.downcase(text) == String.downcase(pattern) end)
+
+      "-v" in flags ->
+        lines -- match_lines(lines, pattern, flags -- ["-v"])
+
+      "-i" in flags ->
+        lines
+        |> Enum.filter(fn {text, _index} ->
+          String.downcase(text) |> String.contains?(String.downcase(pattern))
+        end)
+
+      "-x" in flags ->
+        lines |> Enum.filter(fn {text, _index} -> text == pattern end)
+
+      true ->
+        lines |> Enum.filter(fn {text, _index} -> String.contains?(text, pattern) end)
     end
   end
-
-  defp match_entire_line({text, _index}, pattern) when text == pattern, do: text
-  defp match_entire_line(_line, _pattern), do: ""
 end

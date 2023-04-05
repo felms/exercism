@@ -42,7 +42,7 @@ defmodule Poker do
       hands
       |> Hand.sort_hands()
 
-    winning_category = sorted_hands |> Enum.at(-1) |> Map.get(:category)
+    winning_category = sorted_hands |> hd() |> Map.get(:category) |> IO.inspect()
 
     winning_hands = sorted_hands |> Enum.filter(fn hand -> hand.category == winning_category end)
 
@@ -54,8 +54,28 @@ defmodule Poker do
 
   defp find_high_hands(hands, category) do
     case category do
+      :two_pair -> tie_breaker_op(hands)
+      :one_pair -> tie_breaker_op(hands)
       :high_card -> tie_breaker_hc(hands)
       _ -> raise("Error")
+    end
+  end
+
+  defp tie_breaker_op([first_hand | hands]), do: tie_breaker_op(hands, [first_hand])
+  defp tie_breaker_op([], best_hands) do 
+    case best_hands |> length() do
+      1 -> best_hands
+      _ -> tie_breaker_hc(best_hands)
+    end
+  end
+  defp tie_breaker_op([hand | hands], [best_hand | _tail] = best_hands) do
+    pairs_0 = get_pairs(hand) |> Card.sort_cards()  |> IO.inspect()
+    pairs_1 = get_pairs(best_hand) |> Card.sort_cards() |> IO.inspect()
+
+    case get_high_card(pairs_0, pairs_1) do
+      :tie -> tie_breaker_op(hands, [hand | best_hands])
+      :first -> tie_breaker_op(hands, [hand])
+      :second -> tie_breaker_op(hands, best_hands)
     end
   end
 
@@ -80,4 +100,17 @@ defmodule Poker do
 
   defp get_high_card([card_0 | _hand_0], [card_1 | _hand_1]) when card_0.value < card_1.value,
     do: :second
+
+  defp get_pairs(hand) do
+    pair_ranks =
+    hand.cards
+    |> Enum.map(fn card -> card.rank end)
+    |> Enum.frequencies()
+    |> Map.to_list()
+    |> Enum.filter(fn {_rank, freq} -> freq == 2 end)
+    |> Enum.map(fn {rank, _freq} -> rank end)
+
+    hand.cards
+    |> Enum.filter(fn card -> card.rank in pair_ranks end)
+  end
 end

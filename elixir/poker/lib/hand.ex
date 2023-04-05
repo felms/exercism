@@ -83,7 +83,7 @@ defmodule Hand do
 
   defp straight?(hand) do
     sorted_hand = Card.sort_cards(hand) |> Enum.map(fn card -> card.value end)
-
+    # TODO FIX THIS!!!
     (Enum.at(sorted_hand, -1) == 2 and Enum.at(sorted_hand, 1) - Enum.at(sorted_hand, -1) == 3) or
       Enum.at(sorted_hand, 0) - Enum.at(sorted_hand, -1) == 4
   end

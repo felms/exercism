@@ -82,10 +82,16 @@ defmodule Hand do
   end
 
   defp straight?(hand) do
-    sorted_hand = Card.sort_cards(hand) |> Enum.map(fn card -> card.value end)
-    # TODO FIX THIS!!!
-    (Enum.at(sorted_hand, -1) == 2 and Enum.at(sorted_hand, 1) - Enum.at(sorted_hand, -1) == 3) or
-      Enum.at(sorted_hand, 0) - Enum.at(sorted_hand, -1) == 4
+    sorted_hand = hand |> Enum.map(fn card -> card.value end)
+
+    {min, max} = Enum.min_max(sorted_hand)
+
+    case {min, max} do
+      {2, 6} -> 2..6 |> Enum.all?(&(&1 in sorted_hand))
+      {2, 14} -> 2..5 |> Enum.all?(&(&1 in sorted_hand))
+      {x, y} -> x..y |> Enum.all?(&(&1 in sorted_hand))
+    end
+
   end
 
   defp flush?(hand) do

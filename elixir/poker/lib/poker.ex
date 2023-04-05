@@ -69,8 +69,8 @@ defmodule Poker do
     end
   end
   defp tie_breaker_op([hand | hands], [best_hand | _tail] = best_hands) do
-    pairs_0 = get_pairs(hand) |> Card.sort_cards()  |> IO.inspect()
-    pairs_1 = get_pairs(best_hand) |> Card.sort_cards() |> IO.inspect()
+    pairs_0 = get_pairs(hand) |> Card.sort_cards()
+    pairs_1 = get_pairs(best_hand) |> Card.sort_cards()
 
     case get_high_card(pairs_0, pairs_1) do
       :tie -> tie_breaker_op(hands, [hand | best_hands])

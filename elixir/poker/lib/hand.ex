@@ -2,11 +2,15 @@ defmodule Hand do
   defstruct [:cards, :category]
 
   @categories %{
-    straight_flush: 9,
-    four_of_a_kind: 8,
-    full_house: 7,
-    flush: 6,
-    straight: 5,
+    ace_high_straight_flush: 13,
+    straight_flush: 12,
+    five_high_straight_flush: 11,
+    four_of_a_kind: 10,
+    full_house: 9,
+    flush: 8,
+    ace_high_straight: 7,
+    straight: 6,
+    five_high_straight: 5,
     three_of_a_kind: 4,
     two_pair: 3,
     one_pair: 2,
@@ -36,11 +40,15 @@ defmodule Hand do
 
   defp categorize_hand(hand) do
     cond do
+      ace_high_straight?(hand) and flush?(hand) -> :ace_high_straight_flush
       straight?(hand) and flush?(hand) -> :straight_flush
+      five_high_straight?(hand) and flush?(hand) -> :five_high_straight_flush
       four_of_a_kind?(hand) -> :four_of_a_kind
       three_of_a_kind?(hand) and one_pair?(hand) -> :full_house
       flush?(hand) -> :flush
+      ace_high_straight?(hand) -> :ace_high_straight
       straight?(hand) -> :straight
+      five_high_straight?(hand) -> :five_high_straight
       three_of_a_kind?(hand) -> :three_of_a_kind
       two_pair?(hand) -> :two_pair
       one_pair?(hand) -> :one_pair
@@ -81,17 +89,20 @@ defmodule Hand do
     |> then(&(2 in &1))
   end
 
+  defp ace_high_straight?(hand) do
+    values = hand |> Enum.map(fn card -> card.value end)
+    10..14 |> Enum.all?(&(&1 in values))
+  end
+
+  defp five_high_straight?(hand) do
+    values = hand |> Enum.map(fn card -> card.value end)
+    [2, 3, 4, 5, 14] |> Enum.all?(&(&1 in values))
+  end
+
   defp straight?(hand) do
-    sorted_hand = hand |> Enum.map(fn card -> card.value end)
-
-    {min, max} = Enum.min_max(sorted_hand)
-
-    case {min, max} do
-      {2, 6} -> 2..6 |> Enum.all?(&(&1 in sorted_hand))
-      {2, 14} -> 2..5 |> Enum.all?(&(&1 in sorted_hand))
-      {x, y} -> x..y |> Enum.all?(&(&1 in sorted_hand))
-    end
-
+    values = hand |> Enum.map(fn card -> card.value end)
+    {min, max} = Enum.min_max(values)
+    min..max |> Enum.all?(&(&1 in values))
   end
 
   defp flush?(hand) do

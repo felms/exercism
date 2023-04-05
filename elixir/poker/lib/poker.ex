@@ -42,7 +42,7 @@ defmodule Poker do
       hands
       |> Hand.sort_hands()
 
-    winning_category = sorted_hands |> hd() |> Map.get(:category) |> IO.inspect()
+    winning_category = sorted_hands |> hd() |> Map.get(:category)
 
     winning_hands = sorted_hands |> Enum.filter(fn hand -> hand.category == winning_category end)
 
@@ -54,23 +54,108 @@ defmodule Poker do
 
   defp find_high_hands(hands, category) do
     case category do
+      :straight_flush -> tie_breaker_hc(hands)
+      :four_of_a_kind -> tie_breaker_foak(hands)
+      :full_house -> tie_breaker_full_house(hands)
+      :flush -> tie_breaker_hc(hands)
+      :five_high_straight -> hands
+      :ace_high_straight -> hands
+      :straight -> tie_breaker_straight(hands)
+      :three_of_a_kind -> tie_breaker_toak(hands)
       :two_pair -> tie_breaker_op(hands)
       :one_pair -> tie_breaker_op(hands)
       :high_card -> tie_breaker_hc(hands)
-      _ -> raise("Error")
     end
   end
 
-  defp tie_breaker_op([first_hand | hands]), do: tie_breaker_op(hands, [first_hand])
-  defp tie_breaker_op([], best_hands) do 
+  defp tie_breaker_foak([first_hand | hands]), do: tie_breaker_foak(hands, [first_hand])
+
+  defp tie_breaker_foak([], best_hands) do
     case best_hands |> length() do
       1 -> best_hands
       _ -> tie_breaker_hc(best_hands)
     end
   end
+
+  defp tie_breaker_foak([hand | hands], [best_hand | _tail] = best_hands) do
+    quad_0 = get_group(hand, 4) |> Card.sort_cards()
+    quad_1 = get_group(best_hand, 4) |> Card.sort_cards()
+
+    case get_high_card(quad_0, quad_1) do
+      :tie -> tie_breaker_foak(hands, [hand | best_hands])
+      :first -> tie_breaker_foak(hands, [hand])
+      :second -> tie_breaker_foak(hands, best_hands)
+    end
+  end
+
+  defp tie_breaker_full_house([first_hand | hands]),
+    do: tie_breaker_full_house(hands, [first_hand])
+
+  defp tie_breaker_full_house([], best_hands) do
+    case best_hands |> length() do
+      1 -> best_hands
+      _ -> tie_breaker_op(best_hands)
+    end
+  end
+
+  defp tie_breaker_full_house([hand | hands], [best_hand | _tail] = best_hands) do
+    triplet_0 = get_group(hand, 3) |> Card.sort_cards()
+    triplet_1 = get_group(best_hand, 3) |> Card.sort_cards()
+
+    case get_high_card(triplet_0, triplet_1) do
+      :tie -> tie_breaker_full_house(hands, [hand | best_hands])
+      :first -> tie_breaker_full_house(hands, [hand])
+      :second -> tie_breaker_full_house(hands, best_hands)
+    end
+  end
+
+  defp tie_breaker_straight([first_hand | hands]), do: tie_breaker_straight(hands, [first_hand])
+
+  defp tie_breaker_straight([], best_hands), do: best_hands
+
+  defp tie_breaker_straight([hand | hands], [best_hand | _tail] = best_hands) do
+    h_0 = hand.cards |> Card.sort_cards()
+    h_1 = best_hand.cards |> Card.sort_cards()
+
+    case get_high_card(h_0, h_1) do
+      :tie -> tie_breaker_straight(hands, [hand | best_hands])
+      :first -> tie_breaker_straight(hands, [hand])
+      :second -> tie_breaker_straight(hands, best_hands)
+    end
+  end
+
+  defp tie_breaker_toak([first_hand | hands]), do: tie_breaker_toak(hands, [first_hand])
+
+  defp tie_breaker_toak([], best_hands) do
+    case best_hands |> length() do
+      1 -> best_hands
+      _ -> tie_breaker_hc(best_hands)
+    end
+  end
+
+  defp tie_breaker_toak([hand | hands], [best_hand | _tail] = best_hands) do
+    triplet_0 = get_group(hand, 3) |> Card.sort_cards()
+    triplet_1 = get_group(best_hand, 3) |> Card.sort_cards()
+
+    case get_high_card(triplet_0, triplet_1) do
+      :tie -> tie_breaker_toak(hands, [hand | best_hands])
+      :first -> tie_breaker_toak(hands, [hand])
+      :second -> tie_breaker_toak(hands, best_hands)
+    end
+  end
+
+  defp tie_breaker_op([first_hand | hands]), do: tie_breaker_op(hands, [first_hand])
+
+  defp tie_breaker_op([], best_hands) do
+    case best_hands |> length() do
+      1 -> best_hands
+      _ -> tie_breaker_hc(best_hands)
+    end
+  end
+
   defp tie_breaker_op([hand | hands], [best_hand | _tail] = best_hands) do
-    pairs_0 = get_pairs(hand) |> Card.sort_cards()
-    pairs_1 = get_pairs(best_hand) |> Card.sort_cards()
+    pairs_0 = get_group(hand, 2) |> Card.sort_cards()
+    pairs_1 = get_group(best_hand, 2) |> Card.sort_cards()
 
     case get_high_card(pairs_0, pairs_1) do
       :tie -> tie_breaker_op(hands, [hand | best_hands])
@@ -101,16 +186,16 @@ defmodule Poker do
   defp get_high_card([card_0 | _hand_0], [card_1 | _hand_1]) when card_0.value < card_1.value,
     do: :second
 
-  defp get_pairs(hand) do
-    pair_ranks =
-    hand.cards
-    |> Enum.map(fn card -> card.rank end)
-    |> Enum.frequencies()
-    |> Map.to_list()
-    |> Enum.filter(fn {_rank, freq} -> freq == 2 end)
-    |> Enum.map(fn {rank, _freq} -> rank end)
+  defp get_group(hand, frequency) do
+    groups =
+      hand.cards
+      |> Enum.map(fn card -> card.rank end)
+      |> Enum.frequencies()
+      |> Map.to_list()
+      |> Enum.filter(fn {_rank, freq} -> freq == frequency end)
+      |> Enum.map(fn {rank, _freq} -> rank end)
 
     hand.cards
-    |> Enum.filter(fn card -> card.rank in pair_ranks end)
+    |> Enum.filter(fn card -> card.rank in groups end)
   end
 end

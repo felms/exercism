@@ -32,5 +32,52 @@ defmodule Poker do
   def best_hand(hands) when length(hands) == 1, do: hands
 
   def best_hand(hands) do
+    hands
+    |> Enum.map(&Hand.parse_hand/1)
+    |> find_best_hand()
   end
+
+  defp find_best_hand(hands) do
+    sorted_hands =
+      hands
+      |> Hand.sort_hands()
+
+    winning_category = sorted_hands |> Enum.at(-1) |> Map.get(:category)
+
+    winning_hands = sorted_hands |> Enum.filter(fn hand -> hand.category == winning_category end)
+
+    case winning_hands |> length() do
+      1 -> winning_hands |> Enum.map(&Hand.print_hand/1)
+      _ -> find_high_hands(winning_hands, winning_category) |> Enum.map(&Hand.print_hand/1)
+    end
+  end
+
+  defp find_high_hands(hands, category) do
+    case category do
+      :high_card -> tie_breaker_hc(hands)
+      _ -> raise("Error")
+    end
+  end
+
+  defp tie_breaker_hc([first_hand | hands]), do: tie_breaker_hc(hands, [first_hand])
+  defp tie_breaker_hc([], best_hands), do: best_hands
+
+  defp tie_breaker_hc([hand | hands], [best_hand | _tail] = best_hands) do
+    case get_high_card(Card.sort_cards(hand.cards), Card.sort_cards(best_hand.cards)) do
+      :tie -> tie_breaker_hc(hands, [hand | best_hands])
+      :first -> tie_breaker_hc(hands, [hand])
+      :second -> tie_breaker_hc(hands, best_hands)
+    end
+  end
+
+  defp get_high_card([], []), do: :tie
+
+  defp get_high_card([card_0 | hand_0], [card_1 | hand_1]) when card_0.value == card_1.value,
+    do: get_high_card(hand_0, hand_1)
+
+  defp get_high_card([card_0 | _hand_0], [card_1 | _hand_1]) when card_0.value > card_1.value,
+    do: :first
+
+  defp get_high_card([card_0 | _hand_0], [card_1 | _hand_1]) when card_0.value < card_1.value,
+    do: :second
 end

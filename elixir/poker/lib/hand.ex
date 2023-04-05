@@ -1,6 +1,5 @@
 defmodule Hand do
-
-  defstruct [:cards, :categorie]
+  defstruct [:cards, :category]
 
   @categories %{
     straight_flush: 9,
@@ -14,21 +13,25 @@ defmodule Hand do
     high_card: 1
   }
 
-  def parse_hand(hand) do 
-    cards = hand |> Enum.map(&Card.parse_card/1) 
+  def parse_hand(hand) do
+    cards = hand |> Enum.map(&Card.parse_card/1)
 
     %Hand{
       cards: cards,
-      categorie: categorize_hand(cards)
+      category: categorize_hand(cards)
     }
-
   end
 
   def sort_hands(hands) do
     hands
     |> Enum.sort(fn hand_0, hand_1 ->
-      @categories[hand_0.categorie] >= @categories[hand_1.categorie]
+      @categories[hand_0.category] >= @categories[hand_1.category]
     end)
+  end
+
+  def print_hand(hand) do
+    hand.cards
+    |> Enum.map(&Card.print_card/1)
   end
 
   defp categorize_hand(hand) do
@@ -91,5 +94,4 @@ defmodule Hand do
     |> Enum.uniq()
     |> length() == 1
   end
-
 end

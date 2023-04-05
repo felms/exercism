@@ -46,6 +46,24 @@ defmodule Card do
     }
   end
 
+  def print_card(card) do
+    rank =
+      @number_to_rank
+      |> Map.to_list()
+      |> Enum.filter(fn {_key, value} -> value == card.rank end)
+      |> hd()
+      |> elem(0)
+
+    suit =
+      @suits
+      |> Map.to_list()
+      |> Enum.filter(fn {_key, value} -> value == card.suit end)
+      |> hd()
+      |> elem(0)
+
+    "#{rank}#{suit}"
+  end
+
   def sort_cards(cards) do
     cards
     |> Enum.sort(fn card_0, card_1 ->

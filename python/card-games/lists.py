@@ -55,7 +55,7 @@ def approx_average_is_average(hand):
 
     avg = card_average(hand)
     avg_first_last = (hand[0] + hand[-1]) / 2
-    median = hand[int(len(hand) / 2)]
+    median = hand[len(hand) // 2]
 
     return avg in (avg_first_last, median)
 
@@ -67,22 +67,7 @@ def average_even_is_average_odd(hand):
     :return: bool - are even and odd averages equal?
     """
 
-    sum_even = 0
-    qty_even = 0
-    sum_odd = 0
-    qty_odd = 0
-
-    for index, elem in enumerate(hand):
-        if index % 2 == 0:
-            sum_even += elem
-            qty_even += 1
-        else:
-            sum_odd += elem
-            qty_odd += 1
-
-    return (sum_even / qty_even) == (sum_odd / qty_odd)
-
-
+    return card_average(hand[::2]) == card_average(hand[1::2])
 
 
 def maybe_double_last(hand):

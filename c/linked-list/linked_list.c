@@ -192,6 +192,10 @@ void list_delete(struct list *list, ll_data_t data) {
 // destroys an entire list
 // list will be a dangling pointer after calling this method on it
 void list_destroy(struct list *list) {
+
+   while (list -> last) {
+      list_pop(list);
+   }
+
    free(list);
-   list = NULL;
 }

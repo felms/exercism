@@ -2,6 +2,14 @@
 //
 // @ts-check
 
+const PRICES = {
+  "Margherita": 7, 
+  "Caprese": 9, 
+  "Formaggio": 10,
+  "ExtraSauce": 1,
+  "ExtraToppings": 2
+};
+
 /**
  * Determine the prize of the pizza given the pizza and optional extras
  *
@@ -11,13 +19,8 @@
  * @returns {number} the price of the pizza
  */
 export function pizzaPrice(pizza, ...extras) {
-  let totalPrice = pizza === "Margherita" ? 7 
-                    : pizza === "Caprese" ? 9 
-                    : pizza === "Formaggio" ? 10
-                    : 0;
 
-  return extras.map(extra => extra === "ExtraSauce" ? 1 : extra === "ExtraToppings" ? 2 : 0)
-    .reduce((sum, current) => sum + current, totalPrice);
+  return PRICES[pizza] + (extras.length ? pizzaPrice(...extras) : 0);
 }
 
 /**
@@ -28,7 +31,5 @@ export function pizzaPrice(pizza, ...extras) {
  */
 export function orderPrice(pizzaOrders) {
 
-  return pizzaOrders.map(order => pizzaPrice(order.pizza, ...order.extras))
-                  .reduce((sum, current) => sum + current, 0);
-
+  return pizzaOrders.reduce((acc, order) => acc + pizzaPrice(order.pizza, ...order.extras), 0);
 }

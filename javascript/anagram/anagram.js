@@ -4,22 +4,9 @@
 //
 
 export const findAnagrams = (word, candidates) => {
-  let anagrams = [];
 
-  candidates.forEach((str) => {
-    let w = word.toLowerCase();
-    let str0 = str.toLowerCase();
+  let w = word.toLowerCase().split("").sort().join("");
 
-    if (str0.length === w.length && str0 !== w) {
-      w = w.split("").sort();
-      str0 = str0.split("").sort();
-
-      if (w.every(letter => str0.indexOf(letter) === w.indexOf(letter))) {
-        anagrams.push(str);
-      }
-
-    }
-  });
-
-  return anagrams;
+  return candidates.filter(candidate => candidate.toLowerCase() !== word.toLowerCase())
+                   .filter(candidate => candidate.toLowerCase().split("").sort().join("") === w);
 };

@@ -5,6 +5,4 @@
 
 bool is_armstrong_number(int candidate);
 
-int get_digits(int candidate);
-
 #endif

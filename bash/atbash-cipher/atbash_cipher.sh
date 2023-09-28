@@ -26,7 +26,8 @@
 # variable to hold the result
 result=""
 
-translate_letter () {
+# encodes a single letter
+encode_letter () {
 
     plain_alphabet="abcdefghijklmnopqrstuvwxyz1234567890"
     cipher_alphabet="zyxwvutsrqponmlkjihgfedcba1234567890"
@@ -51,6 +52,7 @@ translate_letter () {
     fi
 }
 
+# encodes the input text
 encode () {
 
     local input="$@"
@@ -63,14 +65,44 @@ encode () {
         letter=${word:$i:1}
         
         # calls the function on each letter
-        translate_letter "$letter"
+        encode_letter "$letter"
     done
 
     echo $result
 }
 
+# decodes a single letter
+decode_letter () {
+
+    plain_alphabet="abcdefghijklmnopqrstuvwxyz1234567890"
+    cipher_alphabet="zyxwvutsrqponmlkjihgfedcba1234567890"
+
+    # finds the position of the letter
+    search_letter="$1"
+
+    rest=${plain_alphabet#*$search_letter}
+    pos=$(( ${#plain_alphabet} - ${#rest} - ${#search_letter}))
+
+    # adds the "decoded" letter to the result
+    if [ $pos -ge 0 ]; then
+        result+=${cipher_alphabet:$pos:1}
+    fi
+}
+
+# decodes the input text
 decode () {
-    echo "decoding $1"
+
+    local word="$@"
+
+    for ((i = 0; i<${#word}; i++)); do
+        # Iterates each letter from the input
+        letter=${word:$i:1}
+        
+        # calls the function on each letter
+        decode_letter "$letter"
+    done
+
+    echo $result
 }
 
 main () {

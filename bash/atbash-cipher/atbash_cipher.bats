@@ -64,42 +64,42 @@ load bats-extra
 # decode
 
 @test "decode exercism" {
-  [[ $BATS_RUN_SKIPPED == "true" ]] || skip
+  #[[ $BATS_RUN_SKIPPED == "true" ]] || skip
   run bash atbash_cipher.sh decode "vcvix rhn"
   assert_success
   assert_output "exercism"
 }
 
 @test "decode a sentence" {
-  [[ $BATS_RUN_SKIPPED == "true" ]] || skip
+  #[[ $BATS_RUN_SKIPPED == "true" ]] || skip
   run bash atbash_cipher.sh decode "zmlyh gzxov rhlug vmzhg vkkrm thglm v"
   assert_success
   assert_output "anobstacleisoftenasteppingstone"
 }
 
 @test "decode numbers" {
-  [[ $BATS_RUN_SKIPPED == "true" ]] || skip
+  #[[ $BATS_RUN_SKIPPED == "true" ]] || skip
   run bash atbash_cipher.sh decode "gvhgr mt123 gvhgr mt"
   assert_success
   assert_output "testing123testing"
 }
 
 @test "decode all the letters" {
-  [[ $BATS_RUN_SKIPPED == "true" ]] || skip
+  #[[ $BATS_RUN_SKIPPED == "true" ]] || skip
   run bash atbash_cipher.sh decode "gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt"
   assert_success
   assert_output "thequickbrownfoxjumpsoverthelazydog"
 }
 
 @test "decode with too many spaces" {
-  [[ $BATS_RUN_SKIPPED == "true" ]] || skip
+  #[[ $BATS_RUN_SKIPPED == "true" ]] || skip
   run bash atbash_cipher.sh decode "vc vix    r hn"
   assert_success
   assert_output "exercism"
 }
 
 @test "decode with no spaces" {
-  [[ $BATS_RUN_SKIPPED == "true" ]] || skip
+  #[[ $BATS_RUN_SKIPPED == "true" ]] || skip
   run bash atbash_cipher.sh decode "zmlyhgzxovrhlugvmzhgvkkrmthglmv"
   assert_success
   assert_output "anobstacleisoftenasteppingstone"

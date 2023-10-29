@@ -54,7 +54,26 @@ class Tree {
     }
 
     public List<String> pathTo(String fromNode, String toNode) {
-        throw new UnsupportedOperationException("Please implement the Pov.pathTo() method.");
+
+        if (!containsNode(fromNode, this) || !containsNode(toNode, this)) {
+           throw new UnsupportedOperationException("No path found");
+        }
+
+        Tree searchTree = fromPov(fromNode, this);
+        List<String> res = new ArrayList<>();
+        res.add(fromNode);
+
+        while (!fromNode.equals(toNode)) {
+            Tree searchedSubtree = searchTree.children.stream()
+                    .filter(childTree -> containsNode(toNode, childTree)).findFirst().get();
+
+            res.add(searchedSubtree.label);
+
+            fromNode = searchedSubtree.label;
+            searchTree = searchedSubtree;
+        }
+
+        return res;
     }
 
     private static Tree fromPov(String fromNode, Tree currentTree) {
@@ -83,10 +102,7 @@ class Tree {
             return true;
         }
 
-        if (!tree.label.equals(searchedNode) && !tree.children.isEmpty()) {
-            return tree.children.stream().anyMatch(currTree -> containsNode(searchedNode, currTree));
-        }
+        return tree.children.stream().anyMatch(currTree -> containsNode(searchedNode, currTree));
 
-        return false;
     }
 }

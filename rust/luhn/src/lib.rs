@@ -1,24 +1,17 @@
 /// Check a Luhn checksum.
 pub fn is_valid(code: &str) -> bool {
-    let cleaned_code = code.replace(' ', "");
 
-    if cleaned_code.len() < 2 || !cleaned_code.chars().all(|c| c.is_ascii_digit()) {
+    if code.chars().filter(|c| c.is_ascii_digit()).count() < 2 
+        || code.chars().any(|c| !c.is_ascii_digit() && c != ' ') {
         return false;
     }
 
-    let mut numbers: Vec<u32> = cleaned_code
-        .chars()
+    code.chars().rev()
+        .filter(|c| c.is_ascii_digit())
         .map(|c| c.to_digit(10).unwrap())
-        .collect();
+        .enumerate()
+        .map(|(i, digit)| if i % 2 != 0 { digit * 2 } else { digit })
+        .map(|digit| if digit > 9 { digit - 9 } else { digit })
+        .sum::<u32>() % 10 == 0
 
-    let len = numbers.len();
-
-    for i in (0..(len - 1)).rev().step_by(2) {
-        let digit = numbers[i] * 2;
-        numbers[i] = if digit > 9 { digit - 9 } else { digit };
-    }
-
-    let sum: u32 = numbers.iter().sum();
-
-    sum % 10 == 0
 }

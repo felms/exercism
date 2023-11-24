@@ -6,26 +6,19 @@ pub fn reply(message: &str) -> &str {
         return "Fine. Be that way!";
     }
 
-    if is_question(m) {
-        if is_shouting(m) {
-            return "Calm down, I know what I'm doing!";
-        }
+    let is_question = m.ends_with("?");
+    let is_shouting = m.chars().any(|c| c.is_ascii_alphabetic()) && m == m.to_ascii_uppercase();
 
-        return "Sure.";
+    if is_question { 
+        return if is_shouting {
+            "Calm down, I know what I'm doing!"
+        } else { "Sure." }
     }
 
-    if is_shouting(m) {
+    if is_shouting {
         return "Whoa, chill out!";
     }
     
     "Whatever."
 }
 
-fn is_question(message: &str) -> bool {
-    message.ends_with("?")
-}
-
-fn is_shouting(message: &str) -> bool {
-    message.chars().any(|c| c.is_ascii_alphabetic() && c.is_ascii_uppercase())
-    && !message.chars().any(|c| c.is_ascii_alphabetic() && c.is_ascii_lowercase())
-}

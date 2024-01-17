@@ -16,35 +16,54 @@ defmodule Change do
   """
 
   @spec generate(list, integer) :: {:ok, list} | {:error, String.t()}
-  def generate(_coins, 0), do: {:ok, []}
+  def generate(_coins, target) when target < 0, do: {:error, "cannot change"}
 
   def generate(coins, target) do
-    map =
-      (0..target)
-      |> Enum.reduce(%{}, fn current_target, combinations ->
-        smallest_combination(combinations, coins |> Enum.sort(:desc), current_target)
+    initial_list = List.duplicate(target + 1, target)
+
+    combinations =
+      0..target
+      |> Enum.reduce(%{}, fn curr, acc ->
+        Map.put(acc, curr, initial_list)
       end)
 
-    case map[target] do
-      nil -> {:error, "cannot change"}
-      _ -> {:ok, map[target]}
+    map =
+      0..target
+      |> Enum.reduce(combinations, fn current_target, acc ->
+        smallest_combination(acc, coins, current_target)
+      end)
+
+    list = map[target]
+
+    cond do
+      list == nil -> {:error, "cannot change"}
+      list |> Enum.sum() > target -> {:error, "cannot change"}
+      true -> {:ok, list}
     end
   end
 
-  defp smallest_combination(combinations, [], _), do: combinations
-  defp smallest_combination(combinations, [target | _], target), do: Map.put(combinations, target, [target])
+  @spec smallest_combination(map(), list(), integer()) :: map()
+  defp smallest_combination(combinations, [], _target), do: combinations
 
-  defp smallest_combination(combinations, [coin | coins], target)
-       when coin > target,
-       do: smallest_combination(combinations, coins, target)
+  defp smallest_combination(combinations, [target | _], target),
+    do: Map.put(combinations, target, [target])
 
-  defp smallest_combination(combinations, [coin | coins] = coins_list, target) do
-    map = smallest_combination(combinations, coins_list, target - coin)
+  defp smallest_combination(combinations, [coin | coins], target) when coin > target,
+    do: smallest_combination(combinations, coins, target)
 
-    if map[target - coin] == nil do
-      smallest_combination(combinations, coins, target)
-    else
-      Map.put(map, target, map[target - coin] ++ [coin])
+  defp smallest_combination(combinations, [coin | coins], target) do
+    current_sol = combinations[target]
+    new_sol = [coin | combinations[target - coin]]
+
+    cond do
+      current_sol == nil ->
+        smallest_combination(Map.put(combinations, target, new_sol), coins, target)
+
+      current_sol |> length() > new_sol |> length() ->
+        smallest_combination(Map.put(combinations, target, new_sol), coins, target)
+
+      true ->
+        smallest_combination(combinations, coins, target)
     end
   end
 end

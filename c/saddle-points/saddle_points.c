@@ -11,7 +11,9 @@ bool is_smaller_in_column(uint8_t number, uint8_t column,
 saddle_points_t* saddle_points(uint8_t rows, uint8_t columns, uint8_t matrix[rows][columns]) {
 
     uint32_t max_possible_points = rows * columns;
-    saddle_point_t *points = malloc(max_possible_points * (sizeof(saddle_point_t)));
+
+    saddle_points_t *res = malloc(sizeof(saddle_points_t));
+    res->points = malloc(max_possible_points * (sizeof(saddle_point_t)));
     
     uint8_t count = 0;
 
@@ -23,19 +25,12 @@ saddle_points_t* saddle_points(uint8_t rows, uint8_t columns, uint8_t matrix[row
                 && is_smaller_in_column(number, j, rows, columns, matrix);
 
             if (is_saddle_point) {
-                saddle_point_t *point = malloc(sizeof(saddle_point_t));
-                point->row = i + 1;
-                point->column = j + 1;
-                points[count++] = *point;
+                res->points[count++] = (saddle_point_t) { i + 1, j + 1 };
             }
         }
     }
 
-
-    saddle_points_t *res = malloc(sizeof(saddle_points_t));
-
     res->count = count;
-    res->points = points;
 
     return res;
 }
@@ -66,9 +61,6 @@ bool is_smaller_in_column(uint8_t number, uint8_t column,
 
 void free_saddle_points(saddle_points_t *saddle_points) {
     
-    for (size_t i = 0; i < saddle_points->count; i++) {
-        free(&(saddle_points->points[i]));
-    }
-
+    free(saddle_points->points);
     free(saddle_points);
 }

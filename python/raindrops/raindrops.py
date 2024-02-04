@@ -1,17 +1,11 @@
 def convert(number):
 
+    lookup = [(3, "Pling"), (5, "Plang"), (7, "Plong")]
+
     res = ""
 
-    if number % 3 == 0:
-        res += "Pling"
-    
-    if number % 5 == 0:
-        res += "Plang"
+    for (factor, output) in lookup:
+        if number % factor == 0:
+            res += output
 
-    if number % 7 == 0:
-        res += "Plong"
-
-    if res == "":
-        res = str(number)
-    
-    return res
+    return res if res else str(number)

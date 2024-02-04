@@ -8,41 +8,23 @@ defmodule Raindrops do
   - If the number does not contain 3, 5, or 7 as a prime factor,
     just pass the number's digits straight through.
   """
+
+  @raindrops_lookup [
+    {3, "Pling"},
+    {5, "Plang"},
+    {7, "Plong"}
+  ]
+
   @spec convert(pos_integer) :: String.t()
   def convert(number) do
-    ""
-    |> test_pling(number)
-    |> test_plang(number)
-    |> test_plong(number)
-    |> test_num(number)
+    do_convert(number, @raindrops_lookup, "")
   end
 
-  defp test_pling(curr_str, number) do
-    cond do
-      rem(number, 3) == 0 -> curr_str <> "Pling"
-      true -> curr_str
-    end
-  end
+  defp do_convert(number, [], ""), do: Integer.to_string(number)
+  defp do_convert(_number, [], string), do: string
 
-  defp test_plang(curr_str, number) do
-    cond do
-      rem(number, 5) == 0 -> curr_str <> "Plang"
-      true -> curr_str
-    end
-  end
+  defp do_convert(number, [{factor, output} | tail], string) when rem(number, factor) == 0,
+    do: do_convert(number, tail, string <> output)
 
-  defp test_plong(curr_str, number) do
-    cond do
-      rem(number, 7) == 0 -> curr_str <> "Plong"
-      true -> curr_str
-    end
-  end
-
-  defp test_num(curr_str, number) do
-    cond do
-      curr_str == "" -> Integer.to_string(number)
-      true -> curr_str
-    end
-  end
-
+  defp do_convert(number, [_ | tail], string), do: do_convert(number, tail, string)
 end

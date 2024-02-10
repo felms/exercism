@@ -22,6 +22,7 @@ HELP.md
 bin/
 build/
 gradle/
+java/*/src/test/*
 gradlew
 gradlew.bat
 *.class

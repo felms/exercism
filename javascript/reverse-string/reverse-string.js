@@ -3,4 +3,14 @@
 // convenience to get you started writing code faster.
 //
 
-export const reverseString = (str) => str.split('').reverse().join('');
+export const reverseString = (inputString) => {
+
+    if (inputString.length === 0) {
+        return "";
+    }
+
+    let [head, ...tail] = inputString;
+
+    return reverseString(tail) + head;
+
+};

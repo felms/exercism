@@ -1,54 +1,44 @@
-export const translate = (codon = '') => {
-
-  let proteins = {
-    'AUG': 'Methionine',
-    'UUU': 'Phenylalanine',
-    'UUC': 'Phenylalanine',
-    'UUA': 'Leucine',
-    'UUG': 'Leucine',
-    'UCU': 'Serine',
-    'UCC': 'Serine',
-    'UCA': 'Serine',
-    'UCG': 'Serine',
-    'UAU': 'Tyrosine',
-    'UAC': 'Tyrosine',
-    'UGU': 'Cysteine',
-    'UGC': 'Cysteine',
-    'UGG': 'Tryptophan',
-    'UAA': 'STOP',
-    'UAG': 'STOP',
-    'UGA': 'STOP'
-  };
-
-  let sequences = splitSequence(codon);
-
-  let ans = [];
-
-  for (let s of sequences) {
-    let protein = proteins[s];
-
-    if (!protein) {
-      throw new Error('Invalid codon');
-    }
-
-    if (protein === 'STOP') {
-      break;
-    }
-
-    ans.push(protein);
-  }
-
-  return ans;
-
+let CODON_AMINOACID = {
+    "AUG" : "Methionine",
+    "UUU" : "Phenylalanine",
+    "UUC" :	"Phenylalanine",
+    "UUA" : "Leucine",
+    "UUG" : "Leucine",
+    "UCU" : "Serine",
+    "UCC" : "Serine",
+    "UCA" : "Serine",
+    "UCG" : "Serine",
+    "UAU" : "Tyrosine",
+    "UAC" : "Tyrosine",
+    "UGU" : "Cysteine",
+    "UGC" : "Cysteine",
+    "UGG" :	"Tryptophan"
 };
 
-const splitSequence = (sequence) => {
-  let values = [];
-  let seq = sequence.split('');
+let STOP_CODONS = ["UAA", "UAG", "UGA"];
 
-  for (let i = 0; i < seq.length; i += 3) {
-    values.push(seq.slice(i, i + 3).join(''));
-  }
+export const translate = (protein) => {
+    
+    let translation = [];
 
-  return values;
+    for (let chunk of chunkString(protein, 3)) {
+
+        if (!(chunk in CODON_AMINOACID) && !STOP_CODONS.includes(chunk)){
+            throw new Error("Invalid codon");
+        }
+
+        if (STOP_CODONS.includes(chunk)) {
+            break;
+        }
+
+        translation.push(CODON_AMINOACID[chunk]);
+    }
+
+    return translation;
+};
+
+const chunkString = (inputString, chunkLength) => {
+    return inputString 
+        ? inputString.match(new RegExp(".{1," + chunkLength + "}", "g")) 
+        : [];
 };

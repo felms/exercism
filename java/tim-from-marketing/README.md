@@ -11,13 +11,12 @@ If you get stuck on the exercise, check out `HINTS.md`, but try and solve it wit
 In Java, the `null` literal is used to denote the absence of a value.
 
 Primitive data types in java all have a default value and therefore can never be `null`.
-By convention, they start with a lowercase letter e.g `int`
+By convention, they start with a lowercase letter e.g `int`.
 
-Reference types contain the memory address of an object can
-have a value of null. These variables usually start with an uppercase e.g `String`
+Reference types contain the memory address of an object can have a value of null.
+These variables usually start with an uppercase e.g `String`.
 
-Attempting to assign a primitive variable a value of `null` will result in a compile time error as the variable always holds
-a primitive value of the type assigned.
+Attempting to assign a primitive variable a value of `null` will result in a compile time error as the variable always holds a primitive value of the type assigned.
 
 ```java
 //Throws compile time error stating the required type is int, but null was provided

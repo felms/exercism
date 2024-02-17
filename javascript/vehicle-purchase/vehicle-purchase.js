@@ -5,17 +5,13 @@
 // implementing this exercise.
 
 /**
- * Determines whether or not you need a licence to operate a certain kind of vehicle.
+ * Determines whether or not you need a license to operate a certain kind of vehicle.
  *
  * @param {string} kind
  * @returns {boolean} whether a license is required
  */
 export function needsLicense(kind) {
-  if (kind === "car" || kind === "truck") {
-    return true;
-  }
-
-  return false;
+    return kind === 'car' || kind === 'truck';
 }
 
 /**
@@ -27,9 +23,10 @@ export function needsLicense(kind) {
  * @returns {string} a sentence of advice which option to choose
  */
 export function chooseVehicle(option1, option2) {
-  let bestCar = option1 < option2 ? option1 : option2;
-  return bestCar + " is clearly the better choice.";
 
+    let bestOption = option1 < option2 ? option1 : option2;
+    
+    return `${bestOption} is clearly the better choice.`
 }
 
 /**
@@ -38,14 +35,17 @@ export function chooseVehicle(option1, option2) {
  *
  * @param {number} originalPrice
  * @param {number} age
- * @returns expected resell price in the dealership
+ * @returns {number} expected resell price in the dealership
  */
 export function calculateResellPrice(originalPrice, age) {
-  if (age < 3) {
-    return originalPrice * 0.8;
-  } else if (age >= 3 && age <= 10) {
-    return originalPrice * 0.7;
-  } else {
+
+    if (age < 3) {
+        return originalPrice * 0.8;
+    }
+
+    if (age <= 10) {
+        return originalPrice * 0.7;
+    }
+
     return originalPrice * 0.5;
-  }
 }

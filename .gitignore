@@ -5,6 +5,7 @@ LICENSE
 *.xml
 *.toml
 *.exercism/
+*.swp
 
 # JavaScript
 node_modules

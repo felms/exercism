@@ -1,3 +1,12 @@
+# General
+HELP.md
+HINTS.md
+LICENSE
+*.xml
+*.toml
+*.exercism/
+
+# JavaScript
 node_modules
 package-lock.json
 yarn-error.log
@@ -5,19 +14,13 @@ yarn-error.log
 .npmrc
 *.config.js
 *.spec.js
-HELP.md
-HINTS.md
-LICENSE
 package.json
 config.json
 metadata.json
+
+# Java
 *.gradle
 *Test.java
-HELP.md
-*.xml
-*.iml
-*.properties
-
 .idea/
 bin/
 build/
@@ -35,16 +38,25 @@ gradlew.bat
 *.zip
 *.tar.gz
 *.rar
+*.iml
+*.properties
 
+# Elixir
 elixir/*/test/*
 *.formatter.exs
 mix.exs
 
-
+# C 
 .ccls*
 c/*/test*
+*/makefile
+
 
 .fake
+
+# Gleam
+build/
+gleam/*/test/*test.gleam
 
 
 ## Ignore Visual Studio temporary files, build results, and

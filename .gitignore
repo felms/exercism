@@ -59,12 +59,15 @@ c/*/test*
 build/
 gleam/*/test/*test.gleam
 
-#Swift
+# Python
+python/*/*test.py
+
+# Swift
 swift/*/Tests/*
 swift/*/.gitignore
 swift/*/Package.swift
 
-#SML
+# SML
 test*.sml
 
 

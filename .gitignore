@@ -62,6 +62,10 @@ gleam/*/test/*test.gleam
 # Python
 python/*/*test.py
 
+# Rust
+rust/*/tests/
+rust/*/.gitignore
+
 # Swift
 swift/*/Tests/*
 swift/*/.gitignore

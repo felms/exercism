@@ -1,6 +1,7 @@
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 class AppointmentScheduler {
     public LocalDateTime schedule(String appointmentDateDescription) {
@@ -9,7 +10,7 @@ class AppointmentScheduler {
     }
 
     public boolean hasPassed(LocalDateTime appointmentDate) {
-        return appointmentDate.isBefore(LocalDateTime.now());
+        return LocalDateTime.now().isAfter(appointmentDate);
     }
 
     public boolean isAfternoonAppointment(LocalDateTime appointmentDate) {
@@ -18,12 +19,12 @@ class AppointmentScheduler {
     }
 
     public String getDescription(LocalDateTime appointmentDate) {
-        DateTimeFormatter datePrinter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy, 'at' h:mm a");
-        return String.format("You have an appointment on %s.", datePrinter.format(appointmentDate));
+        String desc = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy, 'at' h:mm a").format(appointmentDate);
+        return String.format("You have an appointment on %s.", desc);
     }
 
     public LocalDate getAnniversaryDate() {
-        int thisYear = LocalDateTime.now().getYear();
-        return LocalDate.of(thisYear, 9, 15);
+        int year = LocalDate.now().getYear();
+        return LocalDate.of(year, 9, 15);
     }
 }

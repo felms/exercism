@@ -11,14 +11,16 @@ class CaptainsLog {
     }
 
     char randomPlanetClass() {
-        return PLANET_CLASSES[this.random.nextInt(PLANET_CLASSES.length)];
+        int pos = this.random.nextInt(PLANET_CLASSES.length);
+        return PLANET_CLASSES[pos];
     }
 
     String randomShipRegistryNumber() {
-        return String.format("NCC-%s", (this.random.nextInt(9000) + 1000));
+        int shipNumber = this.random.nextInt(9000) + 1000;
+        return "NCC-" + shipNumber;
     }
 
     double randomStardate() {
-        return 41000.0 + 1000.0 * this.random.nextDouble();
+        return 41_000 + (1_000 * this.random.nextDouble());
     }
 }

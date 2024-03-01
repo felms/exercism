@@ -7,8 +7,7 @@
  * @returns {Record<string, number>} new score board
  */
 export function createScoreBoard() {
-  var bestPlayer = {"The Best Ever" : 1000000};
-  return bestPlayer;
+    return { 'The Best Ever' : 1_000_000 };
 }
 
 /**
@@ -20,8 +19,8 @@ export function createScoreBoard() {
  * @returns {Record<string, number>} updated score board
  */
 export function addPlayer(scoreBoard, player, score) {
-  scoreBoard[player] = score;
-  return scoreBoard;
+    scoreBoard[player] = score;
+    return scoreBoard;
 }
 
 /**
@@ -32,9 +31,10 @@ export function addPlayer(scoreBoard, player, score) {
  * @returns {Record<string, number>} updated score board
  */
 export function removePlayer(scoreBoard, player) {
-  delete scoreBoard[player];
-  return scoreBoard;
+    delete scoreBoard[player];
+    return scoreBoard;
 }
+
 /**
  * Increases a player's score by the given amount.
  *
@@ -44,8 +44,8 @@ export function removePlayer(scoreBoard, player) {
  * @returns {Record<string, number>} updated score board
  */
 export function updateScore(scoreBoard, player, points) {
-  scoreBoard[player] += points;
-  return scoreBoard;
+    scoreBoard[player] += points;
+    return scoreBoard;
 }
 
 /**
@@ -55,12 +55,12 @@ export function updateScore(scoreBoard, player, points) {
  * @returns {Record<string, number>} updated score board
  */
 export function applyMondayBonus(scoreBoard) {
-  for (var i in scoreBoard) {
-    if (scoreBoard.hasOwnProperty(i)) {
-      scoreBoard[i] += 100;
+
+    for (let key in scoreBoard) {
+        scoreBoard[key] += 100;
     }
-  }
-  return scoreBoard;
+
+    return scoreBoard;
 }
 
 /**
@@ -70,6 +70,7 @@ export function applyMondayBonus(scoreBoard) {
  * @returns {number} normalized score
  */
 export function normalizeScore(params) {
-  let newScore  = params.normalizeFunction(params.score);
-  return newScore;
+    
+    let normalizedScore= params.normalizeFunction(params.score);
+    return normalizedScore;
 }

@@ -59,6 +59,10 @@ c/*/test*
 build/
 gleam/*/test/*test.gleam
 
+# Haskell
+haskell/*/test/*
+haskell/*/*.yaml
+
 # Python
 python/*/*test.py
 

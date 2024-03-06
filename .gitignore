@@ -59,6 +59,9 @@ c/*/test*
 build/
 gleam/*/test/*test.gleam
 
+# Groovy
+groovy/*/src/test/*
+
 # Haskell
 haskell/*/test/*
 haskell/*/*.yaml

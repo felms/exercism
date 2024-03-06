@@ -77,6 +77,10 @@ powershell/*/*.tests.ps1
 rust/*/tests/
 rust/*/.gitignore
 
+# Scala
+scala/*/src/test/*
+scala/*/*.sbt
+
 # Swift
 swift/*/Tests/*
 swift/*/.gitignore

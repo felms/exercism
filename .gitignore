@@ -44,6 +44,8 @@ gradlew.bat
 
 # Elixir
 elixir/*/test/*
+elixir/*/.gitignore
+elixir/*/_build/*
 *.formatter.exs
 mix.exs
 

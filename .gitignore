@@ -44,6 +44,8 @@ gradlew.bat
 
 # Elixir
 elixir/*/test/*
+elixir/*/.gitignore
+elixir/*/_build/*
 *.formatter.exs
 mix.exs
 
@@ -59,6 +61,13 @@ c/*/test*
 build/
 gleam/*/test/*test.gleam
 
+# Groovy
+groovy/*/src/test/*
+
+# Haskell
+haskell/*/test/*
+haskell/*/*.yaml
+
 # Python
 python/*/*test.py
 
@@ -70,6 +79,10 @@ powershell/*/*.tests.ps1
 rust/*/tests/
 rust/*/.gitignore
 
+# Scala
+scala/*/src/test/*
+scala/*/*.sbt
+
 # Swift
 swift/*/Tests/*
 swift/*/.gitignore
@@ -77,6 +90,11 @@ swift/*/Package.swift
 
 # SML
 test*.sml
+
+# TCL
+tcl/*/test*.tcl
+tcl/*/*.test
+tcl/*/.exercism
 
 
 ## Ignore Visual Studio temporary files, build results, and

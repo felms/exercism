@@ -6,52 +6,42 @@ defmodule ListOps do
   # `++`, `--`, `hd`, `tl`, `in`, and `length`.
 
   @spec count(list) :: non_neg_integer
-  def count(l), do: do_count(l, 0)
-  defp do_count([], counter), do: counter
-  defp do_count([_h | t], counter), do: do_count(t, counter + 1)
-
+  def count([]), do: 0
+  def count([_ | tail]), do: 1 + count(tail)
 
   @spec reverse(list) :: list
-  def reverse(l), do: do_reverse(l, [])
-  defp do_reverse([], reversed_list), do: reversed_list
-  defp do_reverse([h | t], reversed_list), do: do_reverse(t, [h | reversed_list])
+  def reverse(list), do: do_reverse(list, [])
+  defp do_reverse([], acc), do: acc
+  defp do_reverse([head | tail], acc), do: do_reverse(tail, [head | acc])
 
   @spec map(list, (any -> any)) :: list
-  def map(l, f), do: do_map(l, f, [])
-  defp do_map([], _f, resulting_list), do: reverse(resulting_list)
-  defp do_map([h | t], f, resulting_list), do: do_map(t, f, [f.(h) | resulting_list])
+  def map([], _), do: []
+  def map([head | tail], f), do: [f.(head) | map(tail, f)]
 
   @spec filter(list, (any -> as_boolean(term))) :: list
-  def filter(l, f), do: do_filter(l, f, [])
+  def filter([], _), do: []
 
-  defp do_filter([], _f, filtered_list), do: reverse(filtered_list)
-  defp do_filter([h | t], f, filtered_list) do
-    if f.(h) do
-      do_filter(t, f, [h | filtered_list])
+  def filter([head | tail], f) do
+    if f.(head) do
+      [head | filter(tail, f)]
     else
-      do_filter(t, f, filtered_list)
+      filter(tail, f)
     end
   end
 
-  @type acc :: any
-  @spec foldl(list, acc, (any, acc -> acc)) :: acc
-  def foldl([], acc, _f), do: acc
-  def foldl([h | t], acc, f), do: foldl(t, f.(h, acc), f)
+  @spec foldl(list, any, (any, any -> any)) :: any
+  def foldl([], initial_value, _), do: initial_value
+  def foldl([head | tail], initial_value, f), do: foldl(tail, f.(head, initial_value), f)
 
-
-  @spec foldr(list, acc, (any, acc -> acc)) :: acc
-  def foldr([], acc, _f), do: acc
-  def foldr(l, acc, f), do: foldl(reverse(l), acc, f)
+  @spec foldr(list, any, (any, any -> any)) :: any
+  def foldr([], initial_value, _), do: initial_value
+  def foldr([head | tail], initial_value, f), do: f.(head, foldr(tail, initial_value, f))
 
   @spec append(list, list) :: list
-  def append(a, b), do: do_append(reverse(a), b)
-  defp do_append([], b), do: b
-  defp do_append([h | t], b), do: do_append(t, [h | b])
+  def append([], b), do: b
+  def append([head | tail], b), do: [head | append(tail, b)]
 
   @spec concat([[any]]) :: [any]
-  def concat(ll), do: foldr(ll,[], &do_concat/2)
-  defp do_concat(a, b) when is_list(a) and is_list(b), do: append(a, b)
-  defp do_concat(a, b) when is_list(a), do: append(a, [b])
-  defp do_concat(a, b) when is_list(b), do: append([a], b)
-
+  def concat([]), do: []
+  def concat([head | tail]), do: append(head, concat(tail))
 end

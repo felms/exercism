@@ -1,27 +1,30 @@
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ParallelLetterFrequency{
+import java.util.Map;
 
-    private final String text;
+class ParallelLetterFrequency {
 
-    public ParallelLetterFrequency(String text) {
-        this.text = text;
+    private String text;
+
+    ParallelLetterFrequency(String[] texts) {
+        this.text = String.join(" ", texts);
     }
 
-    public Map<Integer, Integer> letterCounts() {
-
-        return this.text.chars()
-                .filter(Character::isLetter)
-                .map(Character::toLowerCase)
-                .boxed()
-                .collect(Collectors.groupingByConcurrent(
+    Map<Character, Integer> countLetters() {
+        return this.text.codePoints()
+            .mapToObj(c -> (char) c)
+            .filter(Character::isLetter)
+            .map(Character::toLowerCase)
+            .collect(Collectors.groupingByConcurrent(
                         Function.identity(),
                         Collectors.summingInt(letter -> 1)));
+
         // 'letter -> 1' diz à funcão para contar '1'
         // cada vez que a letra aparecer.
         // Caso contrário ele adicionaria o proprio item à soma
         // todas vezes que ele aparecesse.
+
     }
+
 }

@@ -1,21 +1,17 @@
 export const convert = (number) => {
-  let result = "";
+    let res = "";
 
-  if (number % 3 === 0) {
-    result += "Pling";
-  } 
+    if (number % 3 === 0) {
+        res = "Pling";
+    }
 
-  if (number % 5 === 0) {
-    result += "Plang";
-  }
+    if (number % 5 === 0) {
+        res += "Plang";
+    }
 
-  if (number % 7 === 0) {
-    result += "Plong";
-  }
+    if (number % 7 === 0) {
+        res += "Plong";
+    }
 
-  if (result === "") {
-    result += number;
-  }
-
-  return result;
+    return res === "" ? number.toString() : res;
 };

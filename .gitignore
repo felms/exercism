@@ -61,6 +61,10 @@ c/*/test*
 build/
 gleam/*/test/*test.gleam
 
+# Go
+go/*/go.mod
+go/*/*test.go
+
 # Groovy
 groovy/*/src/test/*
 

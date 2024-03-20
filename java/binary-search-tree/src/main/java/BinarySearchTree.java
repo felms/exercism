@@ -1,102 +1,95 @@
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 class BinarySearchTree<T extends Comparable<T>> {
-
-    private Node<T> root;
-
-    public BinarySearchTree() {
-        this.root = null;
-    }
+    private Node<T> root = null;
 
     void insert(T value) {
-        Node<T> node = new Node<>(value);
-
-        if (this.root == null) {
-            this.root = node;
+        if(this.root == null) {
+            this.root = new Node<>(value);
         } else {
-            Node<T> currentNode = this.getRoot();
-            boolean inserted = false;
-
-            while (!inserted) {
-                if (value.compareTo(currentNode.getData()) > 0) {
-
-                    if (currentNode.right == null) {
-                        currentNode.right = node;
-                        inserted = true;
-                    } else {
-                        currentNode = currentNode.right;
-                    }
-
-                } else {
-                    if (currentNode.left == null) {
-                        currentNode.left = node;
-                        inserted = true;
-                    } else {
-                        currentNode = currentNode.left;
-                    }
-                }
-            }
-            
+            this.root = insertChild(this.root, value);
         }
     }
 
     List<T> getAsSortedList() {
-        List<T> treeData = new ArrayList<>();
-        inOrderTraversal(this.root, treeData);
-        return treeData;
+        List<T> res = new ArrayList<>();
+        inOrder(this.root, res);
+        return res;
+    }
+
+    private void inOrder(Node<T> node, List<T> list) {
+
+        if(node == null) {
+            return;
+        }
+
+        inOrder(node.getLeft(), list);
+        list.add(node.getData());
+        inOrder(node.getRight(), list);
     }
 
     List<T> getAsLevelOrderList() {
+        List<T> res = new ArrayList<>();
+        List<Node<T>> queue = new ArrayList<>();
 
-        List<T> treeData = new ArrayList<>();
-        Queue<Node<T>> nodesQueue = new ArrayDeque<>();
-        nodesQueue.add(this.getRoot());
+        queue.add(this.root);
 
-        while (!nodesQueue.isEmpty()) {
-            Node<T> node = nodesQueue.remove();
-            treeData.add(node.getData());
-
-            if (node.getLeft() != null) {
-                nodesQueue.add(node.getLeft());
+        while(!queue.isEmpty()) {
+            Node<T> node = queue.remove(0);
+            res.add(node.getData());
+            
+            Node<T> left = node.getLeft();
+            if(left != null) {
+                queue.add(left);
             }
 
-            if (node.getRight() != null) {
-                nodesQueue.add(node.getRight());
+            Node<T> right = node.getRight();
+            if(right != null) {
+                queue.add(right);
             }
         }
 
-        return treeData;
-
+        return res;
     }
 
     Node<T> getRoot() {
         return this.root;
     }
 
-    private void inOrderTraversal(Node<T> node, List<T> treeData) {
-
-        if (node == null) {
-            return;
+    Node<T> insertChild(Node<T> node, T data) {
+        if(node == null) {
+            return new Node<>(data);
         }
 
-        inOrderTraversal(node.getLeft(), treeData);
-        treeData.add(node.getData());
-        inOrderTraversal(node.getRight(), treeData);
+        if(data.compareTo(node.getData()) <= 0) {
+            return new Node<>(
+                    node.getData(),
+                    insertChild(node.getLeft(), data),
+                    node.getRight());
+        }
+
+        return new Node<>(
+                node.getData(),
+                node.getLeft(),
+                insertChild(node.getRight(), data));
+
     }
 
     static class Node<T> {
 
+        private T data;
         private Node<T> left;
         private Node<T> right;
-        private T data;
 
-        public Node(T data) {
-            this.left = null;
-            this.right = null;
+        Node(T data) {
+            this(data, null, null);
+        }
+
+        Node(T data, Node<T> left, Node<T> right) {
             this.data = data;
+            this.left = left;
+            this.right = right;
         }
 
         Node<T> getLeft() {
@@ -111,5 +104,6 @@ class BinarySearchTree<T extends Comparable<T>> {
             return this.data;
         }
 
+        
     }
 }

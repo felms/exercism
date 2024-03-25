@@ -1,25 +1,23 @@
-export const isPaired = (expression) => {
-  let brackets = [];
+export const isPaired = ([currentChar, ...remainingChars], stack = []) => {
 
-  for (let c of expression) {
-    if (c === '[' || c === '{' || c === '(') {
-      brackets.push(c);
-    } else if (c === ']' 
-          && brackets[brackets.length - 1] === '[') {
-      brackets.pop();
-
-    } else if (c === '}' 
-          && brackets[brackets.length - 1] === '{') {
-      brackets.pop();
-    } else if (c === ')' 
-          && brackets[brackets.length - 1] === '(') {
-      brackets.pop();
-    } else if (c === ']' || c === '}' || c === ')') {
-      brackets.push(c);
+    if (!currentChar) {
+        return stack.length === 0;
     }
 
-  } 
-  
+    if (['(', '[', '{'].includes(currentChar)) {
+        return isPaired(remainingChars, [currentChar, ...stack]);
+    }
 
-  return brackets.length === 0;
+    if ([')', ']', '}'].includes(currentChar)) {
+        let [head, ...tail] = stack;
+        if ((currentChar === ')' && head === '(')
+            || (currentChar === ']' && head === '[')
+            || (currentChar === '}' && head === '{')) {
+            return isPaired(remainingChars, tail);
+        }
+
+        return false;
+    }
+
+    return isPaired(remainingChars, stack);
 };

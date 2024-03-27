@@ -1,26 +1,17 @@
-export const flatten = (inputArray) => {
-  return flat(inputArray);
-};
-
-const flat = (input) => {
-
-  let arr = [];
-
-  if (!Array.isArray(input)) {
-    if (input || input === 0) {
-      arr.push(input);
+export const flatten = (inputArray, acc = []) => {
+    if (inputArray.length === 0) {
+        return acc;
     }
-    return arr;
-  }
-  
-  if (input.length === 0) {
-    return arr;
-  }
 
-  input.forEach(item => {
-    let a0 = flat(item);
-    arr = [...arr, ...a0];
-  });
+    let [head, ...tail] = inputArray;
 
-  return arr;
-}
+    if(head == null) {
+        return flatten(tail, acc);
+    }
+
+    if(Array.isArray(head)) {
+        return flatten([...head, ...tail], acc);
+    }
+
+    return flatten(tail, [...acc, head]);
+};

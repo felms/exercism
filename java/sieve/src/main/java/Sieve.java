@@ -1,32 +1,31 @@
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class Sieve {
-    private boolean[] isPrime;
+
+    private boolean[] sieve;
 
     Sieve(int maxPrime) {
-        isPrime = new boolean[maxPrime + 1];
-        isPrime[0] = false;
-        isPrime[1] = false;
-        for (int i = 2; i < maxPrime + 1; i++) {
-            isPrime[i] = true;
-        }
+        this.sieve = new boolean[maxPrime + 1];
+        Arrays.fill(this.sieve, true);
 
-        for (int i = 2; i < maxPrime + 1; i++) {
-            if (isPrime[i]) {
-                for (int j = 2; i * j < maxPrime + 1; j++) {
-                    isPrime[j * i] = false;
+        this.sieve[0] = false;
+        this.sieve[1] = false;
+
+        for (int i = 2; i <= maxPrime; i++) {
+            if (this.sieve[i]) {
+                for (int j = i + i; j <= maxPrime; j += i) {
+                    this.sieve[j] = false;
                 }
             }
         }
     }
 
     List<Integer> getPrimes() {
-        return IntStream.range(2, isPrime.length)
-                        .filter(candidate -> isPrime[candidate])
-                        .boxed()
-                        .collect(Collectors.toList());
+        return IntStream.range(2, this.sieve.length)
+                    .filter(index -> this.sieve[index])
+                    .boxed()
+                    .toList();
     }
 }

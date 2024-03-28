@@ -10,13 +10,7 @@
  * @returns {Visitor} the visitor that was created
  */
 export function createVisitor(name, age, ticketId) {
-  let visitor = {
-    name: name,
-    age: age,
-    ticketId: ticketId
-  };
-
-  return visitor;
+    return { name, age, ticketId };
 }
 
 /**
@@ -26,8 +20,8 @@ export function createVisitor(name, age, ticketId) {
  * @returns {Visitor} the visitor without a ticket
  */
 export function revokeTicket(visitor) {
-  visitor.ticketId = null;
-  return visitor;
+    visitor.ticketId = null;
+    return visitor;
 }
 
 /**
@@ -38,18 +32,10 @@ export function revokeTicket(visitor) {
  * @returns {string} ticket status
  */
 export function ticketStatus(tickets, ticketId) {
-  if (!tickets.hasOwnProperty(ticketId)) {
-    return "unknown ticket id";
-  }
-
-  if (tickets[ticketId] === undefined || tickets[ticketId] === null) {
-    return "not sold";
-  }
-
-  if (tickets[ticketId] !== undefined) {
-    return "sold to " + tickets[ticketId];
-  }  
-
+    let status = tickets[ticketId];
+    return status === undefined ? 'unknown ticket id' 
+        : status === null ? 'not sold' 
+        : `sold to ${status}`;
 }
 
 /**
@@ -61,14 +47,7 @@ export function ticketStatus(tickets, ticketId) {
  * @returns {string} ticket status
  */
 export function simpleTicketStatus(tickets, ticketId) {
-  if (!tickets.hasOwnProperty(ticketId) 
-        || tickets[ticketId] === undefined || tickets[ticketId] === null) {
-    return "invalid ticket !!!";
-  }
-
-  if (tickets[ticketId] !== undefined) {
-    return tickets[ticketId];
-  } 
+    return tickets[ticketId] ?? 'invalid ticket !!!';
 }
 
 /**
@@ -78,7 +57,5 @@ export function simpleTicketStatus(tickets, ticketId) {
  * @returns {string | undefined} version
  */
 export function gtcVersion(visitor) {
-  if (visitor.gtc !== undefined) {
-    return visitor.gtc.version;
-  }
+    return visitor?.gtc?.version;
 }

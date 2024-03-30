@@ -58,6 +58,7 @@ c/*/test*
 # Elm
 elm/*/tests/*
 elm/*/*.json
+elm/*/elm-stuff/*
 
 # Gleam
 build/

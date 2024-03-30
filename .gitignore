@@ -53,9 +53,11 @@ mix.exs
 .ccls*
 c/*/test*
 */makefile
-
-
 .fake
+
+# Elm
+elm/*/tests/*
+elm/*/*.json
 
 # Gleam
 build/

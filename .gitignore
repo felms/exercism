@@ -74,6 +74,10 @@ groovy/*/src/test/*
 haskell/*/test/*
 haskell/*/*.yaml
 
+# Nim
+nim/*/test*
+
+
 # Python
 python/*/*test.py
 

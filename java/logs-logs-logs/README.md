@@ -124,7 +124,7 @@ Define a `LogLevel` enum that has six elements corresponding to the above log le
 - `ERROR`
 - `FATAL`
 
-Next, implement the `LogLine.getLogLevel()` method that returns the parsed the log level of a log line:
+Next, implement the `LogLine.getLogLevel()` method that returns the parsed log level of a log line:
 
 ```java
 var logLine = new LogLine("[INF]: File deleted");
@@ -163,7 +163,7 @@ Implement the `LogLine.getOutputForShortLog()` method that can output the shorte
 ```java
 var logLine = new LogLine("[ERR]: Stack Overflow");
 logLine.getOutputForShortLog();
-// => "6:Stack overflow"
+// => "6:Stack Overflow"
 ```
 
 ## Source

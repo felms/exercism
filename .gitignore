@@ -49,6 +49,10 @@ elixir/*/_build/*
 *.formatter.exs
 mix.exs
 
+# Bash
+bash/*/*-extra.bash
+bash/*/*.bats
+
 # C 
 .ccls*
 c/*/test*

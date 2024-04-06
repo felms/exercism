@@ -1,18 +1,28 @@
 public class LogLine {
 
-    private final LogLevel logLvl;
-    private final String message;
+    private LogLevel log;
+    private String msg;
+
     public LogLine(String logLine) {
-        String[] info = logLine.split(": ");
-        this.logLvl = LogLevel.getLevel(info[0].replaceAll("[\\[\\]]", ""));
-        this.message = info[1];
+        String str = logLine.replaceAll("\\[|\\].*", "");
+        this.log = switch(str) {
+            case "TRC" -> LogLevel.TRACE;
+            case "DBG" -> LogLevel.DEBUG;
+            case "INF" -> LogLevel.INFO;
+            case "WRN" -> LogLevel.WARNING;
+            case "ERR" -> LogLevel.ERROR;
+            case "FTL" -> LogLevel.FATAL;
+            default -> LogLevel.UNKNOWN;
+        };
+
+        this.msg = logLine.replaceAll(".*:\\s+", "");
     }
 
     public LogLevel getLogLevel() {
-        return this.logLvl;
+        return this.log;
     }
 
     public String getOutputForShortLog() {
-        return String.format("%d:%s", this.logLvl.getShortFormat(), this.message);
+        return String.format("%d:%s", this.log.getShortFormat(), this.msg);
     }
 }

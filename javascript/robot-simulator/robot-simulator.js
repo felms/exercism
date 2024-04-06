@@ -5,89 +5,71 @@ export class InvalidInputError extends Error {
     }
 }
 
+const DIRECTIONS = ['north', 'east', 'south', 'west'];
+
 export class Robot {
 
-    constructor() {
-        this.state = {direction: 'north', x: 0, y: 0};
+    constructor(direction = 'north') {
+        this.#validateDirection(direction);
+        this.direction = direction;
+        this.coord = [0, 0];
     }
 
     get bearing() {
-        return this.state.direction;
+        return this.direction;
     }
 
     get coordinates() {
-        return [this.state.x, this.state.y];
+        return this.coord;
     }
 
     place({ x, y, direction }) {
-
-        if (!(direction === 'north' || direction === 'south'
-            || direction === 'east' || direction === 'west')){
-            throw new InvalidInputError();
-        }
-
-        this.state.direction = direction;
-        this.state.x = x;
-        this.state.y = y;
+        this.#validateDirection(direction);
+        this.direction = direction;
+        this.coord = [x, y];
     }
 
     evaluate(instructions) {
-
-        instructions.split('').forEach(item => {
-            switch (item) {
-                case 'R':
-                    this.turnRight();
-                    break;
-                case 'L':
-                    this.turnLeft();
-                    break;
-                case 'A':
-                    this.advance();
-                    break;
-            };
-        });
+        for (let instruction of instructions) {
+            if (['R', 'L'].includes(instruction)) {
+                this.#turn(instruction);
+            } else if (instruction === 'A') {
+                this.#advance();
+            }
+        }
     }
 
-    turnRight() {
-
-        if (this.state.direction === 'north') {
-            this.state.direction = 'east';
-        } else if (this.state.direction === 'east') {
-            this.state.direction = 'south';
-        } else if (this.state.direction === 'south') {
-            this.state.direction = 'west';
-        } else if (this.state.direction === 'west') {
-            this.state.direction = 'north';
+    #validateDirection(direction) {
+        if (!DIRECTIONS.includes(direction)) {
+            throw new InvalidInputError();
         }
-
     }
 
-    turnLeft() {
-
-        if (this.state.direction === 'north') {
-            this.state.direction = 'west';
-        } else if (this.state.direction === 'west') {
-            this.state.direction = 'south';
-        } else if (this.state.direction === 'south') {
-            this.state.direction = 'east';
-        } else if (this.state.direction === 'east') {
-            this.state.direction = 'north';
+    #turn(direction) {
+        if (direction === 'R') {
+            this.direction = DIRECTIONS[(DIRECTIONS.indexOf(this.direction) + 1) % 4];
         }
 
+        if (direction === 'L') {
+            this.direction = DIRECTIONS[(DIRECTIONS.indexOf(this.direction) + 3) % 4];
+        }
     }
 
-    advance() {
-
-        if (this.state.direction === 'north') {
-            this.state.y++;
-        } else if (this.state.direction === 'west') {
-            this.state.x--;
-        } else if (this.state.direction === 'south') {
-            this.state.y--;
-        } else if (this.state.direction === 'east') {
-            this.state.x++;
+    #advance() {
+        let [x, y] = this.coord;
+        switch(this.direction) {
+            case 'north':
+                this.coord = [x, y + 1];
+                break;
+            case 'south':
+                this.coord = [x, y - 1];
+                break;
+            case 'east':
+                this.coord = [x + 1, y];
+                break;
+            case 'west':
+                this.coord = [x - 1, y];
+                break;
         }
-
     }
 }
-

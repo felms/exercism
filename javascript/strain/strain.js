@@ -1,28 +1,11 @@
-export const keep = (input, predicate) => {
-
-    let res = [];
-
-    for (let item of input) {
-
-        if (predicate(item)) {
-            res.push(item);
-        }
+export const keep = ([head, ...tail], predicate, res = []) => {
+    if (!head) {
+        return res;
     }
 
-    return res;
+    return predicate(head) 
+            ? keep(tail, predicate, [...res, head])
+            : keep(tail, predicate, res);
 };
 
-export const discard = (input, predicate) => {
-
-    let res = [];
-
-    for (let item of input) {
-
-        if (!predicate(item)) {
-            res.push(item);
-        }
-    }
-
-    return res;
-
-};
+export const discard = (arr, predicate) => keep(arr, item => !predicate(item)); 

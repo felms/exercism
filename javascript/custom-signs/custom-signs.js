@@ -1,9 +1,5 @@
 // @ts-check
 
-// The line above enables type checking for this file. Various IDEs interpret
-// the @ts-check directive. It will give you helpful autocompletion when
-// implementing this exercise.
-
 /**
  * Build a sign that includes both of the parameters.
  *
@@ -14,7 +10,7 @@
  */
 
 export function buildSign(occasion, name) {
-  return `Happy ${occasion} ${name}!`;
+    return `Happy ${occasion} ${name}!`;
 }
 
 /**
@@ -26,9 +22,7 @@ export function buildSign(occasion, name) {
  */
 
 export function buildBirthdaySign(age) {
-  let adjective = age >= 50 ? "mature" : "young";
-
-  return `Happy Birthday! What a ${adjective} fellow you are.`;
+    return `Happy Birthday! What a ${age < 50 ? 'young' : 'mature'} fellow you are.`;
 }
 
 /**
@@ -41,7 +35,7 @@ export function buildBirthdaySign(age) {
  */
 
 export function graduationFor(name, year) {
-  return `Congratulations ${name}!\nClass of ${year}`;
+    return `Congratulations ${name}!\nClass of ${year}`;
 }
 
 /**
@@ -55,8 +49,8 @@ export function graduationFor(name, year) {
  */
 
 export function costOf(sign, currency) {
-
-  let price = 20.00 + sign.length * 2;
-  
-  return `Your sign costs ${price.toFixed(2)} ${currency}.`;
+    let basePrice = 20;
+    let pricePerLetter = 2;
+    let price = basePrice + (sign.length * pricePerLetter);
+    return `Your sign costs ${price.toFixed(2)} ${currency}.`;
 }

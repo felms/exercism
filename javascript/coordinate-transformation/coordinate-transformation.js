@@ -1,8 +1,4 @@
 // @ts-check
-//
-// The line above enables type checking for this file. Various IDEs interpret
-// the @ts-check directive. It will give you helpful autocompletion when
-// implementing this exercise.
 
 /**
  * Create a function that returns a function making use of a closure to
@@ -15,9 +11,7 @@
  *  translated coordinate pair in the form [x, y]
  */
 export function translate2d(dx, dy) {
-  
-  return (x, y) => [x + dx, y + dy];
-
+    return (x, y) => [x + dx, y + dy];
 }
 
 /**
@@ -31,9 +25,7 @@ export function translate2d(dx, dy) {
  *  scaled coordinate pair in the form [x, y]
  */
 export function scale2d(sx, sy) {
-  
-  return (x, y) => [sx * x, sy * y];
-
+    return (x, y) => [x * sx, y * sy];
 }
 
 /**
@@ -47,11 +39,9 @@ export function scale2d(sx, sy) {
  *  transformed coordinate pair in the form [x, y]
  */
 export function composeTransform(f, g) {
-  
-  return (x, y) => {
-    let [a, b] = f(x, y);
-    return g(a, b);
-  }
+    return (x, y) => {
+        return g(...f(x, y));
+    };
 }
 
 /**
@@ -64,18 +54,17 @@ export function composeTransform(f, g) {
  *  if the arguments are the same on subsequent calls, or compute a new result if they are different.
  */
 export function memoizeTransform(f) {
-  
-  let previousX, previousY;
-  let result;
+    let lastInput = '';
+    let lastResult = null;
+    return (x, y) => {
+        let key = `${x}, ${y}`;
+        if (key === lastInput) {
+            return lastResult;
+        }
 
-  return (x, y) => {    
-    if (previousX != x || previousY != y) {
-      result = f(x, y);
-      previousX = x;
-      previousY = y;
+        let res = f(x, y);
+        lastInput = key;
+        lastResult = res;
+        return res;
     }
-
-    return result
-  }
-
 }

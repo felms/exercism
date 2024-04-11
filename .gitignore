@@ -64,6 +64,10 @@ elm/*/tests/*
 elm/*/*.json
 elm/*/elm-stuff/*
 
+# Fortran
+fortran/*/CMakeLists.txt
+fortran/*/*test.f90
+
 # Gleam
 build/
 gleam/*/test/*test.gleam

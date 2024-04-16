@@ -103,6 +103,10 @@ rust/*/.gitignore
 scala/*/src/test/*
 scala/*/*.sbt
 
+# Scheme
+scheme/*/Makefile
+scheme/*/test*
+
 # Swift
 swift/*/Tests/*
 swift/*/.gitignore

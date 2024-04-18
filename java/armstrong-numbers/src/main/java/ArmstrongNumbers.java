@@ -1,37 +1,18 @@
-import java.util.ArrayList;
-import java.util.List;
-
 class ArmstrongNumbers {
 
     boolean isArmstrongNumber(int numberToCheck) {
+        int numberOfDigits = 1 + (int)Math.log10(numberToCheck);
 
-        int numberOfDigits = String.valueOf(numberToCheck).length();
+        int n = numberToCheck;
+        int sum = 0;
 
-        List<Integer> digits = getDigits(numberToCheck);
-        int sum = digits.stream()
-                        .map(digit -> (int)Math.pow(digit, numberOfDigits))
-                        .mapToInt(Integer::intValue)
-                        .sum();
-
-        return sum == numberToCheck;
-
-    }
-
-    private List<Integer> getDigits(int number) {
-        if (number == 0) {
-            return List.of(0);
-        }
-
-        List<Integer> digits = new ArrayList<>();
-
-        int n = number;
-        while(n > 0) {
-            digits.add(n % 10);
+        while (n > 0) {
+            int digit = n % 10;
+            sum += Math.pow(digit, numberOfDigits);
             n /= 10;
         }
 
-        return digits;
-
+        return sum == numberToCheck;
     }
 
 }

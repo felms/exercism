@@ -1,7 +1,7 @@
 class Node:
     def __init__(self, value, succeeding=None, previous=None):
         self.value = value
-        self.succeding = succeeding
+        self.succeeding = succeeding
         self.previous = previous
 
 
@@ -11,6 +11,8 @@ class LinkedList:
         self.tail = None
         self.size = 0
 
+    def __len__(self):
+        return self.size
 
     def push(self, value):
         new_node = Node(value)
@@ -25,6 +27,10 @@ class LinkedList:
         self.size += 1
 
     def pop(self):
+
+        if self.size == 0:
+            raise IndexError("The list is empty.")
+
         value = self.tail.value
 
         if self.size == 1:
@@ -38,6 +44,10 @@ class LinkedList:
         return value
 
     def shift(self):
+
+        if self.size == 0:
+            raise IndexError("The list is empty.")
+
         value = self.head.value
 
         if self.size == 1:
@@ -62,3 +72,33 @@ class LinkedList:
         self.head = new_node
         self.size += 1
 
+    def delete(self, item):
+
+        if self.size == 0:
+            raise ValueError("Value not found")
+
+        if self.head.value == item:
+            next = self.head.succeeding
+            if next:
+                next.previous = None
+            self.head = next
+            self.size -= 1
+            return
+
+        previous = self.head
+        pointer = self.head.succeeding
+
+        while pointer:
+            if pointer.value == item:
+                previous.succeeding = pointer.succeeding
+                if pointer.succeeding:
+                    pointer.succeeding.previous = previous
+                else:
+                    self.tail = previous
+                self.size -= 1
+                return
+
+            previous = pointer
+            pointer = pointer.succeeding
+
+        raise ValueError("Value not found")

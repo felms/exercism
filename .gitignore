@@ -120,6 +120,14 @@ tcl/*/test*.tcl
 tcl/*/*.test
 tcl/*/.exercism
 
+# TypeScript
+typescript/*/.yarn*
+typescript/*/.eslint*
+typescript/*/*.config.cjs
+typescript/*/*test.ts
+typescript/*/package.json
+typescript/*/tsconfig.json
+
 # Zig
 zig/*/test*.zig
 

@@ -122,11 +122,13 @@ tcl/*/.exercism
 
 # TypeScript
 typescript/*/.yarn*
+typescript/*/yarn*
 typescript/*/.eslint*
 typescript/*/*.config.cjs
 typescript/*/*test.ts
 typescript/*/package.json
 typescript/*/tsconfig.json
+typescript/*/.pnp*
 
 # Zig
 zig/*/test*.zig

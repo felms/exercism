@@ -79,7 +79,7 @@ These are some of the most common functions used alongside regex.
 
 ### Test
 
-The [test()][mdn-regex-test]] method executes a search for a match between a regular expression and a specified string. Returns true or false.
+The [test()][mdn-regex-test] method executes a search for a match between a regular expression and a specified string. Returns true or false.
 
 ```javascript
 const str = 'It is difficult to test if you have a virus';
@@ -103,7 +103,7 @@ const regex1 = /someone/;
 const regex2 = /happy/;
 
 funnyQuote.match(regex1);
-// => ["someone", index: 3, input: "If you see someone crying, ask if it is because of their haircut.", groups: undefined]
+// => ["someone", index: 11, input: "If you see someone crying, ask if it is because of their haircut.", groups: undefined]
 
 funnyQuote.match(regex2);
 // => null
@@ -231,10 +231,10 @@ If the number is valid (matches the character sequence specified by the **regula
 The expected format is: (+##) ###-###-###
 
 ```javascript
-isValidNumber('(+34) 659-771-594');
+checkPhoneNumber('(+34) 659-771-594');
 // => "Thanks! You can now download me to your phone."
-isValidNumber('659-771-594');
-// => "Oops, it seems like I can't reach out to 6s59-771-594"
+checkPhoneNumber('659-771-594');
+// => "Oops, it seems like I can't reach out to 659-771-594"
 ```
 
 ## Get website link
@@ -244,13 +244,13 @@ The Chatbot is a really curious software. Even though he can search on the inter
 Example of Conversation:
 
 - **Chatbot**: Hey username, I would like to learn how to code in JavaScript, do you know any cool website where I could learn?
-- **User**: I learned a lot from [exercism.com](http://website.com)
+- **User**: I learned a lot from [exercism.org](http://exercism.org)
 
 Implement the function `getURL()` which is able to return an array with just the link of each website.
 
 ```javascript
-getURL('I learned a lot from exercism.com');
-// => ["exercism.com"];
+getURL('I learned a lot from exercism.org');
+// => ["exercism.org"];
 ```
 
 ## Greet the user
@@ -259,15 +259,15 @@ For storing data from all the persons who have had a conversation with, the chat
 
 In this way, we want our chatbot to be really polite and make a good impression.
 
-Write the function `NiceToMeetYou()` that takes a string with the full name of the user, and returns the string **“Nice to meet you, John Smith”**
+Write the function `niceToMeetYou()` that takes a string with the full name of the user, and returns the string **“Nice to meet you, John Smith”**
 
 For learning purposes, implement the function using a **replacement method** from Regular Expressions.
 
 ```javascript
-let str = 'smith, john';
+let str = 'Smith, John';
 
-NiceToMeetYou(str);
-// => "Nice to meet you John Smith"
+niceToMeetYou(str);
+// => "Nice to meet you, John Smith"
 ```
 
 ## Source

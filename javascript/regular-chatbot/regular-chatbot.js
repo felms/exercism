@@ -8,17 +8,18 @@
  */
 
 export function isValidCommand(command) {
-  return /^Chatbot/i.test(command);
+    return /^chatbot.*/gi.test(command);
 }
 
 /**
- * Given a certain message, help the chatbot get rid of all the emoji's encryption throught the message.
+ * Given a certain message, help the chatbot get rid of all the emoji's encryption through the message.
  *
  * @param {string} message
  * @returns {string} The message without the emojis encryption
  */
 export function removeEmoji(message) {
-  return message.replace(/emoji\d+\b/gi, "");
+    let regex = new RegExp(/emoji\d+/, 'gi');
+    return message.replace(regex, '');
 }
 
 /**
@@ -28,30 +29,29 @@ export function removeEmoji(message) {
  * @returns {string} the Chatbot response to the phone Validation
  */
 export function checkPhoneNumber(number) {
-  let regex = /\(\+\d{2}\) \d{3}-\d{3}-\d{3}/;
-  
-  return regex.test(number) 
-    ? "Thanks! You can now download me to your phone."
-    : `Oops, it seems like I can't reach out to ${number}`;
+
+    return /\(\+\d{2}\)\s\d{3}-\d{3}-\d{3}/gi.test(number)
+            ? "Thanks! You can now download me to your phone."
+            : `Oops, it seems like I can't reach out to ${number}`;
 }
 
 /**
- * Given a certain response from the user, help the chatbot get only the URL
+ * Given a certain response from the user, help the chatbot get only the URL.
  *
  * @param {string} userInput
  * @returns {string[] | null} all the possible URL's that the user may have answered
  */
 export function getURL(userInput) {
-  return userInput.match(/\b\w*\.\w*\b/g);
+    return userInput.match(/\w+\.\w+/g);
 }
 
 /**
- * Greet the user using its full name data from the profile
+ * Greet the user using the full name data from the profile.
  *
  * @param {string} fullName
  * @returns {string} Greeting from the chatbot
  */
 export function niceToMeetYou(fullName) {
-  let [surname, name] = fullName.split(/, /);
-  return `Nice to meet you, ${name} ${surname}`;
+    let [surname, name] = fullName.split(/, /);
+    return `Nice to meet you, ${name} ${surname}`;
 }

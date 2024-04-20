@@ -95,6 +95,9 @@ python/*/*test.py
 powershell/*/.exercism/
 powershell/*/*.tests.ps1
 
+#R
+r/*/test*.r
+
 # Rust
 rust/*/tests/
 rust/*/.gitignore

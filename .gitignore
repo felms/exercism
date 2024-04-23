@@ -133,6 +133,10 @@ typescript/*/package.json
 typescript/*/tsconfig.json
 typescript/*/.pnp*
 
+# Wasm
+wasm/*/.*rc
+wasm/*/*.js*
+
 # Zig
 zig/*/test*.zig
 

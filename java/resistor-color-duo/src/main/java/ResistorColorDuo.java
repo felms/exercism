@@ -1,14 +1,11 @@
-import java.util.List;
+import java.util.Map;
 
 class ResistorColorDuo {
     int value(String[] colors) {
-        List<String> colorCodes = List.of("black", "brown" ,"red", "orange",
-                                            "yellow", "green", "blue", "violet",
-                                            "grey", "white");
+        Map<String, Integer> bandColors = Map.of(
+                "black", 0, "brown", 1, "red", 2, "orange", 3, "yellow", 4, 
+                "green", 5, "blue", 6, "violet", 7, "grey", 8, "white", 9);
 
-        int a = colorCodes.indexOf(colors[0].toLowerCase());
-        int b = colorCodes.indexOf(colors[1].toLowerCase());
-
-        return Integer.parseInt(String.format("%s%s", a, b));
+        return (bandColors.get(colors[0]) * 10) + bandColors.get(colors[1]);
     }
 }

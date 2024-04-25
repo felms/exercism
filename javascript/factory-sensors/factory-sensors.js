@@ -3,10 +3,10 @@
 export class ArgumentError extends Error {}
 
 export class OverheatingError extends Error {
-  constructor(temperature) {
-    super(`The temperature is ${temperature} ! Overheating !`);
-    this.temperature = temperature;
-  }
+    constructor(temperature) {
+        super(`The temperature is ${temperature} ! Overheating !`);
+        this.temperature = temperature;
+    }
 }
 
 /**
@@ -16,9 +16,9 @@ export class OverheatingError extends Error {
  * @throws {Error}
  */
 export function checkHumidityLevel(humidityPercentage) {
-  if (humidityPercentage > 70) {
-    throw new Error("Humidity over 70%");
-  }
+    if (humidityPercentage > 70) {
+        throw new Error();
+    }
 }
 
 /**
@@ -28,13 +28,13 @@ export function checkHumidityLevel(humidityPercentage) {
  * @throws {ArgumentError|OverheatingError}
  */
 export function reportOverheating(temperature) {
-  if (temperature === null) {
-    throw new ArgumentError("The sensor is broken");
-  }
+    if (temperature == null) {
+        throw new ArgumentError();
+    }
 
-  if (temperature > 500) {
-    throw new OverheatingError(temperature);
-  }
+    if (temperature > 500) {
+        throw new OverheatingError(temperature);
+    }
 }
 
 /**
@@ -48,21 +48,22 @@ export function reportOverheating(temperature) {
  * }} actions
  * @throws {ArgumentError|OverheatingError|Error}
  */
-export function monitorTheMachine(actions) {
-  
-  try {
-    actions.check(); 
-  } catch (error) {
-    if(error instanceof ArgumentError) {
-      actions.alertDeadSensor();
-    } else if (error instanceof OverheatingError) {
-      if (error.temperature < 600) {
-        actions.alertOverheating();
-      } else {
-        actions.shutdown();
-      }
-    } else {
-      throw error;
+export function monitorTheMachine({ check, alertDeadSensor, alertOverheating, shutdown }) {
+
+    try {
+        check();
+    } catch (error) {
+        if (error instanceof ArgumentError) {
+            alertDeadSensor();
+        } else if (error instanceof OverheatingError) {
+            if (error.temperature > 600) {
+                shutdown();
+            } else {
+                alertOverheating();
+            }
+        } else {
+            throw error;
+        }
     }
-  }
+
 }

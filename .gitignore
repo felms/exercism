@@ -60,6 +60,11 @@ c/*/test*
 */makefile
 .fake
 
+# Clojure
+clojure/*/test
+clojure/*/deps.edn
+clojure/*/project.clj
+
 # Elm
 elm/*/tests/*
 elm/*/*.json

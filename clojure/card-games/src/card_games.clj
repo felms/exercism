@@ -37,20 +37,29 @@
   - Take the average of the _first_ and _last_ number in the hand.
   - Using the median (middle card) of the hand."
   [hand]
-  (or
-    (= (card-average hand) (float (/ (+ (first hand) (last hand)) 2)))
-    (= (/ (apply + hand) (count hand)) (nth hand (/ (count hand) 2)))
-    )
+  (let [avg (card-average hand)]
+   (or
+    (= avg (float (/ (+ (first hand) (last hand)) 2)))
+    (= avg (float (nth hand (/ (count hand) 2))))
+    ))
   )
 
 (defn average-even-odd?
   "Returns true if the average of the cards at even indexes 
   is the same as the average of the cards at odd indexes."
   [hand]
+  (=
+   (card-average (keep-indexed #(if (even? %1) %2) hand))
+   (card-average (keep-indexed #(if (odd? %1) %2) hand))
+   )
   )
 
 (defn maybe-double-last
   "If the last card is a Jack (11), doubles its value
   before returning the hand."
   [hand]
+  (if (= (last hand) 11)
+    (concat (drop-last hand) [22])
+    hand
+    )
   )

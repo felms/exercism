@@ -1,8 +1,4 @@
 // @ts-check
-//
-// The line above enables type checking for this file. Various IDEs interpret
-// the @ts-check directive. It will give you helpful autocompletion when
-// implementing this exercise.
 
 /**
  * Removes duplicate tracks from a playlist.
@@ -11,8 +7,7 @@
  * @returns {string[]} new playlist with unique entries
  */
 export function removeDuplicates(playlist) {
-  let set =  new Set(playlist);
-  return [...set];
+    return [...new Set(playlist)];
 }
 
 /**
@@ -23,8 +18,7 @@ export function removeDuplicates(playlist) {
  * @returns {boolean} whether the track is in the playlist
  */
 export function hasTrack(playlist, track) {
-  let set =  new Set(playlist);
-  return set.has(track);
+    return new Set(playlist).has(track);
 }
 
 /**
@@ -35,10 +29,7 @@ export function hasTrack(playlist, track) {
  * @returns {string[]} new playlist
  */
 export function addTrack(playlist, track) {
-  let set =  new Set(playlist);
-  set.add(track);
-
-  return [...set];
+    return [...new Set(playlist).add(track)];
 }
 
 /**
@@ -49,10 +40,7 @@ export function addTrack(playlist, track) {
  * @returns {string[]} new playlist
  */
 export function deleteTrack(playlist, track) {
-  let set =  new Set(playlist);
-  set.delete(track);
-
-  return [...set];
+    return playlist.filter(t => t !== track);
 }
 
 /**
@@ -62,6 +50,5 @@ export function deleteTrack(playlist, track) {
  * @returns {string[]} list of artists
  */
 export function listArtists(playlist) {
-  let artists = playlist.map(item => item.split(" - ")[1]);
-  return [...new Set(artists)];
+    return [...new Set(playlist.map(track => track.replace(/.* - /g, '')))];
 }

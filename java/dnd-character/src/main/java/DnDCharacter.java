@@ -1,48 +1,38 @@
-import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 class DnDCharacter {
-    
-    private Random random;
+
     private int strength;
     private int dexterity;
     private int constitution;
     private int intelligence;
-    private int wisdom ;
+    private int wisdom;
     private int charisma;
-    private int hitPoints;
+    private int hitpoints;
 
     public DnDCharacter() {
-        this.random = new Random();
-        this.strength = ability();
-        this.dexterity = ability();
-        this.constitution = ability();
-        this.intelligence = ability();
-        this.wisdom = ability();
-        this.charisma = ability();
-        this.hitPoints = 10 + modifier(this.constitution);
+        this.strength = ability(rollDice());
+        this.dexterity = ability(rollDice());
+        this.constitution = ability(rollDice());
+        this.intelligence = ability(rollDice());
+        this.wisdom = ability(rollDice());
+        this.charisma = ability(rollDice());
+
+        this.hitpoints = 10 + modifier(this.constitution);
     }
 
-    int ability() {
-        int d1 = this.random.nextInt(6) + 1;
-        int d2 = this.random.nextInt(6) + 1;
-        int d3 = this.random.nextInt(6) + 1;
-        int d4 = this.random.nextInt(6) + 1;
+    int ability(List<Integer> scores) {
+        return scores.stream().sorted((a, b) -> b - a)
+                        .mapToInt(Integer::intValue).limit(3).sum();
+    }
 
-        int[] arr = {d1, d2, d3, d4};
-        Arrays.sort(arr);
-        int sum = 0;
-
-        for (int i = 3; i > 0; i--) {
-            sum += arr[i];
-        }
-
-        return sum;
+    List<Integer> rollDice() {
+        return new Random().ints(4, 1, 7).boxed().toList();
     }
 
     int modifier(int input) {
-        double m = input - 10;
-        return (int)Math.floor(m / 2.0);
+        return (int)Math.floor((input - 10.0) / 2.0);
     }
 
     int getStrength() {
@@ -70,6 +60,6 @@ class DnDCharacter {
     }
 
     int getHitpoints() {
-        return this.hitPoints;
+        return this.hitpoints;
     }
 }

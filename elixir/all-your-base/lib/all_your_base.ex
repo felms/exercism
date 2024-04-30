@@ -5,12 +5,11 @@ defmodule AllYourBase do
   """
 
   @spec convert(list, integer, integer) :: {:ok, list} | {:error, String.t()}
+  def convert(_digits, input_base, _output_base) when input_base < 2,
+    do: {:error, "input base must be >= 2"}
 
   def convert(_digits, _input_base, output_base) when output_base < 2,
     do: {:error, "output base must be >= 2"}
-
-  def convert(_digits, input_base, _output_base) when input_base < 2,
-    do: {:error, "input base must be >= 2"}
 
   def convert([], _input_base, _output_base), do: {:ok, [0]}
 

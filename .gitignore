@@ -70,6 +70,11 @@ elm/*/tests/*
 elm/*/*.json
 elm/*/elm-stuff/*
 
+# Erlang
+erlang/*/test/*
+erlang/*/src/*.app.src
+erlang/*/*.config
+
 # Fortran
 fortran/*/CMakeLists.txt
 fortran/*/*test.f90

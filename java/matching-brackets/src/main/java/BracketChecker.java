@@ -1,34 +1,36 @@
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class BracketChecker {
+class BracketChecker {
 
-    private final char[] brackets;
+    private String expression;
 
-    public BracketChecker(String brackets) {
-        this.brackets = brackets.toCharArray();
+    BracketChecker(String expression) {
+        this.expression = expression;
     }
 
-    public boolean areBracketsMatchedAndNestedCorrectly() {
+    boolean areBracketsMatchedAndNestedCorrectly() {
 
         Deque<Character> stack = new LinkedList<>();
 
-        for (char c : this.brackets) {
-            if (c == '[' || c == '{' || c == '(') {
-                stack.push(c);
-            } else if (c == ']' || c == '}' || c == ')') {
+        for(char currentChar : this.expression.toCharArray()) {
 
-                if(stack.isEmpty()) {
+            if (currentChar == '(' || currentChar == '[' || currentChar == '{') {
+                stack.push(currentChar);
+            } else if (currentChar == ')' || currentChar == ']' || currentChar == '}') {
+
+                if (stack.isEmpty()) {
                     return false;
                 }
 
                 char topOfStack = stack.pop();
-                if ((c == ']' && topOfStack != '[')
-                        || (c == '}' && topOfStack != '{')
-                        || (c == ')' && topOfStack != '(')) {
+                if ((currentChar == ')' && topOfStack != '(') || 
+                        (currentChar == ']' && topOfStack != '[') || 
+                        (currentChar == '}' && topOfStack != '{')) {
                     return false;
                 }
             }
+
         }
 
         return stack.isEmpty();

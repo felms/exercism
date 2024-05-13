@@ -1,6 +1,6 @@
 export class Element {
-    constructor(value) {
-        this._value = value;
+    constructor(element) {
+        this._value = element;
         this._next = null;
     }
 
@@ -11,25 +11,25 @@ export class Element {
     get next() {
         return this._next;
     }
+
+    set next(element) {
+        this._next = element;
+    }
 }
 
 export class List {
-    constructor(args) {
+    constructor(items = []) {
         this._head = null;
         this._length = 0;
 
-        if (args) {
-            args.forEach(item => this.add(new Element(item))); 
+        for (let item of items) {
+            this.add(new Element(item));
         }
     }
 
-    add(newElement) {
-        if (this._length === 0) {
-            this._head = newElement;
-        } else {
-            newElement._next = this._head;
-            this._head = newElement;
-        }
+    add(nextValue) {
+        nextValue.next = this._head;
+        this._head = nextValue;
         this._length++;
     }
 
@@ -43,17 +43,23 @@ export class List {
 
     toArray() {
         let arr = [];
+        let head = this._head;
 
-        let currentElement = this._head;
-        while (currentElement !== null) {
-            arr.push(currentElement.value);
-            currentElement = currentElement.next;
+        while (head !== null) {
+            arr.push(head.value);
+            head = head.next;
         }
-
         return arr;
     }
 
     reverse() {
-        return new List(this.toArray());
+        let r = new List();
+        let head = this._head;
+
+        while (head !== null) {
+            r.add(new Element(head.value));
+            head = head.next;
+        }
+        return r;
     }
 }

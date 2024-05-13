@@ -1,89 +1,72 @@
 export class List {
-    constructor(items = []) {
-        this._items = items;
-    }
+  constructor(items = []) {
+      this._data = items;
+  }
 
-    append(otherList) {
-        let arr = [...this._items];
+  get values() {
+      return [...this._data];
+  }
 
-        for (let item of otherList.values) {
-            arr.push(item);
-        }
-        return new List(arr);
-    }
+  append(otherList) {
+      return new List([...this._data, ...otherList.values]);
+  }
 
-    get values() {
-        return this._items;
-    }
+  concat(lists) {
+      let r = this.values;
+      for (let l of lists.values) {
+          r.push(...l.values);
+      }
 
-    concat(otherList) {
-        let arr = [...this._items];
-        let newArr = [];
+      return new List(r);
+  }
 
-        for (let item of otherList.values) {
-            arr.push(...item.values);
-        }
-        return new List(arr);
-    }
+  filter(predicate) {
+      let r = [];
+      for (let item of this.values) {
+          if (predicate(item)) {
+              r.push(item);
+          }
+      }
 
-    filter(predicate) {
-        let arr = [];
+      return new List(r);
+  }
 
-        for (let item of this.values) {
-            if (predicate(item)) {
-                arr.push(item);
-            }
-        }
-        return new List(arr);
-    }
+  map(transform) {
+      let r = [];
+      for (let item of this.values) {
+          r.push(transform(item))
+      }
 
-    map(callbackFunction) {
-        let arr = [];
+      return new List(r);
+  }
 
-        for (let item of this.values) {
-            let mappedItem = callbackFunction(item);
-            arr.push(mappedItem);
-        }
-        return new List(arr);
+  length() {
+      return this._data.length;
+  }
 
-    }
+  foldl(reducer, initialValue) {
+      let acc = initialValue;
+      for (let item of this.values) {
+          acc = reducer(acc, item);
+      }
+      return acc;
+  }
 
-    length() {
-        return this._items.length;
-    }
+  foldr(reducer, initialValue) {
+      let acc = initialValue;
+      let items = this.values;
+      while (items.length > 0) {
+          acc = reducer(acc, items.pop());
+      }
+      return acc;
+  }
 
-    foldl(callbackFunction, acc) {
-        let arr = [...this._items];
-        let res = acc;
-
-        for (let item of arr) {
-            res = callbackFunction(res, item);
-        }
-
-        return res;
-    }
-
-    foldr(callbackFunction, acc) {
-        let arr = [...this._items];
-        let res = acc;
-
-        while (arr.length > 0) {
-            let item = arr.pop();
-            res = callbackFunction(res, item);
-        }
-
-        return res;
-    }
-
-    reverse() {
-        let arr = [...this._items];
-        let newArr = [];
-
-        while(arr.length > 0) {
-            newArr.push(arr.pop());
-        }
-
-        return new List(newArr);
-    }
-
+  reverse() { 
+      let r = [];
+      let items = this.values;
+      while (items.length > 0) {
+          r.push(items.pop());
+      }
+      return new List(r);
+  }
 }

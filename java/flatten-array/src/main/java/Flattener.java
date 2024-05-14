@@ -1,27 +1,31 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Flattener {
+class Flattener {
 
+    <T> List<T> flatten(List<T> list) {
 
-    public List<Object> flatten(List<Object> inputList) {
-        List<Object> list = new ArrayList<>();
-        Object o = inputList.get(0);
-        if (!(o instanceof List)) {
-            if (o != null) {                
-                list.add(o);
-            }
-            if (inputList.size() > 1) {                
-                list.addAll(flatten(inputList.subList(1, inputList.size())));
-            }
+        List<T> res;
+
+        if (list.isEmpty()) {
+            res = new ArrayList<>();
+            return res;
+        }
+
+        T item = list.get(0);
+
+        if (item instanceof List) {
+            res = flatten((List)item);
         } else {
-            List<Object> l0 = (List<Object>) o;
-            list.addAll(flatten(l0));
-            if (inputList.size() > 1) {                
-                list.addAll(flatten(inputList.subList(1, inputList.size())));
+            res = new ArrayList<>();
+            if (item != null) {
+                res.add(item);
             }
         }
 
-        return list;
+        res.addAll(flatten(list.subList(1, list.size())));
+        return res;
+
     }
+
 }

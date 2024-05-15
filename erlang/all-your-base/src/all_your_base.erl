@@ -1,28 +1,22 @@
 -module(all_your_base).
-
 -export([rebase/3]).
 
 
-rebase([], _InputBase, _OutputBase) -> {ok, [0]};
-
+rebase(_, InputBase, _) when InputBase < 2 -> {error, "input base must be >= 2"};
+rebase(_, _, OutputBase) when OutputBase < 2 -> {error, "output base must be >= 2"};
+rebase([], _, _) -> {ok, [0]};
 rebase(Digits, InputBase, OutputBase) -> 
-    base10 = convert_to_base_10(Digits, InputBase),
-    res = convert_from_base_10(base10, OutputBase, []),
-    {ok, res}.
+    to_base10(lists:reverse(Digits), InputBase, OutputBase, 0, 0).
 
-convert_to_base_10(Digits, InputBase) -> 
-    rev = lists:reverse(Digits),
-    with_index = lists:enumerate(0, 1, rev),
+to_base10([], InputBase, OutputBase, _, Acc) -> from_base10(Acc, OutputBase, []);
+to_base10([Digit | _], InputBase, _, _, Acc) when Digit < 0 -> 
+    {error, "all digits must satisfy 0 <= d < input base"};
+to_base10([Digit | _], InputBase, _, _, Acc) when Digit >= InputBase -> 
+    {error, "all digits must satisfy 0 <= d < input base"};
+to_base10([Digit | RemDigits], InputBase, OutputBase, Index, Acc) -> 
+    to_base10(RemDigits, InputBase, OutputBase, Index + 1, Acc + trunc(Digit * math:pow(InputBase, Index))).
 
-    res = lists:foldl(fun({index, digit}, acc) -> digit * trunc(math:pow(InputBase, index)) + acc end, 0, with_index),
-
-    res.
-
-convert_from_base_10(0, _OutputBase, []) -> [0];
-convert_from_base_10(0, _OutputBase, res) -> res;
-convert_from_base_10(Number, OutputBase, res) -> 
-    convert_from_base_10((Number div OutputBase), OutputBase, [(Number rem OutputBase) | res]).
-
-
-        
-
+from_base10(0, _, []) -> {ok, [0]};
+from_base10(0, _, OutputDigits) -> {ok, OutputDigits};
+from_base10(InputValue, OutputBase, OutputDigits) -> 
+    from_base10(InputValue div OutputBase, OutputBase, [(InputValue rem OutputBase) | OutputDigits]).

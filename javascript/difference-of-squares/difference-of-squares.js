@@ -1,26 +1,15 @@
 export class Squares {
-    constructor(n) {
-        this.n = n;
+    constructor(number) {
+        this.number = number;
     }
 
     get sumOfSquares() {
-        let sum = 0;
-
-        for (let i = 1; i <= this.n; i++) {
-            sum += i * i;        
-        } 
-
-        return sum;
+        return (this.number * (this.number + 1) * (2 * this.number + 1)) / 6;
     }
 
     get squareOfSum() {
-        let sum = 0;
-
-        for (let i = 1; i <= this.n; i++) {
-            sum += i;        
-        } 
-
-        return sum * sum;
+        let sumOfNumbers = (this.number * (this.number + 1)) / 2;
+        return sumOfNumbers * sumOfNumbers;
     }
 
     get difference() {

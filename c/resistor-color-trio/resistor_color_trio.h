@@ -20,7 +20,9 @@ typedef enum resistor_band_t {
 
 typedef enum resistor_value_unit_t {
     OHMS,
-    KILOOHMS
+    KILOOHMS, 
+    MEGAOHMS,
+    GIGAOHMS
 } resistor_value_unit_t;
 
 typedef struct resistor_value_t {

@@ -91,6 +91,7 @@ go/*/*test.go
 groovy/*/src/test/*
 
 # Haskell
+haskell/*/dist-newstyle/*
 haskell/*/test/*
 haskell/*/*.yaml
 haskell/*/*.cabal

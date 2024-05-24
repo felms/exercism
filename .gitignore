@@ -93,6 +93,9 @@ groovy/*/src/test/*
 # Haskell
 haskell/*/test/*
 haskell/*/*.yaml
+haskell/*/*.cabal
+haskell/*/*.lock
+haskell/*/.stack*
 
 # Nim
 nim/*/test*

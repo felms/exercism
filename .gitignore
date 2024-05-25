@@ -101,6 +101,9 @@ haskell/*/.stack*
 # Nim
 nim/*/test*
 
+# Perl
+perl5/*/cpanfile
+perl5/*/t/*
 
 # Python
 python/*/*test.py

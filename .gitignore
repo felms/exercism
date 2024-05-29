@@ -98,6 +98,10 @@ haskell/*/*.cabal
 haskell/*/*.lock
 haskell/*/.stack*
 
+# Lua
+lua/*/.busted*
+lua/*/*_spec.lua
+
 # Nim
 nim/*/test*
 

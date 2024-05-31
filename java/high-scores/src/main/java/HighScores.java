@@ -1,31 +1,28 @@
+import java.util.Comparator;
 import java.util.List;
 
 class HighScores {
 
-    private final List<Integer> scoresList;
+    private final List<Integer> scores;
+
     public HighScores(List<Integer> highScores) {
-        this.scoresList = highScores;
+        this.scores = highScores;
     }
 
     List<Integer> scores() {
-        return this.scoresList;
+        return this.scores;
     }
 
     Integer latest() {
-        return this.scoresList.get(this.scoresList.size() - 1);
+        return this.scores.getLast();
     }
 
     Integer personalBest() {
-        return this.scoresList.stream()
-                .max(Integer::compareTo)
-                .orElse(0);
+        return this.scores.stream().max(Integer::compareTo).orElseThrow();
     }
 
     List<Integer> personalTopThree() {
-        return this.scoresList.stream()
-                .sorted((a, b) -> b - a)
-                .limit(3)
-                .toList();
+        return this.scores.stream().sorted(Comparator.reverseOrder()).limit(3).toList();
     }
 
 }

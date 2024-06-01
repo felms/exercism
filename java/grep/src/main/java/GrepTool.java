@@ -2,69 +2,65 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
-public class GrepTool {
+class GrepTool {
 
-    public String grep(String pattern, List<String> flags, List<String> files) {
-        StringBuilder sb = new StringBuilder();
+    String grep(String pattern, List<String> flags, List<String> files) {
+        boolean searchMultipleFiles = files.size() > 1;
+        return files.stream().map(file -> searchFile(pattern, flags, file, searchMultipleFiles))
+                .collect(Collectors.joining())
+                .trim();
+    }
 
-        for (String fileName : files) {
-            try {
-                Scanner scanner = new Scanner(new File(fileName));
-                int lineNumber = 1;
-                while(scanner.hasNext()) {
-                    String line = scanner.nextLine();
-                    String searchedString = line;
-                    String match = "";
+    private String searchFile(String pattern, List<String> flags, String file, boolean searchMulipleFiles) {
+        StringBuilder res = new StringBuilder();
+        try (Scanner scanner = new Scanner(new File(file))){
+            int index = 1;
+            while (scanner.hasNext()) {
+                String line = scanner.nextLine();
+                boolean matchedLine = isMatchedLine(pattern, flags, line);
 
-                    if (flags.contains("-i")) {
-                        searchedString = searchedString.toLowerCase();
-                        pattern = pattern.toLowerCase();
-                    }
-
-                    if (flags.contains("-v")) {
-                        if (flags.contains("-x") && !searchedString.equals(pattern)) {
-                            match = line + "\n";
-                        } else if (!searchedString.contains(pattern)) {
-                            match = line + "\n";
-                        }
-                    } else {
-                        if (flags.contains("-x") && searchedString.equals(pattern)) {
-                            if (flags.contains("-l")) {
-                                match = fileName + "\n";
-                            } else if (flags.contains("-n")) {
-                                match = String.format("%d:%s\n", lineNumber, line);
-                            } else {
-                                match = line + "\n";
-                            }
-                        } else if (!flags.contains("-x") && searchedString.contains(pattern)) {
-                            if (flags.contains("-l")) {
-                                match = fileName + "\n";
-                            } else if (flags.contains("-n")) {
-                                match = String.format("%d:%s\n", lineNumber, line);
-                            } else  {
-                                match = line + "\n";
-                            }
-                        }
-                    }
-
-                    String prefix = match.length() > 0 && files.size() > 1 && !flags.contains("-l")
-                            ? fileName + ":" : "";
-                    String m = prefix + match;
-
-                    if (!sb.toString().contains(m)) {
-                        sb.append(m);
-                    }
-                    lineNumber++;
+                if (matchedLine && flags.contains("-l")) {
+                    return file + "\n";
                 }
-
-                scanner.close();
-
-            } catch (FileNotFoundException fnfe) {
-                fnfe.printStackTrace();
+                if (matchedLine) {
+                    if (searchMulipleFiles) {
+                        res.append(file).append(":");
+                    }
+                    if (flags.contains("-n")){
+                        res.append(index).append(":").append(line).append("\n");
+                    }
+                    else {
+                        res.append(line).append("\n");
+                    }
+                }
+                index++;
             }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
-        return sb.toString().trim();
+        return res.toString();
     }
+
+    private boolean isMatchedLine(String pattern, List<String> flags, String line) {
+        boolean matchedLine = false;
+        String searchPattern = flags.contains("-x")
+                ? "^" + pattern + "$"
+                : ".*" + pattern + ".*";
+
+        if (flags.contains("-i")) {
+            String str = line.toLowerCase();
+            String sp = searchPattern.toLowerCase();
+            matchedLine =  str.matches(sp);
+        }
+
+        if ((line.matches(searchPattern) && !flags.contains("-v"))
+                || (!line.matches(searchPattern) && flags.contains("-v"))) {
+            matchedLine = true;
+        }
+        return matchedLine;
+    }
+
 }

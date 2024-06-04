@@ -64,6 +64,9 @@ c/*/test*
 clojure/*/test
 clojure/*/deps.edn
 clojure/*/project.clj
+clojure/*/target
+clojure/*/.cpcache
+clojure/*/.lein*
 
 # Elm
 elm/*/tests/*

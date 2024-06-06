@@ -8,80 +8,94 @@ class ListOps {
 
     static <T> List<T> append(List<T> list1, List<T> list2) {
 
-        List<T> newList = new ArrayList<>();
-        newList.addAll(list1);
-        newList.addAll(list2);
-        return newList;
+        List<T> l1 = new ArrayList<>(list1);
+        l1.addAll(list2);
+        
+        return l1;
+        
     }
 
     static <T> List<T> concat(List<List<T>> listOfLists) {
 
-        List<T> newList = new ArrayList<>();
+        List<T> res = new ArrayList<>();
 
-        for (List<T> list : listOfLists) {
-            newList.addAll(list);
+        for (List<T> l : listOfLists) {
+            res.addAll(l);
         }
 
-        return newList;
+        return res;
     }
 
     static <T> List<T> filter(List<T> list, Predicate<T> predicate) {
-        List<T> newList = new ArrayList<>();
+
+        List<T> res = new ArrayList<>();
 
         for (T item : list) {
             if (predicate.test(item)) {
-                newList.add(item);
+                res.add(item);
             }
         }
 
-        return newList;
+        return res;
     }
 
     static <T> int size(List<T> list) {
-        return list.size();
+
+        int s = 0;
+
+        for (T item : list) {
+            s++;
+        }
+
+        return s;
     }
 
     static <T, U> List<U> map(List<T> list, Function<T, U> transform) {
-        List<U> newList = new ArrayList<>();
+
+        List<U> res = new ArrayList<>();
 
         for (T item : list) {
-            newList.add(transform.apply(item));
+            res.add(transform.apply(item));
         }
 
-        return newList;
+        return res;
     }
 
     static <T> List<T> reverse(List<T> list) {
-        List<T> newList = new ArrayList<>();
 
-        for (int i = list.size() - 1; i >= 0; i--) {
-            newList.add(list.get(i));
+        List<T> res = new ArrayList<>();
+        int s = size(list);
+
+        for (int i = s - 1; i >= 0; i--) {
+            res.add(list.get(i));
         }
 
-        return newList;
+        return res;
     }
 
     static <T, U> U foldLeft(List<T> list, U initial, BiFunction<U, T, U> f) {
-        U result = initial;
+        U acc = initial;
 
         for (T item : list) {
-            result = f.apply(result, item);
+            acc = f.apply(acc, item);
         }
 
-        return result;
+        return acc;
     }
 
     static <T, U> U foldRight(List<T> list, U initial, BiFunction<T, U, U> f) {
-        U result = initial;
 
-        for (int i = list.size() - 1; i >= 0; i--) {
-            result = f.apply(list.get(i), result);
+        U acc = initial;
+
+        for (T item : reverse(list)) {
+            acc = f.apply(item, acc);
         }
 
-        return result;
+        return acc;
     }
 
     private ListOps() {
         // No instances.
     }
+
 }

@@ -3,18 +3,17 @@ import java.util.stream.Collectors;
 
 class Acronym {
 
-    private final String phrase;
+    private String acronym;
 
     Acronym(String phrase) {
-        this.phrase = phrase;
+
+        this.acronym = Arrays.stream(phrase.replaceAll("-|_", " ").split("\\s+"))
+                .map(word -> word.toUpperCase().substring(0, 1))
+                .collect(Collectors.joining());
     }
 
     String get() {
-        return Arrays.asList(this.phrase.split("(\\s+|-|_)+"))
-                        .stream()
-                        .map(word -> word.toUpperCase().substring(0, 1))
-                        .collect(Collectors.joining());
-
+        return this.acronym;
     }
 
 }

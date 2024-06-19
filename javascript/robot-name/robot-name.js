@@ -1,46 +1,37 @@
-export class Robot {
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const usedNames = new Set();
 
-    static ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static usedNames = [];
+export class Robot {
+    #name;
 
     constructor() {
-       this._name = this.createName();
+        this.#name = this.#generateName();
     }
 
     get name() {
-        return this._name;
-    }
-
-    createName () {
-        let name;
-
-        do{
-            name = this.randomName();
-        }while(Robot.usedNames.indexOf(name) >= 0);
-
-        Robot.usedNames.push(name);
-        return name;
+        return this.#name;
     }
 
     reset() {
-        this._name = this.createName();
+        this.#name = this.#generateName();
     }
 
-    randomName() {
-        let name = "";
-        let pos0 = Math.trunc(Math.random() * 26);
-        let pos1 = Math.trunc(Math.random() * 26);
-        
-        name += Robot.ALPHABET.charAt(pos0);
-        name += Robot.ALPHABET.charAt(pos1);
-        name = name.concat(Math.trunc((Math.random() * 10)).toString());
-        name = name.concat(Math.trunc((Math.random() * 10)).toString());
-        name = name.concat(Math.trunc((Math.random() * 10)).toString());
+    #generateName() {
+        let newName = '';
 
-        return name;
+        do {
+
+            let letters = ALPHABET[Math.floor(Math.random() * 26)] 
+                + ALPHABET[Math.floor(Math.random() * 26)];
+
+            newName = `${letters}${100 + Math.floor(Math.random() * 900)}`;
+        } while (usedNames.has(newName));
+
+        usedNames.add(newName);
+        return newName;
     }
+
 }
 
-Robot.releaseNames = () => {};
 
-
+Robot.releaseNames = () => usedNames.clear();

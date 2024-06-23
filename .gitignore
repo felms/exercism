@@ -50,6 +50,10 @@ elixir/*/_build/*
 *.formatter.exs
 mix.exs
 
+# AWK
+awk/*/*.bash
+awk/*/*.bats
+
 # Bash
 bash/*/*-extra.bash
 bash/*/*.bats

@@ -1,35 +1,17 @@
 export class Matrix {
-  rows = [];
-  columns = [];
-  constructor(matrix) {
-    let lines = matrix.split('\n');
-    
-    
-    for (let i = 0; i < lines.length; i++) {
-      let row = [];
-      let r = lines[i].split(/\s/);
-      for (let j = 0; j < r.length; j++){
-        row.push(parseInt(r[j]));
-      }
-      this.rows.push(row);
-    }
-    
-    
-    for (let j = 0; j < this.rows[0].length; j++){
-      let column = [];
-      for (let i = 0; i < this.rows.length; i++ ) {
-        column.push(this.rows[i][j]);
-      }
-      this.columns.push(column);
-    }
-    
-  }
 
-  get rows() {
-    return this.rows;
-  }
+    constructor(matrixString) {
+        this._rows = matrixString.split('\n')
+                        .map(row => row.split(' ').map(Number));
+        this._columns = this._rows[0]
+                        .map((_, index) => this._rows.map(row => row[index]));
+    }
 
-  get columns() {
-    return this.columns;
-  }
+    get rows() {
+        return this._rows;
+    }
+
+    get columns() {
+        return this._columns;
+    }
 }

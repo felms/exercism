@@ -1,9 +1,4 @@
 export const parse = (phrase) => {
-
-  return phrase.replace(/-|_/g, " ")
-                .split(/\s+/g)
-                .filter(item => item)
-                .map(word => word[0].toUpperCase())
-                .join("");
-  
+    return phrase.toUpperCase().replaceAll(/-|_/g, ' ')
+                    .split(/\s+/).map(word => word[0]).join('');
 };

@@ -1,102 +1,61 @@
 import java.util.Arrays;
+import java.util.List;
 
 class Yacht {
 
-    private final int[] dice;
-    private final YachtCategory yachtCategory;
+    private int[] dice;
+    private YachtCategory yachtCategory;
 
     Yacht(int[] dice, YachtCategory yachtCategory) {
-        this.dice = dice.clone();
+        this.dice = Arrays.copyOf(dice, dice.length);
         this.yachtCategory = yachtCategory;
     }
 
     int score() {
-
-        int[] count = {0, 0, 0, 0, 0, 0, 0};
-
-        for (int d : dice) {
-            count[d]++;
-        }
-
-        int result = 0;
-        switch(this.yachtCategory) {
-            case ONES:
-                result += 1 * count[1];
-                break;
-            case TWOS:
-                result += 2 * count[2];
-                break;
-            case THREES:
-                result += 3 * count[3];
-                break;
-            case FOURS:
-                result += 4 * count[4];
-                break;
-            case FIVES:
-                result += 5 * count[5];
-                break;
-            case SIXES:
-                result += 6 * count[6];
-                break;
-            case FULL_HOUSE:
-                result += calcFullHouse(count);
-                break;
-            case FOUR_OF_A_KIND:
-                result += calcFourOfAKind(count);
-                break;
-            case LITTLE_STRAIGHT:
-                result += (count[1] == 1 && count[2] == 1 && count[3] == 1
-                            && count[4] == 1 && count[5] == 1) ? 30 : 0;
-                break;
-            case BIG_STRAIGHT:
-                result += (count[2] == 1 && count[3] == 1 && count[4] == 1
-                            && count[5] == 1 && count[6] == 1) ? 30 : 0;
-                break;
-            case CHOICE:
-                result += Arrays.stream(this.dice).sum();
-                break;
-            case YACHT:
-                result += Arrays.stream(count).filter(n -> n == 5).count() > 0 ? 50 : 0;
-                break;
-                
-        }
-
-        return result;
+        return switch(yachtCategory) {
+            case YACHT -> scoreYacht();
+            case ONES -> scoreNumberCategory(1);
+            case TWOS -> scoreNumberCategory(2);
+            case THREES -> scoreNumberCategory(3);
+            case FOURS -> scoreNumberCategory(4);
+            case FIVES -> scoreNumberCategory(5);
+            case SIXES -> scoreNumberCategory(6);
+            case FULL_HOUSE -> scoreFullHouse();
+            case FOUR_OF_A_KIND -> scoreFourOfAKind();
+            case LITTLE_STRAIGHT -> scoreStraight(List.of(1, 2, 3, 4, 5));
+            case BIG_STRAIGHT -> scoreStraight(List.of(2, 3, 4, 5, 6));
+            case CHOICE -> Arrays.stream(dice).sum();
+            default -> 0;
+        };
     }
 
-    private int calcFullHouse(int[] dice){
-
-        int result = 0;
-        boolean gotTrio = false;
-        boolean gotPair = false;
-        for (int i = 1; i < dice.length; i++) {
-            if (dice[i] == 3) {
-                result += 3 * i;
-                gotTrio = true;
-            } else if (dice[i] == 2) {
-                result += 2 * i;
-                gotPair = true;
-            }
-        }
-
-        if (gotPair && gotTrio) {
-            return result;
-        }
-
-        return 0;
+    private int scoreYacht() {
+        return Arrays.stream(dice).distinct().count() == 1 ? 50 : 0;
     }
 
-    private int calcFourOfAKind(int[] dice) {
-        
-        int result = 0;
-        for (int i = 1; i < dice.length; i++) {
-            if (dice[i] >= 4) {
-                result = 4 * i;
-                return result;
-            }
-        }
-
-        return 0;
+    private int scoreNumberCategory(int number) {
+        return numberFreq(dice, number) * number;
     }
 
+    private int scoreFullHouse() {
+        return Arrays.stream(dice).anyMatch(number -> numberFreq(dice, number) == 3)
+                && Arrays.stream(dice).anyMatch(number -> numberFreq(dice, number) == 2)
+                ? Arrays.stream(dice).sum() : 0;
+
+    }
+    private int scoreFourOfAKind() {
+        return Arrays.stream(dice)
+                .filter(number -> numberFreq(dice, number) >= 4)
+                .findFirst().orElse(0) * 4;
+    }
+
+    private int scoreStraight(List<Integer> straight) {
+        List<Integer> diceList = Arrays.stream(dice).boxed().toList();
+        return straight.stream()
+               .allMatch(number -> diceList.contains(number)) ? 30 : 0;
+    }
+
+    private int numberFreq(int[] array, int number) {
+        return (int) Arrays.stream(array).filter(n -> n == number).count();
+    }
 }

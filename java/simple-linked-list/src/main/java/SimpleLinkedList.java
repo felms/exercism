@@ -1,110 +1,79 @@
+import java.lang.reflect.Array;
 import java.util.NoSuchElementException;
 
-public class SimpleLinkedList<T> {
+class SimpleLinkedList<T> {
+    private int length;
+    private Node<T> head;
 
-    private int numberOfItems;
-    private Node head;
-
-    public SimpleLinkedList() {
-        this.head = new Node();
-        this.numberOfItems = 0;
+    SimpleLinkedList() {
+        this.length = 0;
+        this.head = null;
     }
 
-    public SimpleLinkedList(T[] items) {
-        this.head = new Node();
-        this.numberOfItems = 0;
+    SimpleLinkedList(T[] values) {
+        this.length = 0;
 
-        for (T item : items) {
-            this.push(item);
+        for (T value : values) {
+            this.push(value);
         }
     }
 
-    // Insere item na lista
-    public void push(T item) {
-        Node node = new Node(item, null);
-        Node n = this.head;
+    void push(T value) {
+        Node<T> node = new Node(value, this.head);
         this.head = node;
-        this.head.next = n;
-        this.numberOfItems++;
-
+        this.length++;
     }
 
-    // Remove item da lista
-    public T pop() {
-        if (this.numberOfItems < 1) {
+    T pop() {
+
+        if (this.length == 0) {
             throw new NoSuchElementException();
         }
 
-        T item = this.head.item;
+        T data = this.head.value;
         this.head = this.head.next;
-        this.numberOfItems--;
-
-        return item;
+        this.length--;
+        return data;
     }
 
-    // Tamanho da lista
-    public int size() {
-        return this.numberOfItems;
-    }
+    void reverse() {
+        Node<T> p = this.head;
+        this.head = null;
 
-    // Retorna a lista como um array
-    @SuppressWarnings("unchecked")
-    public T[] asArray(Class<T> class1) {
-        
-        T[] arr = (T[]) new Object[this.numberOfItems];
-
-        Node n = this.head;
-        for (int i = 0; i < this.numberOfItems; i++) {
-            arr[i] = n.item;
-            n = n.next;
-        }
-
-        return arr;
-    }
-
-    @SuppressWarnings("unchecked")
-    public T[] asArray() {
-        T[] arr = (T[]) new Object[this.numberOfItems];
-
-        Node n = this.head;
-        for (int i = 0; i < this.numberOfItems; i++) {
-            arr[i] = n.item;
-            n = n.next;
-        }
-
-        return arr;
-    }
-
-    
-    // Reverte a ordem dos elementos da lista
-    public void reverse() {
-        T[] items = this.asArray();
-        int num = this.numberOfItems;
-        this.head = new Node();
-        this.numberOfItems = 0;
-
-        for (int i = 0; i < num; i++) {
-            this.push(items[i]);
+        while(p != null) {
+            this.push(p.value);
+            p = p.next;
         }
 
     }
 
-    // Classe Node para armazenar os dados
-    private class Node {
-        
-        T item;
-        Node next;
+    T[] asArray(Class<T> clazz) {
+        T[] array = (T[]) Array.newInstance(clazz, this.length);
+        Node<T> p = this.head;
 
-        public Node() {
-            this(null, null);
+        for (int i = 0; i < this.length; i++) {
+            array[i] = p.value;
+            p = p.next;
         }
 
-        public Node(T item, Node next) {
-            this.item = item;
+        return array;
+    }
+
+    int size() {
+        return this.length;
+    }
+
+    private class Node<T> {
+
+        T value;
+        Node<T> next;
+
+        Node (T value, Node<T> next) {
+            this.value = value;
             this.next = next;
         }
 
     }
-    
 }
+
 

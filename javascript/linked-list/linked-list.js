@@ -1,123 +1,109 @@
-//
-// This is only a SKELETON file for the 'Linked List' exercise. It's been provided as a
-// convenience to get you started writing code faster.
-//
-
 export class LinkedList {
 
-  constructor() {
-    this.head = null;
-    this.tail = null;
-    this.size = 0;
-  }
-
-  // Insert value at back
-  push(value) {
-    let n = new Node(value);
-    if(this.size === 0) {
-      this.head = n;
-      this.tail = n;
-    } else {
-      n.previous = this.tail;
-      this.tail.next = n;
-      this.tail = n;
+    constructor() {
+        this.size = 0;
+        this.head = null;
+        this.tail = null;
     }
 
-    this.size++;
-  }
+    push(data) {
 
-  // Remove value at back
-  pop() {
-    let data = this.tail.data;
-    
-    if (this.size > 1) {
-      this.tail = this.tail.previous;
-      this.tail.next = null;
-    } else {
-      this.tail = null;
-      this.head = null;
+        let node = new Node(data);
+        node.previous = this.tail;
+
+        if (this.size === 0) {
+            this.head = node;
+        } else {
+            this.tail.next = node;
+        }
+
+        this.tail = node;
+        this.size++;
     }
 
-    this.size--;
-    
-    return data;
-  }
+    pop() {
 
-  // Remove value at front
-  shift() {
-    let data = this.head.data;
-    this.head.previous = null;
-    this.head = this.head.next;
-    this.size--;
+        let data = this.tail.value;
+        this.size--;
 
-    return data;
-  }
+        if (this.size === 0) {
+            this.head = null;
+            this.tail = null;
+        } else {
+            this.tail = this.tail.previous;
+            this.tail.next = null;
+        }
 
-  // Insert value at front
-  unshift(value) {
-    let n = new Node(value);
-    if (this.size === 0) {
-      this.head = n;
-      this.tail = n;
-    } else {
-      n.next = this.head;
-      this.head.previous = n;
-      this.head = n;
+        return data;
     }
 
-    this.size++;
-  }
+    shift() {
+        let data = this.head.value;
+        this.size--;
 
-  delete(value) {
-    let n = this.head;
-    let previousNode = null;
+        if (this.size === 0) {
+            this.head = null;
+            this.tail = null;
+        } else {
+            this.head = this.head.next;
+            this.head.prev = null;
+        }
 
-    while (n != null && n.data != value) {
-      previousNode = n;
-      n = n.next;
-    }
-    
-    // if the element is not found return null
-    if (n === null) {
-      return;
+        return data;
     }
 
-    // if removing the first node
-    if (n.previous === null) {
-      this.head = n.next;
+    unshift(data) {
+
+        let node = new Node(data);
+        node.next = this.head;
+
+        if (this.size === 0) {
+            this.head = node;
+            this.tail = node;
+        } else {
+            this.head.prev = node;
+            this.head = node;
+        }
+
+        this.size++;
     }
 
-    // if removing the last node
-    if (n.next === null) {
-      this.tail = n.previous;
+    delete(item) {
+        let nodeToDelete = null;
+        let currentNode = this.head;
+
+        while (currentNode !== null) {
+            if (currentNode.value === item) {
+                if (currentNode.previous !== null) {
+                    currentNode.previous.next = currentNode.next;
+                } else {
+                    this.head = currentNode.next;
+                }
+
+                if (currentNode.next !== null) {
+                    currentNode.next.previous = currentNode.previous;
+                } else {
+                    this.tail = currentNode.previous;
+                }
+
+                this.size--;
+                break;
+            }
+
+            currentNode = currentNode.next;
+        }
     }
 
-
-    let nextNode = n.next;
-    if (previousNode != null) {
-      previousNode.next = nextNode;
+    count() {
+        return this.size;
     }
-
-    if (nextNode != null) {
-      nextNode.previous = previousNode;
-    }
-
-    n.previous = null;
-    n.next = null;
-    this.size--;
-  }
-
-  count() {
-    return this.size;
-  }
 }
-
 
 class Node {
 
-  constructor(data) {
-    this.data = data;
-    this.previous = null;
-    this.next = null;
-  }
+    constructor (value) {
+        this.value = value;
+        this.previous = null;
+        this.next = null;
+    }
 }

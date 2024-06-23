@@ -1,16 +1,8 @@
-export const compute = (strand0, strand1) => {
-  if (strand0.length !== strand1.length) {
-    throw new Error('strands must be of equal length');
-  }
-
-  let distance = 0;
-
-  for (let i = 0; i < strand0.length; i++) {
-    if (strand0[i] != strand1[i]) {
-      distance++;
+export const compute = (strand1, strand2) => {
+    if (strand1.length !== strand2.length) {
+        throw new Error('strands must be of equal length');
     }
-  }
 
-  return distance;
-
+    return [...strand1]
+        .filter((n, index) => n !== strand2[index]).length;
 };

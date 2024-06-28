@@ -1,97 +1,53 @@
-import java.util.ArrayList;
+import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 
-public class MinesweeperBoard {
+class MinesweeperBoard {
 
-    private final String MINE = "*";
     private int rows;
-    private int columns;
+    private int cols;
+    private String[][] grid;
 
-    private List<List<String>> board;
+    MinesweeperBoard(List<String> boardRows) {
+        this.rows = boardRows.size();
+        this.cols = rows > 0 ? boardRows.get(0).length() : 0;
 
-    public MinesweeperBoard(List<String> inputBoard) {
-        if (inputBoard.isEmpty()) {
-            this.board = new ArrayList<>();
-        }
-
-        this.rows = inputBoard.size();
-        this.columns = rows > 0 ? inputBoard.get(0).length() : 0;
-
-        this.board = new ArrayList<>();
-
-        inputBoard.forEach(row -> {
-            this.board.add(Arrays.asList(row.split("")));
-        });
+        this.grid = boardRows.stream()
+                    .map(row -> row.split("")).toList()
+                    .toArray(new String[0][0]);
     }
 
-    public List<String> withNumbers() {
-
-        if(this.board.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        List<String> numberedBoard = new ArrayList<>();        
-
-        for (int i = 0; i < rows; i++) {
-            StringBuilder sb = new StringBuilder();
-            List<String> r = this.board.get(i);
-            for (int j = 0; j < columns; j++) {
-                if (r.get(j).equals(MINE)) {
-                    sb.append(MINE);
-                } else {
-                    int sum = 0;
-                    if (j == 0 && j + 1 < columns && r.get(j + 1).equals(MINE)) {
-                        sum++;                        
-                    }
-
-                    if (j > 0 && r.get(j - 1).equals(MINE)) {
-                        sum++;
-                    }
-
-                    if (j > 0 && j < columns - 1 && r.get(j + 1).equals(MINE)) {
-                        sum++;
-                    }
-
-                    if (i + 1 < rows) {
-                        List<String> r1 = this.board.get(i + 1);
-                        if (r1.get(j).equals(MINE)) {
-                            sum++;
-                        }
-
-                        if (j < columns - 1 && r1.get(j + 1).equals(MINE)) {
-                            sum++;
-                        }
-
-                        if (j > 0 && r1.get(j - 1).equals(MINE)) {
-                            sum++;
-                        }
-
-                    }
-
-                    if (i > 0) {
-                        List<String> r0 = this.board.get(i - 1);
-                        if (r0.get(j).equals(MINE)) {
-                            sum++;
-                        }
-
-                        if (j < columns - 1 && r0.get(j + 1).equals(MINE)) {
-                            sum++;
-                        }
-
-                        if (j > 0 && r0.get(j - 1).equals(MINE)) {
-                            sum++;
-                        }
-                    }
-
-                    sb.append(sum == 0 ? " " : String.valueOf(sum));
+    List<String> withNumbers() {
+        for (int r = 0; r < this.rows; r++) {
+            for(int c = 0; c < this.cols; c++) {
+                if (this.grid[r][c].equals(" ")) {
+                    long counter = this.getNeighbors(r, c).stream()
+                        .filter(point -> grid[(int)point.getX()][(int)point.getY()].equals("*"))
+                        .count();
+                    this.grid[r][c] = counter > 0 ? String.valueOf(counter) : " ";
                 }
-                
             }
-
-            numberedBoard.add(sb.toString());
         }
 
-        return numberedBoard;
+        return Arrays.asList(this.grid).stream()
+                        .map(row -> String.join("", row))
+                        .toList();
     }
+
+    private List<Point> getNeighbors(int r, int c) {
+        return Arrays.asList(
+                    new Point(r - 1, c - 1),
+                    new Point(r - 1, c),
+                    new Point(r - 1, c + 1),
+                    new Point(r, c - 1),
+                    new Point(r, c + 1),
+                    new Point(r + 1, c - 1),
+                    new Point(r + 1, c),
+                    new Point(r + 1, c + 1))
+                        .stream()
+                        .filter(point -> point.getX() >= 0 && point.getX() < rows
+                                    && point.getY() >= 0 && point.getY() < cols)
+                        .toList();
+    }
+
 }

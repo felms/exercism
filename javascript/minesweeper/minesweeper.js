@@ -1,87 +1,24 @@
 export const annotate = (input) => {
-  if (input.length === 0) {
-    return input;
-  }
+    let grid = input.map(row => row.split(''));
 
-
-  let rows = input.length;
-  let columns = rows > 0 ? input[0].length : 0;
-
-  let board = [];
-
-  input.forEach(row => board.push(row.split('')));
-
-  return withNumbers(board, rows, columns);
-};
-
-const withNumbers = (board, rows, columns) => {
-
-  if(board.length === 0) {
-    return [];
-  }
-
-  let numberedBoard = [];
-  const MINE = '*';
-
-  for (let i = 0; i < rows; i++) {
-    let sb = '';
-    let r = board[i];
-    for (let j = 0; j < columns; j++) {
-      if (r[j] === MINE) {
-        sb = sb.concat(MINE);
-      } else {
-        let sum = 0;
-        if (j == 0 && j + 1 < columns && r[j + 1] === MINE) {
-          sum++;
+    for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] === ' ') {
+                grid[r][c] = getNeighbors(grid, [r, c])
+                                .filter(([rr, cc]) => grid[rr][cc] === '*').length || ' ';
+            }
         }
-
-        if (j > 0 && r[j - 1] === MINE) {
-          sum++;
-        }
-
-        if (j > 0 && j < columns - 1 && r[j + 1] === MINE) {
-          sum++;
-        }
-
-        if (i + 1 < rows) {
-          let r1 = board[i + 1];
-          if (r1[j] === MINE) {
-            sum++;
-          }
-
-          if (j < columns - 1 && r1[j + 1] === MINE) {
-            sum++;
-          }
-
-          if (j > 0 && r1[j - 1] === MINE) {
-            sum++;
-          }
-
-        }
-
-        if (i > 0) {
-          let r0 = board[i - 1];
-          if (r0[j] === MINE) {
-            sum++;
-          }
-
-          if (j < columns - 1 && r0[j + 1] === MINE) {
-            sum++;
-          }
-
-          if (j > 0 && r0[j - 1] === MINE) {
-            sum++;
-          }
-        }
-
-        sb = sb.concat(sum === 0 ? ' ' : sum.toString());
-      }
-
     }
 
-    numberedBoard.push(sb);
-  }
+    return grid.map(row => row.join(''));
+};
 
-  return numberedBoard;
+const getNeighbors = (board, [r, c]) => {
+    let rows = board.length;
+    let columns = board[0].length;
 
+    return [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1],
+            [r - 1, c - 1], [r - 1, c + 1], [r + 1, c - 1], [r + 1, c + 1]]
+                .filter(([row, col]) => row >= 0 && row < rows 
+                            && col >= 0 && col < columns);
 };

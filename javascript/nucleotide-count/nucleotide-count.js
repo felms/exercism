@@ -8,5 +8,5 @@ export function countNucleotides(strand) {
 
     [...strand].forEach(nucleotide => counts[nucleotide]++);
 
-    return `${ counts['A'] } ${ counts['C'] } ${ counts['G'] } ${ counts['T'] }`;
+    return Object.values(counts).join(' ');
 }

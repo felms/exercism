@@ -1,18 +1,12 @@
 export function countNucleotides(strand) {
-  if (strand.match(/\b[ACGT]+\b/) || strand === '') {
-    let frequencies = strand.split('').reduce((total, letter) => {
-      total[letter] ? total[letter]++ : total[letter] = 1;
-      return total;
-    }, {});
 
-    let A = frequencies['A'] ? frequencies['A'] : 0;
-    let C = frequencies['C'] ? frequencies['C'] : 0; 
-    let G = frequencies['G'] ? frequencies['G'] : 0;
-    let T = frequencies['T'] ? frequencies['T'] : 0;  
-  
-    return `${A} ${C} ${G} ${T}`;
-    
-  }
+    if (strand.length && strand.match(/[^ACGT]/)) {
+        throw new Error('Invalid nucleotide in strand');
+    }
 
-  throw new Error('Invalid nucleotide in strand');
+    const counts = { 'A': 0, 'C': 0, 'G': 0, 'T': 0 };
+
+    [...strand].forEach(nucleotide => counts[nucleotide]++);
+
+    return `${ counts['A'] } ${ counts['C'] } ${ counts['G'] } ${ counts['T'] }`;
 }

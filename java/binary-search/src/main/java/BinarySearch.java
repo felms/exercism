@@ -1,37 +1,36 @@
 import java.util.ArrayList;
 import java.util.List;
 
-class BinarySearch{
+class BinarySearch {
 
-    private List<Integer> list;
+    private List<Integer> items;
 
-    public BinarySearch(List<Integer> list) {
-        this.list = new ArrayList<>();
-        this.list.addAll(list);
+    BinarySearch(List<Integer> items) {
+        this.items = new ArrayList<>(items);
     }
 
-    public int indexOf(Integer item) throws ValueNotFoundException {
-        
-        int l = 0;
-        int h = this.list.size() - 1;
-        
-        while (l <= h) {
-            int m = l + (h - l) / 2;
-     
-            
-            if (list.get(m).compareTo(item) == 0) {
-                return m;
-            }
-            
-            if (list.get(m).compareTo(item) < 0) {
-                l = m + 1;
+    int indexOf(int item) throws ValueNotFoundException {
+
+        int start = 0;
+        int end = this.items.size() - 1;
+
+        while (start <= end) {
+            int middle = (start + end) / 2;
+            int middleItem = this.items.get(middle);
+
+            if (middleItem == item) {
+                return middle;
+            } 
+
+            if (middleItem > item) {
+                end = middle - 1;
             } else {
-                h = m - 1;
+                start = middle + 1;
             }
+
         }
 
         throw new ValueNotFoundException("Value not in array");
-    }
 
-    
+    }
 }

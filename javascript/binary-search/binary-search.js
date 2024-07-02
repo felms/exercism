@@ -1,19 +1,21 @@
-export const find = (array, number) => {
+export const find = (array, value) => {
 
-	let low = 0;
-	let high = array.length - 1;
-	
-	while (low <= high) {
-		let m = Math.trunc((low + high) / 2);
-		if (array[m] < number) {
-			low = m + 1;
-		} else if (array[m] > number) {
-			high = m - 1;	
-		} else {
-			return m;
-		}
+    let low = 0;
+    let high = array.length;
 
-	}
+    while (low <= high) {
+        let middle = Math.floor((low + high) / 2);
 
-	throw new Error('Value not in array');
+        if (array[middle] === value) {
+            return middle;
+        }
+
+        if (array[middle] < value) {
+            low = middle + 1;
+        } else {
+            high = middle - 1;
+        }
+    }
+
+    throw new Error('Value not in array');
 };

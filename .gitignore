@@ -54,6 +54,11 @@ mix.exs
 awk/*/*.bash
 awk/*/*.bats
 
+# Ballerina
+ballerina/*/*.toml
+ballerina/*/tests/*
+ballerina/*/*.toml
+
 # Bash
 bash/*/*-extra.bash
 bash/*/*.bats

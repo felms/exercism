@@ -117,6 +117,12 @@ lua/*/*_spec.lua
 # Nim
 nim/*/test*
 
+# OCaml
+ocaml/*/*.mli
+ocaml/*/dune*
+ocaml/*/Makefile
+ocaml/*/test.ml
+
 # Perl
 perl5/*/cpanfile
 perl5/*/t/*

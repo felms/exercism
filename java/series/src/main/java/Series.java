@@ -1,29 +1,29 @@
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
-public class Series{
+class Series {
 
-    private final String number;
+    private String number;
 
-    public Series(String number) {
-        this.number = number;
+    Series(String string) {
+        if (string.isBlank()) {
+            throw new IllegalArgumentException("series cannot be empty");
+        }
+
+        this.number = string;
     }
 
-    public List<String> slices(int size) {
-
-        if (size > this.number.length()) {
-            throw new IllegalArgumentException("Slice size is too big.");
+    List<String> slices(int num) {
+        if (num <= 0) {
+            throw new IllegalArgumentException("slice length cannot be negative or zero");
         }
 
-        if (size < 1) {
-            throw new IllegalArgumentException("Slice size is too small.");
+        if (num > this.number.length()) {
+            throw new IllegalArgumentException("slice length cannot be greater than series length");
         }
 
-        List<String> list = new ArrayList<>();
-        for (int i = 0; i <= number.length() - size; i++) {
-            list.add(this.number.substring(i, i + size));
-        }
-
-        return list;
+        return IntStream.range(0, this.number.length() - num + 1)
+                .mapToObj(pos -> this.number.substring(pos, pos + num))
+                .toList();
     }
 }

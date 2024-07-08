@@ -1,87 +1,60 @@
 export class ComplexNumber {
-  
-  constructor(realNumber, imaginary) {
-    this.real = realNumber;
-    this.imag = imaginary;
-  }
 
-  get real() {
-    return this.realNumber;
-  }
+    #real;
+    #imaginary;
 
-  get imag() {
-    return this.imaginary;
-  }
+    constructor(real, imaginary) {
+        this.#real = real;
+        this.#imaginary = imaginary;
+    }
 
-  set real(real) {
-    this.realNumber = real;
-  }
+    get real() {
+        return this.#real;
+    }
 
-  set imag(imag) {
-    this.imaginary = imag
-  }
+    get imag() {
+        return this.#imaginary;
+    }
 
-  add(other) {
-    let real = this.real;
-    let img = this.imag;
-    let otherReal = other.real;
-    let otherImg = other.imag;
-    return new ComplexNumber(real + otherReal, img + otherImg);
-  }
+    add(otherNumber) {
+        let r = this.#real + otherNumber.real;
+        let i = this.#imaginary + otherNumber.imag;
+        return new ComplexNumber(r, i);
+    }
 
-  sub(other) {
-    let real = this.real;
-    let img = this.imag;
-    let otherReal = other.real;
-    let otherImg = other.imag;
-    return new ComplexNumber(real - otherReal, img - otherImg);
-  }
+    sub(otherNumber) {
+        let r = this.#real - otherNumber.real;
+        let i = this.#imaginary - otherNumber.imag;
+        return new ComplexNumber(r, i);
+    }
 
-  div(other) {
-    let real = this.real;
-    let img = this.imag;
-    let otherReal = other.real;
-    let otherImg = other.imag;
+    div(otherNumber) {
+        let den = Math.pow(otherNumber.real, 2) + Math.pow(otherNumber.imag, 2);
+        let r = (this.#real * otherNumber.real + this.imaginary * otherNumber.imag)
+                    / den;
+        let i = (this.#imaginary * otherNumber.real - this.#real * otherNumber.imag) 
+                    / den;
+        return new ComplexNumber(r, i);
+    }
 
-    let newReal = (real * otherReal + img * otherImg) 
-                        / (Math.pow(otherReal, 2) + Math.pow(otherImg, 2));
-    let newImg = (img * otherReal - real * otherImg) 
-                        / (Math.pow(otherReal, 2) + Math.pow(otherImg, 2));
+    mul(otherNumber) {
+        let r = this.#real * otherNumber.real - this.#imaginary * otherNumber.imag;
+        let i = this.#imaginary * otherNumber.real + this.#real * otherNumber.imag;
+        return new ComplexNumber(r, i);
+    }
 
-    return new ComplexNumber(newReal, newImg);
-  }
+    get abs() {
+        return Math.sqrt(Math.pow(this.#real, 2) + Math.pow(this.#imaginary, 2));
+    }
 
-  mul(other) {
-    let real = this.real;
-    let img = this.imag;
-    let otherReal = other.real;
-    let otherImg = other.imag;
+    get conj() {
+        return new ComplexNumber(this.#real, (-this.#imaginary));
+    }
 
-    let newReal = real * otherReal - img * otherImg;
-    let newImg = img * otherReal + real * otherImg;
-
-    return new ComplexNumber(newReal, newImg);
-  }
-
-  get abs() {
-    let real = this.real;
-    let img = this.imag;
-    return Math.sqrt(real * real + img * img);
-  }
-
-  get conj() {
-    let real = this.real;
-    let img = this.imag;
-    return new ComplexNumber(real, (img === 0 ? 0 : (-1 * img)));
-  }
-
-  get exp() {
-    let real = this.real;
-    let img = this.imag;
-
-    let a =  new ComplexNumber(Math.pow(Math.E, real), 0);
-    let b  = new ComplexNumber(Math.cos(img), Math.sin(img));
-
-    return a.mul(b);
-  }
+    get exp() {
+        let a = new ComplexNumber(Math.pow(Math.E, this.#real), 0);
+        let b = new ComplexNumber(Math.cos(this.#imaginary), 
+                                    Math.sin(this.#imaginary));
+        return a.mul(b);
+    }
 }

@@ -1,74 +1,55 @@
 export const spiralMatrix = (size) => {
 
-    if (size === 0) {
-        return [];
+    let matrix = [...Array(size)].map(() => {
+        return [...Array(size)].map(() => -1);
+    });
+
+    let RIGHT = 0;
+    let DOWN = 1;
+    let LEFT = 2;
+    let UP = 3;
+
+    let r = 0;
+    let c = 0;
+    let direction = RIGHT;
+
+    let currentValue = 1;
+    let lastValue = size * size;
+
+    while (currentValue <= lastValue) {
+        matrix[r][c] = currentValue;
+        currentValue++;
+
+        if (direction == RIGHT) {
+            if (c == size - 1 || matrix[r][c + 1] != -1) {
+                direction = DOWN;
+                r++
+            } else {
+                c++;
+            }
+        } else if (direction == DOWN) {
+            if (r == size - 1 || matrix[r + 1][c] != -1) {
+                direction = LEFT;
+                c--;
+            } else {
+                r++;
+            }
+        } else if (direction == LEFT) {
+            if (c == 0 || matrix[r][c - 1] != -1) {
+                direction = UP;
+                r--;
+            } else {
+                c--;
+            }
+        } else { //direction == UP
+            if (r == 0 || matrix[r - 1][c] != -1) {
+                direction = RIGHT;
+                c++;
+            } else {
+                r--;
+            }
+        }
     }
 
-    let matrix = initMatrix(size);
-    let currentNumber = 1;
-    let maxNumber = size * size;
-    let i = 0;
-    let j = 0;
-    let minColumn = 0;
-    let minRow = 0;
-    let maxColumn = size;
-    let maxRow = size;
-
-    while (currentNumber <= maxNumber)  {
-        
-        while (j < maxColumn) {
-            matrix[i][j] = currentNumber;
-            j++;
-            currentNumber++;
-        }
-        i++;
-        j--;
-
-        while (i < maxRow) {
-            matrix[i][j] = currentNumber;
-            i++;
-            currentNumber++;
-        }
-        i--;
-        j--;
-
-        while(j >= minColumn) {
-            matrix[i][j] = currentNumber;
-            j--;
-            currentNumber++;
-        }
-        i--;
-        j++;
-
-        while (i > minRow) {
-            matrix[i][j] = currentNumber;
-            i--;
-            currentNumber++;
-        }
-        i++;
-        j++;
-
-        maxColumn--;
-        maxRow--;
-        minColumn++;
-        minRow++;
-        
-    }
-    
     return matrix;
 };
-
-const initMatrix = (size) => {
-    
-    let matrix = [];
-
-    for (let i = 0; i < size; i++) {
-        let row = [];
-        for (let j = 0; j < size; j++) {
-            row.push(-1);
-        }
-        matrix.push(row);
-    }
-    
-    return matrix;
-}

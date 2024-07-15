@@ -1,55 +1,52 @@
 export class BankAccount {
+
+    #balance;
+    #isOpen;
     constructor() {
-        this._balance = 0;
-        this.openedAccount = false;
+        this.#balance = 0;
+        this.#isOpen = false;
     }
 
     open() {
-        if (this.openedAccount) {
+        if (this.#isOpen) {
             throw new ValueError();
         }
 
-        this.openedAccount = true;
+        this.#isOpen = true;
     }
 
     close() {
-        if (!this.openedAccount) {
+        if (!this.#isOpen) {
             throw new ValueError();
         }
 
-        this._balance = 0;
-        this.openedAccount = false;
+        this.#isOpen = false;
+        this.#balance = 0;
     }
 
-    deposit(ammount) {
-        if (!this.openedAccount) {
+    deposit(value) {
+        if (!this.#isOpen || value < 0) {
             throw new ValueError();
         }
 
-        if (ammount < 0) {
-            throw new ValueError();
-        }
-
-        this._balance += ammount;
+        this.#balance += value;
     }
 
-    withdraw(ammount) {
-        if (!this.openedAccount) {
+    withdraw(value) {
+        if (!this.#isOpen 
+            || value > this.#balance || value < 0) {
             throw new ValueError();
         }
 
-        if (ammount > this._balance || ammount < 0) {
-            throw new ValueError();
-        }
-
-        this._balance -= ammount;
+        this.#balance -= value;
     }
 
     get balance() {
-        if (!this.openedAccount) {
+        if (!this.#isOpen) {
             throw new ValueError();
         }
-        return this._balance;
+
+        return this.#balance;
     }
 }
 

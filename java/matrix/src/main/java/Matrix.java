@@ -2,30 +2,23 @@ import java.util.Arrays;
 
 class Matrix {
 
-    private int[][] matrix;
-    private int rows;
+    private int[][] rows;
 
     Matrix(String matrixAsString) {
-        String[] lines = matrixAsString.split("\\n");
-        rows = lines.length;
-        matrix = new int[rows][];
-        for (int i = 0; i < lines.length; i++) {
-            matrix[i] = Arrays.stream(lines[i].split("\\s+")).mapToInt(Integer::parseInt).toArray();
-
-        }
-
+        this.rows = Arrays.stream(matrixAsString.split("\\n"))
+                        .map(this::parseRow).toArray(int[][]::new);
     }
 
     int[] getRow(int rowNumber) {
-        return matrix[rowNumber - 1];
+        return this.rows[rowNumber - 1];
     }
 
     int[] getColumn(int columnNumber) {
-        int[] column = new int[rows];
-        for (int i = 0; i < rows; i++) {
-            column[i] = matrix[i][columnNumber - 1];
-        }
+        return Arrays.stream(this.rows).mapToInt(row -> row[columnNumber - 1]).toArray();
+    }
 
-        return column;
+    private int[] parseRow(String row) {
+        return Arrays.stream(row.split("\\s+"))
+                        .mapToInt(Integer::parseInt).toArray();
     }
 }

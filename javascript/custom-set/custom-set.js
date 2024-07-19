@@ -1,34 +1,34 @@
 export class CustomSet {
-    constructor(input = []) {
-        this.items = input;
+
+    #items;
+    constructor(items = []) {
+        this.#items = items;
     }
 
     empty() {
-        return this.items.length === 0;
+        return this.#items.length === 0;
     }
 
     contains(item) {
-        return this.items.includes(item);
+        return this.#items.includes(item);
     }
 
     add(item) {
-        let arr = [...this.items];
-        if (!this.contains(item)) {
-            arr.push(item);
+        let newItems = [...this.#items];
+        if (!newItems.includes(item)) {
+            newItems.push(item);
         }
-        return new CustomSet(arr);
+        return new CustomSet(newItems);
     }
 
     subset(otherSet) {
-        if (this.empty()) {
-            return true;
-        }
-
-        return this.items.every(item => otherSet.contains(item));
+        return this.empty() 
+            || this.#items.every(item => otherSet.contains(item));
     }
 
     disjoint(otherSet) {
-        return this.items.every(item => !otherSet.contains(item));
+        return this.empty() && otherSet.empty()
+            || !this.#items.some(item => otherSet.contains(item));
     }
 
     eql(otherSet) {
@@ -36,44 +36,17 @@ export class CustomSet {
     }
 
     union(otherSet) {
-
-        let thisArr = [...this.items];
-
-        otherSet.values().forEach(item => {
-            if (!thisArr.includes(item)) {
-                thisArr.push(item);
-            }
-        });
-
-        return new CustomSet(thisArr);
+        this.#items.forEach(item => otherSet = otherSet.add(item));
+        return otherSet;
     }
 
     intersection(otherSet) {
-        let interArr = [];
-
-        for (let item of this.items) {
-            if (otherSet.contains(item)) {
-                interArr.push(item);
-            }
-        }
-
-        return new CustomSet(interArr);
+        let newItems = this.#items.filter(item => otherSet.contains(item));
+        return new CustomSet(newItems);
     }
 
     difference(otherSet) {
-        let interArr = [];
-
-        for (let item of this.items) {
-            if (!otherSet.contains(item)) {
-                interArr.push(item);
-            }
-        }
-
-        return new CustomSet(interArr);
-    }
-
-    values() {
-        let arr = [...this.items];
-        return arr;
+        let newItems = this.#items.filter(item => !otherSet.contains(item));
+        return new CustomSet(newItems);
     }
 }

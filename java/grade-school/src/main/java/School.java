@@ -1,35 +1,37 @@
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class School {
+class School {
 
-    private final Map<Integer, List<String>> students;
-
+    private Map<String, Integer> roster;
     public School() {
-        this.students = new HashMap<>();
+        this.roster = new HashMap<>();
     }
 
-    public void add(String student, int gradeNumber) {
-        List<String> grade = this.students.get(gradeNumber);
-
-        if (grade == null) {
-            grade = new ArrayList<>();
+    boolean add(String student, int grade) {
+        if(this.roster.containsKey(student)) {
+            return false;
         }
 
-        grade.add(student);
-        Collections.sort(grade);
-        this.students.put(gradeNumber, grade);
+        this.roster.put(student, grade);
+        return true;
     }
 
-    public List<String> roster() {
-        return this.students
-                .values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+    List<String> roster() {
+        return this.roster.entrySet().stream()
+                    .sorted((a, b) -> { 
+                        int res = a.getValue() - b.getValue();
+                        return res == 0 ? a.getKey().compareTo(b.getKey()) : res;
+                    })
+                    .map(s -> s.getKey()).toList();
     }
 
-    public List<String> grade(int gradeNumber) {
-        return this.students.getOrDefault(gradeNumber, new ArrayList<>());
-
+    List<String> grade(int grade) {
+        return this.roster.entrySet().stream()
+                .filter(student -> student.getValue() == grade)
+                .map(student -> student.getKey())
+                .sorted(String::compareTo).toList();
     }
+
 }

@@ -1,34 +1,27 @@
-import java.util.Arrays;
+import java.util.function.Function;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.swing.event.CaretListener;
+class NucleotideCounter {
 
-public class NucleotideCounter {
+    private Map<Character, Integer> counts;
 
-    private final String nucleotides;
-
-    public NucleotideCounter(String nucleotides) {
-        if (!"".equals(nucleotides) && !nucleotides.matches("\\b[ACGT]+\\b")) {
+    NucleotideCounter(String sequence) {
+        if (sequence.matches(".*[^ACGT]+.*")) {
             throw new IllegalArgumentException();
         }
-        
-        this.nucleotides = nucleotides;
+
+        this.counts = new HashMap<>();
+
+        var list = sequence.chars().mapToObj(i -> (char)i).toList();
+        "ACGT".chars().mapToObj(i -> (char)i)
+            .forEach(item -> this.counts.put(item, Collections.frequency(list, item)));
     }
 
-    public Map<Character, Integer> nucleotideCounts() {
-
-        Map<Character, Integer> map = "ACGT".chars()
-                                            .mapToObj(c -> (char) c)
-                                            .collect(Collectors.toMap(Function.identity(), i -> 0));
-        
-        List<Character> list = Arrays.asList(this.nucleotides.chars().mapToObj(c -> (char)c).toArray(Character[]::new));
-        list.forEach(item -> map.put(item, Collections.frequency(list, item)));
-        return map;
+    Map<Character, Integer> nucleotideCounts() {
+        return this.counts;
     }
+
 }
-

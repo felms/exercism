@@ -1,26 +1,20 @@
+import java.util.stream.IntStream;
+
 class IsbnVerifier {
 
     boolean isValid(String stringToVerify) {
-
-        char[] digits = stringToVerify.replaceAll("-", "").toCharArray();
-        if (digits.length != 10) {
+        String s = stringToVerify.replaceAll("-", "");
+        if (s.length() != 10 || s.matches(".*X.+")) {
             return false;
         }
 
-        int weight = 10;
-        int sum = 0;
-        for (char c : digits) {
+        StringBuilder sb = new StringBuilder(s).reverse();
 
-            if ((c != 'X' && !Character.isDigit(c))
-                || (c == 'X' && weight != 1)) {
-                return false;
-            }
 
-            sum += weight * (c == 'X' ? 10 : Character.getNumericValue(c));
-            weight--;
-        }
-
-        return sum % 11 == 0;
+        return IntStream.rangeClosed(1, 10)
+                    .map(i -> sb.charAt(i - 1) == 'X' ? 10 * i : (sb.charAt(i - 1) - '0') * i)
+                    .sum() % 11 == 0;
+                            
     }
 
 }

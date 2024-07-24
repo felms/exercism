@@ -1,49 +1,51 @@
 export class BinarySearchTree {
 
+    #data;
+    #left;
+    #right;
+
     constructor(data) {
-        this._data = data;
-        this._left = null;
-        this._right = null;
+        this.#data = data;
+        this.#left = null;
+        this.#right = null;
     }
 
     get data() {
-        return this._data;
+        return this.#data;
     }
     get right() {
-        return this._right;
+        return this.#right;
     }
 
     get left() {
-        return this._left;
+        return this.#left;
     }
 
-    insert(number) {
-
-        if (number > this._data) {
-            if (this._right) {
-                this._right.insert(number);
+    insert(value) {
+        if (value > this.#data) {
+            if (this.#right === null) {
+                this.#right = new BinarySearchTree(value);
             } else {
-                this._right = new BinarySearchTree(number);
+                this.#right.insert(value);
             }
         } else {
-            if (this._left) {
-                this._left.insert(number);
+            if (this.#left === null) {
+                this.#left = new BinarySearchTree(value);
             } else {
-                this._left = new BinarySearchTree(number);
+                this.#left.insert(value);
             }
         }
-
     }
 
-    each(callback) {
-        if (this._left) {
-            this._left.each(callback);
+    each(func) {
+        if (this.#left !== null) {
+            this.#left.each(func);
         }
 
-        callback(this._data);
+        func(this.#data);
 
-        if (this._right) {
-            this._right.each(callback);
+        if (this.#right !== null) {
+            this.#right.each(func);
         }
     }
 }

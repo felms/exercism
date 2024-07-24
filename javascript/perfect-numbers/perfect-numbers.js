@@ -1,22 +1,22 @@
-//
-// This is only a SKELETON file for the 'Perfect Numbers' exercise. It's been provided as a
-// convenience to get you started writing code faster.
-//
-
 export const classify = (number) => {
-  if (number < 1) {
-    throw new Error('Classification is only possible for natural numbers.');
-  }
-
-  let alicotSum  = 0;
-  for (let i = 1; i <= number / 2; i++) {
-    if (number % i == 0) {
-      alicotSum += i;
+    if (number <= 0) {
+        throw new Error('Classification is only possible for natural numbers.');
     }
-  }
 
-  return alicotSum == number ? 'perfect'
-                             : alicotSum < number ? 'deficient' 
-                             : 'abundant';
+    let sum = aliquotSum(number);
 
+    return sum === number ? 'perfect'
+            : sum > number ? 'abundant' : 'deficient';
+};
+
+const aliquotSum = (number) => {
+    let sum = 0;
+
+    for (let i = 1; i <= number / 2; i++) {
+        if (number % i == 0) {
+            sum += i;
+        }
+    }
+
+    return sum;
 };

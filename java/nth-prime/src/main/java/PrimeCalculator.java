@@ -1,7 +1,3 @@
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 class PrimeCalculator {
 
     int nth(int nth) {
@@ -10,23 +6,32 @@ class PrimeCalculator {
             throw new IllegalArgumentException();
         }
 
-        List<Integer> primes = IntStream.range(0, 1_000_000)
-                                .filter(this::isPrime)
-                                .boxed()
-                                .collect(Collectors.toList());
+        int count = 1;
+        int currentPrime = 2;
 
-       return primes.get(nth - 1);
+        while (count < nth) {
+            while (!isPrime(++currentPrime));
+            count++;
+        }
+
+        return currentPrime;
     }
 
-    private boolean isPrime(int n) {
+    boolean isPrime(int n) {
+        if (n == 2) {
+            return true;
+        }
 
-        if (n < 2) {
+        if (n % 2 == 0) {
             return false;
         }
 
-        return IntStream.rangeClosed(2, (int)Math.sqrt(n))
-                    .noneMatch(number -> (n % number == 0));
-                
-    }
+        for (int i = 3; i * i <= n; i += 2) {
+            if (n % i == 0) {
+                return false;
+            }
+        }
 
+        return true;
+    }
 }

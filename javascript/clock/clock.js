@@ -1,37 +1,41 @@
 export class Clock {
-  constructor(hours = 0, minutes = 0) {
-    let h = hours;
-    while (h < 0) {
-      h += 24;
+
+    #hours;
+    #minutes;
+
+    constructor(hours, minutes = 0) {
+        if (minutes >= 60) {
+            hours += Math.floor(minutes / 60);
+        }
+
+        while (minutes < 0) {
+            hours--;
+            minutes += 60;
+        }
+
+        while (hours < 0) {
+            hours += 24;
+        }
+
+        this.#hours = hours % 24;
+        this.#minutes = minutes % 60;
     }
 
-    this.minutes = h * 60 + minutes;
-
-    let dayInMinutes = 24 * 60;
-    while(this.minutes < 0) {
-      this.minutes += dayInMinutes;
+    toString() {
+        let h = String(this.#hours).padStart(2, '0');
+        let m = String(this.#minutes).padStart(2, '0');
+        return `${h}:${m}`
     }
-  }
 
-  toString() {
-    let h = (Math.floor(this.minutes / 60)) % 24;
-    let m = this.minutes % 60;
-    h = h >= 10 ? h : '0' + h;
-    m = m >= 10 ? m: '0' + m;
-    return `${h}:${m}`;
-  }
+    plus(minutes) {
+        return new Clock(this.#hours, this.#minutes + minutes);
+    }
 
-  plus(minutes) {
-    this.minutes += minutes;
-    return new Clock(0, this.minutes);
-  }
+    minus(minutes) {
+        return new Clock(this.#hours, this.#minutes - minutes);
+    }
 
-  minus(minutes) {
-    this.minutes -= minutes;
-    return new Clock(0, this.minutes);;
-  }
-
-  equals(other) {
-    return this.toString() === other.toString();
-  }
+    equals(otherClock) {
+        return this.toString() === otherClock.toString();
+    }
 }

@@ -1,82 +1,65 @@
-public class ComplexNumber {
+class ComplexNumber {
 
-    private final double real;
-    private final double imaginary;
+    private double real;
+    private double imaginary;
 
-    public ComplexNumber(double real, double imaginary) {
+    ComplexNumber(double real, double imaginary) {
         this.real = real;
         this.imaginary = imaginary;
     }
 
-    public double getReal() {
+    double getReal() {
         return this.real;
     }
 
-    public double getImag() {
+    double getImaginary() {
         return this.imaginary;
     }
 
-    public ComplexNumber add(ComplexNumber other) {
-        double real = this.getReal();
-        double img = this.getImag();
-        double otherReal = other.getReal();
-        double otherImg = other.getImag();
-        return new ComplexNumber(real + otherReal, img + otherImg);
+    double abs() {
+        return Math.sqrt(this.real * this.real + this.imaginary * this.imaginary);
     }
 
-    public ComplexNumber minus(ComplexNumber other) {
-        double real = this.getReal();
-        double img = this.getImag();
-        double otherReal = other.getReal();
-        double otherImg = other.getImag();
-        return new ComplexNumber(real - otherReal, img - otherImg);
+    ComplexNumber add(ComplexNumber other) {
+        double r = this.real + other.getReal();
+        double i = this.imaginary + other.getImaginary();
+        return new ComplexNumber(r, i);
     }
 
-    public ComplexNumber times(ComplexNumber other) {
-        double real = this.getReal();
-        double img = this.getImag();
-        double otherReal = other.getReal();
-        double otherImg = other.getImag();
-
-        double newReal = real * otherReal - img * otherImg;
-        double newImg = img * otherReal + real * otherImg;
-
-        return new ComplexNumber(newReal, newImg);
+    ComplexNumber subtract(ComplexNumber other) {
+        double r = this.real - other.getReal();
+        double i = this.imaginary - other.getImaginary();
+        return new ComplexNumber(r, i);
     }
 
-    public ComplexNumber div(ComplexNumber other) {
-        double real = this.getReal();
-        double img = this.getImag();
-        double otherReal = other.getReal();
-        double otherImg = other.getImag();
-
-        double newReal = (real * otherReal + img * otherImg) 
-                            / (Math.pow(otherReal, 2) + Math.pow(otherImg, 2));
-        double newImg = (img * otherReal - real * otherImg) 
-                            / (Math.pow(otherReal, 2) + Math.pow(otherImg, 2));
-
-        return new ComplexNumber(newReal, newImg);
+    ComplexNumber multiply(ComplexNumber other) {
+        double r = this.real * other.getReal() - this.imaginary * other.getImaginary();
+        double i = this.imaginary * other.getReal() + this.real * other.getImaginary();
+        return new ComplexNumber(r, i);
     }
 
-    public double abs() {
-        double real = this.getReal();
-        double img = this.getImag();
-        return Math.sqrt(real * real + img * img);
+    ComplexNumber multiply(double factor) {
+        return this.multiply(new ComplexNumber(factor, 0));
     }
 
-    public ComplexNumber conjugate() {
-        double real = this.getReal();
-        double img = this.getImag();
-        return new ComplexNumber(real, -1 * img);
+    ComplexNumber divide(ComplexNumber other) {
+        double div = Math.pow(other.getReal(), 2) + Math.pow(other.getImaginary(), 2);
+        double r = this.real * other.getReal() + this.imaginary * other.getImaginary();
+        double i = this.imaginary * other.getReal() - this.real * other.getImaginary();
+        return new ComplexNumber(r / div, i / div);
     }
 
-    public ComplexNumber exponentialOf() {
-        double real = this.getReal();
-        double img = this.getImag();
-
-        ComplexNumber a =  new ComplexNumber(Math.pow(Math.E, real), 0);
-        ComplexNumber b  = new ComplexNumber(Math.cos(img), Math.sin(img));
-
-        return a.times(b);
+    ComplexNumber divide(double divisor) {
+        return this.divide(new ComplexNumber(divisor, 0));
     }
+
+    ComplexNumber conjugate() {
+        return new ComplexNumber(this.real, -this.imaginary);
+    }
+
+    ComplexNumber exponentialOf() {
+        return new ComplexNumber(Math.cos(this.imaginary), Math.sin(this.imaginary))
+                        .multiply(Math.pow(Math.E, this.real));
+    }
+
 }

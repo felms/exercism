@@ -1,77 +1,64 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Tournament {
-	
-	private final List<Team> teams;
+import java.util.stream.Collectors;
 
-	public Tournament(){
-		
-		this.teams = new ArrayList<>();
-	}	
-	
-	public void applyResults(String inputTable) {
-		
-		Arrays.stream(inputTable.split("\\n"))
-					.forEach(this::processGame);
-	}
+class Tournament {
 
-	public String printTable(){
-		
-		Collections.sort(this.teams);
-		StringBuilder sb = new StringBuilder();
-		sb.append( "Team                           | MP |  W |  D |  L |  P\n");
-		this.teams.forEach(t -> {
-							sb.append(String.format("%1$-31s", t.getName()));
-							sb.append("|  ").append(t.getMatches()).append(" ");
-							sb.append("|  ").append(t.getWins()).append(" ");
-							sb.append("|  ").append(t.getDraws()).append(" ");
-							sb.append("|  ").append(t.getLosses()).append(" ");
-							sb.append("|  ").append(t.getPoints()).append("\n");
-					});
+    private Map<String, Team> teams;
 
-		return sb.toString();
-	}
+    public Tournament() {
+        this.teams = new HashMap<>();
+    }
 
-	private void processGame(String game) {
-		
-		String[] tokens = game.split(";");
-		Team team0 = new Team(tokens[0]);
-		Team team1 = new Team(tokens[1]);
+    String printTable() {
+        String header = "Team                           | MP |  W |  D |  L |  P";
 
-		int indexTeam0 = this.teams.indexOf(team0);
-		if (indexTeam0 >= 0) {
-			team0 = this.teams.get(indexTeam0);
-		} else {
-			this.teams.add(team0);
-		}
+        String table = this.teams.values().stream()
+                .sorted().map(this::printTeam).collect(Collectors.joining("\n"));
 
-		int indexTeam1 = this.teams.indexOf(team1);
-		if (indexTeam1 >= 0) {
-			team1 = this.teams.get(indexTeam1);
-		} else {
-			this.teams.add(team1);
-		}
-		
-		team0.addMatch();
-		team1.addMatch();
+        return header + "\n" + (table.isBlank() ? "" : table + "\n");
+    }
 
-		switch(tokens[2]) {
-			case "win":
-				team0.addWin();
-				team1.addLoss();
-				break;
-			case "loss":
-				team0.addLoss();
-				team1.addWin();
-				break;
-			default:
-				team0.addDraw();
-				team1.addDraw();
-				break;
-		}
-	}
+    void applyResults(String resultString) {
+        Arrays.stream(resultString.split("\n")).forEach(this::applyResult);
+    }
 
-}	
+    private void applyResult(String matchResult) {
+        String[] match = matchResult.split(";");
+
+        String teamA = match[0];
+        String teamB = match[1];
+        String result = match[2];
+
+        Team a = this.teams.getOrDefault(teamA, new Team(teamA));
+        Team b = this.teams.getOrDefault(teamB, new Team(teamB));
+        a.addMatch();
+        b.addMatch();
+
+        if (result.equals("win")) {
+            a.addWin();
+            b.addLoss();
+        } else if (result.equals("loss")) {
+            a.addLoss();
+            b.addWin();
+        } else {
+            a.addDraw();
+            b.addDraw();
+        }
+
+        teams.put(teamA, a);
+        teams.put(teamB, b);
+    }
+
+    private String printTeam(Team team) {
+        return String.format("%s|%s |%s |%s |%s |%s",
+                String.format("%-31s", team.getName()), 
+                String.format("%3d", team.getMatches()), 
+                String.format("%3d", team.getWins()), 
+                String.format("%3d", team.getDraws()), 
+                String.format("%3d", team.getLosses()), 
+                String.format("%3d", team.getPoints()));
+    }
+}

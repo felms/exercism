@@ -1,33 +1,17 @@
 export const saddlePoints = (matrix) => {
+    let points = [];
 
-    let sPoints = [];
+    for (let r = 0; r < matrix.length; r++) {
+        for (let c = 0; c < matrix[0].length; c++) {
 
-    for (let i = 0; i < matrix.length; i++) {
-        for (let j = 0; j < matrix[i].length; j++) {
-            if (isSaddlePoint(matrix, i, j)) {
-                sPoints.push({ row: i + 1, column: j + 1 });
+            let isLargestInRow = matrix[r].every(i => i <= matrix[r][c]);
+            let isSmallestInColumn = matrix.every(row => row[c] >= matrix[r][c]);
+
+            if (isLargestInRow && isSmallestInColumn) {
+                points.push({row: r + 1 , column: c + 1});
             }
         }
-    } 
+    }
 
-    return sPoints;
-
+    return points;
 };
-
-const isSaddlePoint = (matrix, row, column) => {
-    let value = matrix[row][column];
-
-    for (let j = 0; j < matrix[row].length; j++) {
-        if (value < matrix[row][j]) {
-            return false;
-        }
-    }
-
-    for (let i = 0; i < matrix.length; i++) {
-        if (value > matrix[i][column]) {
-            return false;
-        }
-    }
-
-    return true;
-}

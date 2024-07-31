@@ -1,50 +1,43 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 class Matrix {
 
-    private int[][] matrix;
+    private List<List<Integer>> matrixValues;
 
     Matrix(List<List<Integer>> values) {
-        this.matrix = new int[values.size()][];
-        
-        for (int i = 0; i < values.size(); i++) {
-            this.matrix[i] = values.get(i).stream().mapToInt(Integer::intValue).toArray();
+        this.matrixValues = new ArrayList<>();
+        for (List<Integer> v : values) {
+            matrixValues.add(new ArrayList<>(v));
         }
     }
 
     Set<MatrixCoordinate> getSaddlePoints() {
+        Set<MatrixCoordinate> set = new HashSet<>();
 
-        Set<MatrixCoordinate> settlePoints = new HashSet<>();
-        for (int i = 0; i < this.matrix.length; i++) {
-            for (int j = 0; j < this.matrix[i].length; j++) {
-                if (isSettlePoint(i, j)) {
-                    settlePoints.add(new MatrixCoordinate(i + 1, j + 1));
+        for (int r = 0; r < this.matrixValues.size(); r++) {
+            for (int c = 0; c < this.matrixValues.get(0).size(); c++) {
+                if (isLargestInRow(r, c) && isSmallestInColumn(r, c)) {
+                    set.add(new MatrixCoordinate(r + 1, c + 1));
                 }
             }
         }
 
-        return settlePoints;
+        return set;
     }
 
-    private boolean isSettlePoint(int row, int column) {
-        int value = this.matrix[row][column];
+    private boolean isLargestInRow(int r, int c) {
+        int value = this.matrixValues.get(r).get(c);
 
-        for (int j = 0; j < this.matrix[row].length; j++) {
-            if (value < this.matrix[row][j]) {
-                return false;
-            }
-        }
-
-        for (int i = 0; i < this.matrix.length; i++) {
-            if (value > this.matrix[i][column]) {
-                return false;
-            }
-        }
-
-        return true;
+        return this.matrixValues.get(r).stream().allMatch(i -> value >= i);
     }
 
-    
+    private boolean isSmallestInColumn(int r, int c) {
+        int value = this.matrixValues.get(r).get(c);
+
+        return this.matrixValues.stream().allMatch(list -> list.get(c) >= value);
+    }
+
 }

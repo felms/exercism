@@ -1,13 +1,10 @@
-export const transform = (oldScore) => {
-  let newScore = {};
+export const transform = (input) => {
 
-  for (let item in oldScore) {
-    let letterScore = item;
-    let letters = oldScore[item];
+    return Object.entries(input)
+        .reduce((acc, [score, letters]) => ({ 
+            ...acc, 
+            ...letters.reduce((res, letter) => 
+                ({...res, [letter.toLowerCase()]: Number(score)}), {})
+        }), {});
 
-    letters.forEach(letter => newScore[letter.toLowerCase()] = parseInt(letterScore));
-
-  }
-
-  return newScore;
 };

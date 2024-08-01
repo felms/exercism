@@ -7,14 +7,14 @@ class ErrorHandling {
     }
 
     void handleErrorByThrowingIllegalArgumentExceptionWithDetailMessage(String message) {
-        throw new IllegalArgumentException("This is the detail message.");
+        throw new IllegalArgumentException(message);
     }
 
     void handleErrorByThrowingAnyCheckedException() throws Exception {
         throw new Exception();
     }
 
-    void handleErrorByThrowingAnyCheckedExceptionWithDetailMessage(String message) throws Exception{
+    void handleErrorByThrowingAnyCheckedExceptionWithDetailMessage(String message) throws Exception {
         throw new Exception(message);
     }
 
@@ -26,11 +26,11 @@ class ErrorHandling {
         throw new RuntimeException(message);
     }
 
-    void handleErrorByThrowingCustomCheckedException() throws CustomCheckedException{
+    void handleErrorByThrowingCustomCheckedException() throws CustomCheckedException {
         throw new CustomCheckedException();
     }
 
-    void handleErrorByThrowingCustomCheckedExceptionWithDetailMessage(String message)throws CustomCheckedException{
+    void handleErrorByThrowingCustomCheckedExceptionWithDetailMessage(String message) throws CustomCheckedException {
         throw new CustomCheckedException(message);
     }
 
@@ -43,10 +43,9 @@ class ErrorHandling {
     }
 
     Optional<Integer> handleErrorByReturningOptionalInstance(String integer) {
-        
         try {
-            return Optional.of(Integer.parseInt(integer));            
-        } catch (Exception e) {
+            return Optional.of(Integer.parseInt(integer));
+        } catch(NumberFormatException nfe) {
             return Optional.empty();
         }
     }

@@ -1,50 +1,32 @@
-export const clean = (number) => {
-  let regex = /[\s+\.\(\)\-]/g;
+export const clean = (phoneNumber) => {
 
-  let n = number.replace(regex, "");
-
-  if (n.length < 10) {
-    throw new Error('Incorrect number of digits');
-  }
-
-  if (n.length === 11) {
-    if (n.charAt(0) !== '1') {
-      throw new Error('11 digits must start with 1');
+    if (/[a-z]/g.test(phoneNumber)) {
+        throw new Error('Letters not permitted');
     }
 
-    n = n.substr(1);
-  }
+    if (/[^-+()\d\s.]/.test(phoneNumber)) {
+        throw new Error('Punctuations not permitted');
+    }
 
-  if (n.length > 11) {
-    throw new Error('More than 11 digits');
-  }
+    let num = phoneNumber.replaceAll(/\D/g,'');
 
-  regex = /[a-zA-Z]/;
-  if (regex.test(n)) {
-    throw new Error('Letters not permitted');
-  }
+    if (num.length < 10) {
+        throw new Error('Incorrect number of digits');
+    }
 
-  regex = /[^a-zA-Z0-9]/;
-  if (regex.test(n)) {
-    throw new Error('Punctuations not permitted');
-  }
+    if (num.length > 11) {
+        throw new Error('More than 11 digits');
+    }
 
-  if (n.charAt(0) === '0') {
-    throw new Error('Area code cannot start with zero');
-  }
+    if (/[^1].{10}/.test(num)) {
+        throw new Error('11 digits must start with 1');
+    }
 
-  if (n.charAt(0) === '1') {
-    throw new Error('Area code cannot start with one');
-  }
+    if (/[01]?[01][0-9]{9}/.test(num)) {
+        let n = (num.length === 11 && num[1] === '0') 
+                    || (num.length === 10 && num[0] === '0') ? 'zero' : 'one';
+        throw new Error(`Area code cannot start with ${n}`);
+    }
 
-  if (n.charAt(3) === '0') {
-    throw new Error('Exchange code cannot start with zero');
-  }
-
-  if (n.charAt(3) === '1') {
-    throw new Error('Exchange code cannot start with one');
-  }
-
-  return n;
-
+    return num.length === 11 ? num.substring(1) : num;
 };

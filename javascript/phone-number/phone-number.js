@@ -22,10 +22,14 @@ export const clean = (phoneNumber) => {
         throw new Error('11 digits must start with 1');
     }
 
-    if (/[01]?[01][0-9]{9}/.test(num)) {
-        let n = (num.length === 11 && num[1] === '0') 
-                    || (num.length === 10 && num[0] === '0') ? 'zero' : 'one';
+    if (/^1?[01]\d{9}$/.test(num)) {
+        let n = /^1?0\d{9}$/.test(num) ? 'zero' : 'one';
         throw new Error(`Area code cannot start with ${n}`);
+    }
+
+    if (/^\d{3,4}[01]\d{6}$/.test(num)) {
+        let n = /^\d{3,4}0\d{6}$/.test(num) ? 'zero' : 'one';
+        throw new Error(`Exchange code cannot start with ${n}`);
     }
 
     return num.length === 11 ? num.substring(1) : num;

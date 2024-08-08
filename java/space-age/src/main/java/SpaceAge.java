@@ -1,61 +1,41 @@
 class SpaceAge {
 
-    private static final double EARTH_YEAR = 31557600;
-
-    private static final double MERCURY_OP = 0.2408467;
-    private static final double VENUS_OP = 0.61519726;
-    private static final double MARS_OP = 1.8808158;
-    private static final double JUPITER_OP = 11.862615;
-    private static final double SATURN_OP = 29.447498;
-    private static final double URANUS_OP = 84.016846;
-    private static final double NEPTUNE_OP = 164.79132;
-
-    private final double age;
+    private double ageOnEarth;
 
     SpaceAge(double seconds) {
-        this.age = seconds;
-    }
-
-    double getSeconds() {
-        return this.age;
+        this.ageOnEarth = seconds / 31_557_600;
     }
 
     double onEarth() {
-        return this.age / EARTH_YEAR;
+        return this.ageOnEarth;
     }
 
     double onMercury() {
-        return this.onEarth() / MERCURY_OP;
+        return this.ageOnEarth / 0.2408467;
     }
 
     double onVenus() {
-        return this.onEarth() / VENUS_OP;
-
+        return this.ageOnEarth / 0.61519726;
     }
 
     double onMars() {
-        return this.onEarth() / MARS_OP;
-
+        return this.ageOnEarth / 1.8808158;
     }
 
     double onJupiter() {
-        return this.onEarth() / JUPITER_OP;
-
+        return this.ageOnEarth / 11.862615;
     }
 
     double onSaturn() {
-        return this.onEarth() / SATURN_OP;
-
+        return this.ageOnEarth / 29.447498;
     }
 
     double onUranus() {
-        return this.onEarth() / URANUS_OP;
-
+        return this.ageOnEarth / 84.016846;
     }
 
     double onNeptune() {
-        return this.onEarth() / NEPTUNE_OP;
-
+        return this.ageOnEarth / 164.79132;
     }
 
 }

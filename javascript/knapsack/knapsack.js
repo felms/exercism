@@ -1,26 +1,33 @@
 export const knapsack = (maximumWeight, items) => {
+    let sortedItems = items.toSorted((a, b) => a.weight - b.weight);
+    let bestKnapsack = permutations(maximumWeight, sortedItems, [], []);
 
-  let sortedItems = [...items];
-  sortedItems.sort((a, b) => a.value - b.value);
+    return knapsackSum(bestKnapsack);
 
-  let loot = mValue(maximumWeight, sortedItems, 0);
-  return loot;
 };
 
-const mValue = (limit, items, loot) => {
+const permutations = (maximumWeight, items, currentKnapsack, bestKnapsack) => {
 
-  if (limit === 0 || items.length === 0) {
-    return loot;
-  }
- 
-  let localItems = [...items];
-  let o = localItems.pop();
-  if (o.weight <= limit) {
-    return Math.max(
-      mValue(limit - o.weight, localItems, loot + o.value),
-      mValue(limit, localItems, loot)
-    );
-  } else {
-    return mValue(limit, localItems, loot);
-  }
+    if (maximumWeight < 0) {
+        return bestKnapsack;
+    }
+
+    if (items.length === 0 || items[0].weight > maximumWeight) {
+        if (knapsackSum(currentKnapsack) > knapsackSum(bestKnapsack)) {
+            return [...currentKnapsack];
+        }
+
+        return bestKnapsack;
+    }
+
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        items.splice(i, 1);
+        bestKnapsack = permutations(maximumWeight - item.weight, items, [...currentKnapsack, item], bestKnapsack);
+        items.splice(i, 0, item);
+    }
+
+    return bestKnapsack;
 };
+
+const knapsackSum = (knapsack) => knapsack.reduce((sum, item) => sum + item.value, 0);

@@ -1,6 +1,5 @@
 export const knapsack = (maximumWeight, items) => {
-    let sortedItems = items.toSorted((a, b) => a.weight - b.weight);
-    let bestKnapsack = permutations(maximumWeight, sortedItems, [], []);
+    let bestKnapsack = permutations(maximumWeight, items, [], []);
 
     return knapsackSum(bestKnapsack);
 
@@ -13,18 +12,14 @@ const permutations = (maximumWeight, items, currentKnapsack, bestKnapsack) => {
     }
 
     if (items.length === 0 || items[0].weight > maximumWeight) {
-        if (knapsackSum(currentKnapsack) > knapsackSum(bestKnapsack)) {
-            return [...currentKnapsack];
-        }
 
-        return bestKnapsack;
+        return (knapsackSum(currentKnapsack) > knapsackSum(bestKnapsack)) 
+            ? currentKnapsack : bestKnapsack;
     }
 
     for (let i = 0; i < items.length; i++) {
         let item = items[i];
-        items.splice(i, 1);
-        bestKnapsack = permutations(maximumWeight - item.weight, items, [...currentKnapsack, item], bestKnapsack);
-        items.splice(i, 0, item);
+        bestKnapsack = permutations(maximumWeight - item.weight, items.slice(i + 1), [...currentKnapsack, item], bestKnapsack);
     }
 
     return bestKnapsack;

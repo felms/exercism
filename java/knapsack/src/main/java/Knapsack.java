@@ -1,47 +1,30 @@
+import java.util.ArrayList;
 import java.util.List;
 
-public class Knapsack {
+class Knapsack {
 
-    public Knapsack() {
-
+    int maximumValue(int maximumWeight, List<Item> items) {
+        return maxLoot(maximumWeight, items, 0);
     }
 
-    public int maximumValue(int knapsackLimit, List<Item> list) {
-        return mValue(knapsackLimit, list, list.size());
-    }
+    int maxLoot(int maximumWeight, List<Item> items, int currentValue) {
 
-    private int mValue(int limit, List<Item> items, int n) {
-
-        if (n == 0 || limit == 0) {
-            return 0;
+        if (items.isEmpty() || maximumWeight == 0) {
+            return currentValue;
         }
 
-        if (items.get(n - 1).getWeight() > limit) {
-            return mValue(limit, items, n - 1);
+        List<Item> localItems = new ArrayList<>(items);
+        Item item = localItems.remove(0);
+
+        if (item.weight <= maximumWeight) {
+            return Math.max(
+                maxLoot(maximumWeight - item.weight, localItems, currentValue + item.value),
+                maxLoot(maximumWeight, localItems, currentValue)
+            );
+
         } else {
-            return Math.max(items.get(n - 1).getValue() + mValue(limit - items.get(n - 1).getWeight(), items, n - 1),
-                                mValue(limit, items, n - 1));
+            return maxLoot(maximumWeight, localItems, currentValue);
         }
     }
-}
 
-class Item{
-
-    private final int weight;
-    private final int value;
-
-    public Item(int weight, int value) {
-        this.weight = weight;
-        this.value = value;
-    }
-
-    public int getWeight() {
-        return this.weight;
-    }
-
-    public int getValue() {
-        return this.value;
-    }
-
-    
 }

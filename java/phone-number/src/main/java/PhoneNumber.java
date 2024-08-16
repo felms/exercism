@@ -1,66 +1,51 @@
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
-public class PhoneNumber {
+class PhoneNumber {
 
     private String number;
 
-    public PhoneNumber(String number) {
-        this.number = cleanNumber(number);
-    }
+    PhoneNumber(String numberString) {
 
-    public String getNumber() {
-        return this.number;
-    }
-
-    private String cleanNumber(String number) {
-        String regex = "[\\s+\\.\\(\\)\\-]";
-        String n0 = number.replaceAll(regex, "");
-        Pattern p;
-        Matcher m;
-
-        if (n0.length() < 10) {
-            throw new IllegalArgumentException("incorrect number of digits");
-        }
-
-        if (n0.length() == 11) {
-            if (n0.charAt(0) != '1') {
-                throw new IllegalArgumentException("11 digits must start with 1");
-            }
-            n0 = n0.substring(1);
-        }
-
-        if (n0.length() > 11) {
-            throw new IllegalArgumentException("more than 11 digits");
-        }
-
-        p = Pattern.compile("[a-zA-Z]");
-        m = p.matcher(n0);
-        if (m.find()) {
+        if (numberString.matches(".*[a-z].*")) {
             throw new IllegalArgumentException("letters not permitted");
         }
 
-        p = Pattern.compile("[^a-zA-Z0-9]");
-        m = p.matcher(n0);
-        if (m.find()) {
+        if (numberString.matches(".*[:punct:].*")) {
             throw new IllegalArgumentException("punctuations not permitted");
         }
 
-        if (n0.charAt(0) == '0') {
-            throw new IllegalArgumentException("area code cannot start with zero");
+        this.number = numberString.replaceAll("\\D", "");
+
+        if (this.number.matches("[^1]\\d{10}")) {
+            throw new IllegalArgumentException("11 digits must start with 1");
         }
 
-        if (n0.charAt(0) == '1') {
-            throw new IllegalArgumentException("area code cannot start with one");
+        if (this.number.length() < 10) {
+            throw new IllegalArgumentException("must not be fewer than 10 digits");
         }
 
-        if (n0.charAt(3) == '0') {
-            throw new IllegalArgumentException("exchange code cannot start with zero");
+        if (this.number.length() > 11) {
+            throw new IllegalArgumentException("must not be greater than 11 digits");
         }
-        if (n0.charAt(3) == '1') {
-            throw new IllegalArgumentException("exchange code cannot start with one");
+
+        if (this.number.length() == 11) {
+            this.number = this.number.substring(1);
         }
-        
-        return n0;
+
+        if (this.number.matches("[01].*")) {
+            String message = "area code cannot start with " +
+                        (this.number.charAt(0) == '0' ? "zero" : "one");
+            throw new IllegalArgumentException(message);
+        }
+
+        if (this.number.matches("\\d{3}[01].*")) {
+            String message = "exchange code cannot start with " +
+                        (this.number.charAt(3) == '0' ? "zero" : "one");
+            throw new IllegalArgumentException(message);
+        }
+
     }
+
+    String getNumber() {
+        return this.number;
+    }
+
 }

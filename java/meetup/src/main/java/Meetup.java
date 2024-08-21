@@ -1,84 +1,62 @@
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 
-public class Meetup {
+class Meetup {
 
-    private LocalDate date;
-    private DayOfWeek dayOfWeek;
-    public Meetup(int month, int year) {
-        this.date = LocalDate.of(year, month, 1);
-        this.dayOfWeek = date.getDayOfWeek();
+    private int monthOfYear;
+    private int year;
+
+    Meetup(int monthOfYear, int year) {
+        this.monthOfYear = monthOfYear;
+        this.year = year;
     }
 
-    public LocalDate day(DayOfWeek dayOfWeek, MeetupSchedule descriptor) {
-
-        switch (descriptor) {
-            case FIRST:
-                return handleOffset(dayOfWeek, 0);
-            case SECOND:
-                return handleOffset(dayOfWeek, 1);
-            case THIRD:
-                return handleOffset(dayOfWeek, 2);
-            case FOURTH:
-                return handleOffset(dayOfWeek, 3);
-            case LAST:
-                return handleLast(dayOfWeek);
-            case TEENTH:
-                return handleTeenth(dayOfWeek);
-        }
-
-        return null;
+    LocalDate day(DayOfWeek dayOfWeek, MeetupSchedule schedule) {
+        return switch(schedule) {
+            case MeetupSchedule.TEENTH -> calcTeenth(dayOfWeek);
+            case MeetupSchedule.LAST -> calcLast(dayOfWeek);
+            default -> calcNthDayOfWeek(dayOfWeek, schedule);
+        };
     }
 
-    private LocalDate handleOffset(DayOfWeek dayOfWeek, long weeksToAdd) {
+    private LocalDate calcTeenth(DayOfWeek dayOfWeek) {
+        LocalDate date = LocalDate.of(this.year, this.monthOfYear, 13);
 
-        long offset = weeksToAdd * 7;
-
-        if (this.dayOfWeek == dayOfWeek) {
-            return this.date.plusDays(offset);
+        while (date.getDayOfWeek() != dayOfWeek) {
+            date = date.plusDays(1);
         }
 
-        long daysToAdd = dayOfWeek.getValue() - this.dayOfWeek.getValue();
-        offset += daysToAdd > 0 ? daysToAdd : daysToAdd + 7;
-
-        return this.date.plusDays(offset);
-
+        return date;
     }
 
-    private LocalDate handleLast(DayOfWeek dayOfWeek) {
+    private LocalDate calcLast(DayOfWeek dayOfWeek) {
 
-        LocalDate lastDayOfTheMonth = this.date.plusDays(this.date.lengthOfMonth())
-                                    .minusDays(1);
-        
-        DayOfWeek lastDayOfWeek = lastDayOfTheMonth.getDayOfWeek();
+        LocalDate date = LocalDate.of(this.year, this.monthOfYear, 1)
+                            .plusMonths(1).minusDays(1);
 
-        if (lastDayOfWeek == dayOfWeek) {
-            return lastDayOfTheMonth;
+        while (date.getDayOfWeek() != dayOfWeek) {
+            date = date.minusDays(1);
         }
 
-        long offset = dayOfWeek.getValue() - lastDayOfWeek.getValue();
-        offset = offset > 0 ? offset - 7 : offset;
-
-        return lastDayOfTheMonth.plusDays(offset);
-
+        return date;
     }
 
-    private LocalDate handleTeenth(DayOfWeek dayOfWeek) {
+    private LocalDate calcNthDayOfWeek(DayOfWeek dayOfWeek, MeetupSchedule schedule) {
 
-        LocalDate firstTeenth = LocalDate.of(this.date.getYear(), 
-                                            this.date.getMonth(), 
-                                            13);
-        
-        DayOfWeek teenthDayOfWeek = firstTeenth.getDayOfWeek();
+        LocalDate date = LocalDate.of(this.year, this.monthOfYear, 1);
 
-        if (teenthDayOfWeek == dayOfWeek) {
-            return firstTeenth;
+        while (date.getDayOfWeek() != dayOfWeek) {
+            date = date.plusDays(1);
         }
 
-        long offset = dayOfWeek.getValue() - teenthDayOfWeek.getValue();
-        offset = offset > 0 ? offset : offset + 7;
+        int daysToAdd = switch(schedule) {
+            case MeetupSchedule.FIRST -> 0;
+            case MeetupSchedule.SECOND -> 7;
+            case MeetupSchedule.THIRD -> 14;
+            case MeetupSchedule.FOURTH -> 21;
+            default -> 0;
+        };
 
-        return firstTeenth.plusDays(offset);
-
+        return date.plusDays(daysToAdd);
     }
 }

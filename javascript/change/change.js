@@ -1,69 +1,40 @@
 export class Change {
-  calculate(coinArray, target) {
-    if (target < 0) {
-      throw new Error('Negative totals are not allowed.');
-    }
-    if (target == 0) {
-      return [];
-    }
-    if (coinArray.includes(target)) {
-      return [target];
+
+    #cache;
+    constructor() {
+        this.#cache = {};
     }
 
-    let coins = [...coinArray];
-    coins.sort((a, b) => a - b);
+    calculate(coinArray, target) {
 
-    let solution = this.computeChange(target, coins);
+        //for (let currentTarget = 0; currentTarget <= target; currentTarget++) {
+        //    let sol = this.calculateChange(coinArray, currentTarget, [], Array(target));
 
-    // Retorna erro não tenha sido encontrada nenhuma solução
-    if (solution === null) {
-      throw new Error(`The total ${target} cannot be represented in the given currency.`);
+        //    if (sol) {
+        //        this.#cache[currentTarget] = sol;
+        //    }
+        //}
+
+        //return this.#cache[target];
+
+        return this.calculateChange(coinArray, target, [], Array(target + 1));
+
     }
 
-    solution.sort((a, b) => a - b);
-    return solution;
-  }
+    calculateChange(coinArray, target, currentSolution, bestSolution) {
 
-  // Computa as combinaçãoes de moedas possíveis com as
-  // moedas fornecidas partindo dos menores casos
-  // reutilizando as soluções dos mesmos para
-  // casos maiores
-  computeChange(amount, coins) {
-
-    // Cria e inicializa um mapa com as soluções iniciais
-    let list = [];
-    for (let i = 0; i <= amount; i++) {
-      list.push(amount + 1);
-    }
-
-    let dp = new Map();
-    for (let i = 0; i <= amount; i++) {
-      dp.set(i, [...list]);
-    }
-
-    dp.set(0, []);
-
-    for (let i = 0; i <= amount; i++) {
-      for (let coin of coins) {
-        if (coin <= i) { // Se a moeda for menor que o valor atual sendo calculado
-          let solForI = dp.get(i); // A solução atual para o valor 'i'
-
-          // Pego a melhor solução para o caso de valor
-          // de ('i' - 'moedaAtual')
-          let newL = [...dp.get(i - coin)];
-          // Adiciono a moeda à soma para gerar a solução para
-          // o valor atual
-          newL.push(coin);
-
-          // Testo se a solução gerada é melhor que a solução existente
-          if (solForI.length > newL.length) {
-            dp.set(i, newL);
-          }
+        if (target === 0) {
+            return currentSolution.length < bestSolution.length 
+                ? currentSolution : bestSolution;
         }
-      }
+
+        for (let coin of coinArray) {
+            if (target - coin >= 0) {
+                bestSolution = this.calculateChange(coinArray, target - coin, [...currentSolution, coin], bestSolution);
+            }
+        }
+
+        return bestSolution;
     }
 
-    let sum = dp.get(amount).reduce((a, b) => a + b, 0);
-    return sum > amount ? null : dp.get(amount);
-  }
 }

@@ -1,89 +1,69 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChangeCalculator {
+class ChangeCalculator {
 
-    private final List<Integer> coins;
+    private List<Integer> coins;
+    private Map<Integer, List<Integer>> cache;
 
-    public ChangeCalculator(List<Integer> coins) {
-        this.coins = coins;
+    ChangeCalculator(List<Integer> currencyCoins) {
+        this.coins = new ArrayList<>(currencyCoins);
+        this.cache = new HashMap<>();
     }
 
-    public List<Integer> computeMostEfficientChange(int amount) {
+    List<Integer> computeMostEfficientChange(int grandTotal) {
 
-        if (amount < 0) {
+        if (grandTotal < 0) {
             throw new IllegalArgumentException("Negative totals are not allowed.");
         }
-        if (amount == 0) {
-            return Collections.emptyList();
-        }
-        if (this.coins.contains(amount)) {
-            return List.of(amount);
-        }
 
-        this.coins.sort(Comparator.comparingInt(a -> a));
+        List<Integer> r = computeChange(grandTotal);
 
-        List<Integer> solution = computeChange(amount);
-
-        // Retorna erro não tenha sido encontrada nenhuma solução
-        if (solution == null) {
-            throw new IllegalArgumentException(
-                    String.format("The total %d cannot be represented in the given currency.",
-                            amount));
+        if (grandTotal != 0 && r.isEmpty()) {
+            throw new IllegalArgumentException("The total " + grandTotal +
+                    " cannot be represented in the given currency.");
         }
 
-        solution.sort(Comparator.comparingInt(a -> a));
-        return solution;
-
+        return r;
     }
 
-    // Computa as combinaçãoes de moedas possíveis com as
-    // moedas fornecidas partindo dos menores casos
-    // reutilizando as soluções dos mesmos para
-    // casos maiores
-    private List<Integer> computeChange(int amount) {
+    private List<Integer> computeChange(int total) {
 
-        // Cria e inicializa um mapa com as soluções iniciais
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i <= amount; i++) {
-            list.add(amount + 1);
+        if (total == 0) {
+            return new ArrayList<>();
         }
 
-        Map<Integer, List<Integer>> dp = new HashMap<>();
-        for (int i = 0; i <= amount; i++) {
-            dp.put(i, new ArrayList<>(list));
+        if (this.coins.contains(total)) {
+            return List.of(total);
         }
 
-        dp.put(0, new ArrayList<>());
+        if (this.cache.containsKey(total)) {
+            return this.cache.get(total);
+        }
 
-        for (int i = 0; i <= amount; i++) {
-            for (Integer coin : this.coins) {
-                if (coin <= i) { // Se a moeda for menor que o valor atual sendo calculado
-                    List<Integer> solForI = dp.get(i); // A solução atual para o valor 'i'
+        List<Integer> bestSolution = new ArrayList<>();
 
-                    // Pego a melhor solução para o caso de valor 
-                    // de ('i' - 'moedaAtual')
-                    List<Integer> newL = new ArrayList<>(dp.get(i - coin));
-                    // Adiciono a moeda à soma para gerar a solução para 
-                    // o valor atual
-                    newL.add(coin);
+        for (int coin : this.coins) {
 
-                    // Testo se a solução gerada é melhor que a solução existente
-                    if (solForI.size() > newL.size()) {
-                        dp.put(i, newL);
-                    }
+            if (coin <= total) {
+                List<Integer> sol = new ArrayList<>();
+                sol.add(coin);
+                sol.addAll(computeChange(total - coin));
+
+                int sum = sol.stream().mapToInt(Integer::intValue).sum();
+
+                if (sum == total 
+                    && (bestSolution.size() == 0 || sol.size() < bestSolution.size())) {
+                    bestSolution = new ArrayList<>();
+                    bestSolution.addAll(sol);
                 }
             }
         }
 
-        return dp.get(amount).stream()
-                .mapToInt(Integer::intValue).sum() > amount
-                ? null
-                : dp.get(amount);
+        this.cache.put(total, bestSolution);
+        return bestSolution;
     }
 
 }

@@ -1,34 +1,24 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.LongStream;
 
-public class PrimeFactorsCalculator {
+class PrimeFactorsCalculator {
 
-    public List<Long> calculatePrimeFactorsOf(long number) {
-        
-        List<Long> primeFactors = new ArrayList<>();
+    List<Long> calculatePrimeFactorsOf(long number) {
+
+        List<Long> res = new ArrayList<>();
         long n = number;
-        long factor = 0;
-        while(n > 1 && factor <= n) {
-            if (isPrime(factor) && n % factor == 0) {
-                primeFactors.add(factor);
-                n /= factor;
-            } else {
-                factor++;
+        long i = 2;
+
+        while(n > 1) {
+            while (n % i == 0) {
+                n /= i;
+                res.add(i);
             }
+
+            i++;
         }
 
-        return primeFactors;
+        return res;
     }
 
-    private boolean isPrime(long n) {
-
-        if (n < 2) {
-            return false;
-        }
-
-        return LongStream.rangeClosed(2, (long)Math.sqrt(n))
-                    .noneMatch(number -> (n % number == 0));
-                
-    }
 }

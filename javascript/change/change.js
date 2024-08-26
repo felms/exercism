@@ -7,19 +7,31 @@ export class Change {
 
     calculate(coinArray, target) {
 
-        return this.calculateChange(coinArray, target, [], null);
+        let r = this.calculateChange(coinArray, target);
+        return r;
     }
 
-    calculateChange(coinArray, target, currentSolution, bestSolution) {
-        
+    calculateChange(coinArray, target) {
+
         if (target === 0) {
-            return (!bestSolution || currentSolution.length < bestSolution.length)
-                ? currentSolution : bestSolution;
+            return [];
         }
 
+        if (coinArray.includes(target)) {
+            return [target];
+        }
+
+        let bestSolution = [];
+
         for (let coin of coinArray) {
-            if (target - coin >= 0) {
-                bestSolution = this.calculateChange(coinArray, target - coin, [...currentSolution, coin], bestSolution);
+            if (coin <= target) {
+                let sol = [coin, ...this.calculateChange(coinArray, target - coin)];
+                let solSum = sol.reduce((a, b) => a + b);
+
+                if (solSum === target 
+                        && (bestSolution.length === 0 || sol.length < bestSolution.length)) {
+                    bestSolution = [...sol];
+                }
             }
         }
 

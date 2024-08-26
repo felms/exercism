@@ -7,7 +7,16 @@ export class Change {
 
     calculate(coinArray, target) {
 
+        if (target < 0) {
+            throw new Error('Negative totals are not allowed.');
+        }
+
         let r = this.calculateChange(coinArray, target);
+
+        if (target !== 0 && r.length === 0) {
+            throw new Error(`The total ${target} cannot be represented in the given currency.`);
+        }
+
         return r;
     }
 
@@ -21,6 +30,10 @@ export class Change {
             return [target];
         }
 
+        if (this.#cache[target]) {
+            return this.#cache[target];
+        }
+
         let bestSolution = [];
 
         for (let coin of coinArray) {
@@ -29,11 +42,13 @@ export class Change {
                 let solSum = sol.reduce((a, b) => a + b);
 
                 if (solSum === target 
-                        && (bestSolution.length === 0 || sol.length < bestSolution.length)) {
+                    && (bestSolution.length === 0 || sol.length < bestSolution.length)) {
                     bestSolution = [...sol];
                 }
             }
         }
+
+        this.#cache[target] = bestSolution;
 
         return bestSolution;
     }

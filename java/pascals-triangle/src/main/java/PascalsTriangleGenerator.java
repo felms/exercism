@@ -1,43 +1,38 @@
-public class PascalsTriangleGenerator{
+class PascalsTriangleGenerator {
 
-    private int[][] matrix;
-
-    public PascalsTriangleGenerator() {
-        
-    }
-
-    public int[][] generateTriangle(int rows) {
+    int[][] generateTriangle(int rows) {
 
         if (rows == 0) {
             return new int[][]{};
         }
 
-        if (rows == 1) {
-            return new int [][] {{1}};
+        int[][] res = new int[rows][];
+        res[0] = new int[]{1};
+
+        for (int i = 1; i < rows; i++) {
+            res[i] = generateRow(res[i - 1]);
         }
 
-        this.matrix = new int[rows][rows];
-        this.matrix[0] = new int[]{1};
-
-        for (int i = 2; i <= rows; i++) {
-            this.matrix[i - 1] = getRow(i);
-        } 
-
-        return this.matrix;
+        return res;
     }
 
-    private int[] getRow(int rowNumber) {
+    int[] generateRow(int[] previousRow) {
 
-        int[] row = new int[rowNumber];
-        row[0] = 1;
+        int[] res = new int[previousRow.length + 1];
+        res[res.length - 1] = 1;
 
-        for (int k = 1; k < rowNumber; k++) {
-            double number = (double)(rowNumber - k) / (double) k;
-            number *= row[k - 1];
-            row[k] = (int)number;
+        int[] row0 = new int[previousRow.length + 1];
+        row0[0] = 0;
+
+        for (int i = 0; i < previousRow.length; i++) {
+            row0[i + 1] = previousRow[i];
         }
 
-        return row;
+        for (int i = 0; i < res.length - 1; i++) {
+            res[i] = row0[i] + row0[i + 1];
+        }
+
+        return res;
     }
 
 }

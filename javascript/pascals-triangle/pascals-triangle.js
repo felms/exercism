@@ -1,31 +1,25 @@
-//
-// This is only a SKELETON file for the 'Pascals Triangle' exercise. It's been provided as a
-// convenience to get you started writing code faster.
-//
-
 export const rows = (numberOfRows) => {
-  let matrix = [];
 
-  for (let i = 1; i <= numberOfRows; i++) {
-    matrix.push(getRow(i));
-  }
-  
-  return matrix;
+    if (numberOfRows === 0) {
+        return [];
+    }
+
+    if (numberOfRows === 1) {
+        return [[1]];
+    }
+
+    let r = rows(numberOfRows - 1);
+    r.push(generateRow(r[r.length - 1]));
+
+    return r;
+
 };
 
+const generateRow = (previousRow) => {
 
-const getRow = (row) => {
-  if (row == 1) {
-    return [1];
-  }
-  
-  let result = [1];
+    let arr0 = [0, ...previousRow];
+    let arr1 = [...previousRow, 0];
 
-  for (let k = 1; k <= row - 1; k++) {
-    let number = (row - k) / k;
-    number *= result[result.length - 1];
-    result.push(number);
-  }
-
-  return result;
-}
+    return [...Array(previousRow.length + 1).keys()]
+            .map((i) => arr0[i] + arr1[i]);
+};

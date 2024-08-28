@@ -1,50 +1,39 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashSet;
+import java.util.Set;
 
-public class Robot{
+class Robot {
 
-    public static final List<String> usedNames = new ArrayList<>();
-
-    private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static Set<String> usedNames = new HashSet<>();
 
     private String name;
 
     public Robot() {
-        this.name = createName();
+        this.name = this.createName();
     }
 
-    public String getName() {
+    String getName() {
         return this.name;
     }
 
-    public void reset() {
-        this.name = createName();
+    void reset() {
+        this.name = this.createName();
     }
 
     private String createName() {
-        String name;
 
-        do{
-            name = randomName();
-        }while(usedNames.contains(name));
+        String createdName = "";
 
-        usedNames.add(name);
-        return name;
+        do {
+            char letter0 = ALPHABET.charAt((int) (Math.random() * 26));
+            char letter1 = ALPHABET.charAt((int) (Math.random() * 26));
+            int number = 100 + (int) (Math.random() * 900);
+
+            createdName = String.format("%s%s%d", letter0, letter1, number);
+        } while(usedNames.contains(createdName));
+
+        usedNames.add(createdName);
+        return createdName;
     }
 
-    private String randomName() {
-        StringBuilder name = new StringBuilder();
-        Random r = new Random();
-        int pos0 = r.nextInt(ALPHABET.length());
-        int pos1 = r.nextInt(ALPHABET.length());
-        
-        name.append(ALPHABET.charAt(pos0));
-        name.append(ALPHABET.charAt(pos1));
-        name.append(String.valueOf(r.nextInt(10)));
-        name.append(String.valueOf(r.nextInt(10)));
-        name.append(String.valueOf(r.nextInt(10)));
-
-        return name.toString();
-    }
 }

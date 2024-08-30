@@ -1,75 +1,65 @@
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
-public class Robot {
+class Robot {
 
-    private GridPosition gridPosition;
+    private static Orientation[] orientations = Orientation.values();
+    private static int[][] steps = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+    // Had to do this because exercism's online test runner doesn't allow 
+    // me to modify the Orientation and GridPosition classes, what would allow 
+    // a cleaner solution.
+    private static Map<Orientation, Integer> orientationIndex = Map.of(
+        Orientation.NORTH, 0,
+        Orientation.EAST,  1,
+        Orientation.SOUTH, 2,
+        Orientation.WEST,  3
+    );
+
+    private GridPosition position;
     private Orientation orientation;
-    private List<Orientation> cardinals;
 
-    public Robot(GridPosition initialGridPosition, Orientation initialOrientation) {
-        this.gridPosition = initialGridPosition;
+    Robot(GridPosition initialPosition, Orientation initialOrientation) {
+        this.position = initialPosition;
         this.orientation = initialOrientation;
-        this.cardinals = Arrays.asList(Orientation.values());
     }
 
-    public Object getOrientation() {
+    GridPosition getGridPosition() {
+        return this.position;
+    }
+
+    Orientation getOrientation() {
         return this.orientation;
     }
 
-    public Object getGridPosition() {
-        return this.gridPosition;
+    void advance() {
+        int[] step = steps[orientationIndex.get(this.orientation)];
+        this.position = new GridPosition(this.position.x + step[0], this.position.y + step[1]);
     }
 
-    public void turnRight() {
-        int pos = this.cardinals.indexOf(this.orientation);
-        pos = (pos + 1) % 4;
-        this.orientation = this.cardinals.get(pos);
+    void turnLeft() {
+        this.orientation = orientations[(orientationIndex.get(this.orientation) + 3) % 4];
     }
 
-    public void turnLeft() {
-        int pos = this.cardinals.indexOf(this.orientation);
-        pos = (pos - 1) >= 0 ? pos - 1 : pos - 1 + 4;
-        this.orientation = this.cardinals.get(pos);
+    void turnRight() {
+        this.orientation = orientations[(orientationIndex.get(this.orientation) + 1) % 4];
     }
 
-    public void advance() {
-        int x = this.gridPosition.x;
-        int y = this.gridPosition.y;
-
-        switch(this.orientation) {
-            case NORTH:
-                y++;
-                break;
-            case EAST:
-                x++;
-                break;
-            case SOUTH:
-                y--;
-                break;
-            case WEST:
-                x--;
-                break;
-        }
-
-        this.gridPosition = new GridPosition(x, y);
-    }
-
-    public void simulate(String string) {
-
-        Arrays.asList(string.split("")).forEach(action -> {
-            switch(action) {
-                case "R":
-                    this.turnRight();
-                    break;
-                case "L":
-                    this.turnLeft();
-                    break;
-                case "A":
+    void simulate(String instructions) {
+        for (char instruction : instructions.toCharArray()) {
+            switch (instruction) {
+                case 'A':
                     this.advance();
                     break;
+                case 'R':
+                    this.turnRight();
+                    break;
+                case 'L':
+                    this.turnLeft();
+                    break;
+                default:
+                    throw new IllegalArgumentException();
             }
-        });
+        }
     }
-    
+
 }

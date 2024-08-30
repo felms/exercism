@@ -1,147 +1,130 @@
 export class Forth {
+
+    #stack;
+    #userDefinedInstructions;
+
     constructor() {
-        this._stack = [];
-        this.userDefinedCommands = new Map();
+        this.#stack = [];
+        this.#userDefinedInstructions = {};
     }
 
     evaluate(input) {
-        this.evaluateExpression(input);
+        let instructions = input.toLowerCase();
+
+        if (/:.+;/.test(instructions)) {
+            this.#addDefinition(instructions);
+            return;
+        }
+
+        instructions.split(/\s+/g)
+            .forEach((instruction) => this.#evaluateInstruction(instruction));
     }
 
     get stack() {
-        return this._stack;
+        return this.#stack;
     }
 
-    evaluateExpression(expression) {
-        
-        expression = (expression + '').toLowerCase();
+    #evaluateInstruction(instruction) {
+        if (instruction in this.#userDefinedInstructions) {
+            this.evaluate(this.#userDefinedInstructions[instruction]);
+            return;
+        }
 
-        if (/:.+;/.test(expression)) {
+        if (/-?\d+/.test(instruction)) {
+            this.#stack.push(Number(instruction));
+            return;
+        }
 
-            let s = expression.replaceAll(/[:;]/g, '').trim().split(/\s+/);
-            let newCommand = s[0];
+        if (/(dup|drop|swap|over)/i.test(instruction)) {
+            this.#stackManipulation(instruction);
+            return;
+        }
 
-            if (/\d+/.test(newCommand)) {
-                throw new Error('Invalid definition');
-            }
+        if (/[-+*/]/.test(instruction)) {
+            this.#arithmeticOperation(instruction);
+            return;
+        }
 
-            let cmdList = [];
+        throw new Error("Unknown command");
+    }
 
-            for (let i = 1; i < s.length; i++) {
-                let str = s[i];
-                if (this.userDefinedCommands.has(str)) {
-                    cmdList.push(this.userDefinedCommands.get(str));
-                } else {
-                    cmdList.push(str);
+    #arithmeticOperation(operation) {
+        if (this.#stack.length < 2) {
+            throw new Error("Stack empty");
+        }
+
+        let value1 = this.#stack.pop();
+        let value0 = this.#stack.pop();
+
+        switch (operation) {
+            case "+":
+                this.#stack.push(value0 + value1);
+                break;
+            case "-":
+                this.#stack.push(value0 - value1);
+                break;
+            case "*":
+                this.#stack.push(value0 * value1);
+                break;
+            case "/":
+                if (value1 === 0) {
+                    throw new Error("Division by zero");
                 }
+                this.#stack.push(Math.trunc(value0 / value1));
+                break;
+        }
+    }
 
-            }
-
-            this.userDefinedCommands.set(newCommand, cmdList);
-
-        } else {
-
-            expression.split(/\s+/).forEach(item => {
-
-                if (this.userDefinedCommands.has(item)) {
-                    let command = this.userDefinedCommands.get(item); 
-                    command.forEach(cmmd => this.evaluateExpression(cmmd));
-                } else if (/\d+/.test(item)) {
-                    this._stack.push(parseInt(item));
-                } else if (/[-+*/]/.test(item)) {
-                    this.arithmeticOperation(item);
-                } else if (/(dup|drop|swap|over)/.test(item)) {
-                    this.stackManipulation(item);
-                }else {
-                    throw new Error('Unknown command');
+    #stackManipulation(operation) {
+        switch (operation) {
+            case "dup":
+                if (this.#stack.length < 1) {
+                    throw new Error("Stack empty");
                 }
-            });
-        }
-    }
-
-    arithmeticOperation(operation) {
-
-        if(this._stack.length < 2) {
-            throw new Error('Stack empty');
-        }
-
-        let a = this._stack.pop();
-        let b = this._stack.pop();
-        switch(operation) {
-            case '+':
-                this._stack.push(b + a);
+                let value = this.#stack[this.#stack.length - 1];
+                this.#stack.push(value);
                 break;
-            case '-':
-                this._stack.push(b - a);
-                break;
-            case '*':
-                this._stack.push(b * a);
-                break;
-            case '/':
-                if (a == 0) {
-                    throw new Error('Division by zero');
+            case "drop":
+                if (this.#stack.length < 1) {
+                    throw new Error("Stack empty");
                 }
-                this._stack.push(Math.trunc(b / a));
+                this.#stack.pop();
+                break;
+            case "swap":
+                if (this.#stack.length < 2) {
+                    throw new Error("Stack empty");
+                }
+                let value0 = this.#stack.pop();
+                let value1 = this.#stack.pop();
+                this.#stack.push(value0);
+                this.#stack.push(value1);
+                break;
+            case "over":
+                if (this.#stack.length < 2) {
+                    throw new Error("Stack empty");
+                }
+                let item = this.#stack[this.#stack.length - 2];
+                this.#stack.push(item);
                 break;
         }
     }
 
-    stackManipulation(operation) {
-
-        switch(operation) {
-            case 'dup':
-                this.dup();
-                break;
-            case 'drop':
-                this.drop();
-                break;
-            case 'swap':
-                this.swap();
-                break;
-            case 'over':
-                this.over();
-                break;
-
-        }
-    }
-
-    dup() {
-        let len = this._stack.length;
-        if (len === 0) {
-            throw new Error('Stack empty');
+    #addDefinition(newDefinition) {
+        if (/:\s-?\d.*;/.test(newDefinition)) {
+            throw new Error("Invalid definition");
         }
 
-        let a = this._stack[len - 1];
-        this._stack.push(a);
-    }
+        let def = newDefinition.replaceAll(/[:;]/g, "").trim();
+        let [_, definition, operation, ...rem] = /(\S+)\s(.*)/.exec(def);
 
-    drop() {
-        if (this._stack.length === 0) {
-            throw new Error('Stack empty');
+        // In case we are a defined operation to define another operation.
+        let op = operation.split(/\s/)[0] 
+        if (op in this.#userDefinedInstructions) {
+            let o = operation.replaceAll(op, this.#userDefinedInstructions[op]);
+            this.#userDefinedInstructions[definition] = o;
+            return;
         }
 
-        this._stack.pop();    
-    }
-
-    swap() {
-        if (this._stack.length < 2) {
-            throw new Error('Stack empty');
-        }
-
-        let a = this._stack.pop();
-        let b = this._stack.pop();
-
-        this._stack.push(a);
-        this._stack.push(b);
-    }
-
-    over() {
-        let len = this._stack.length;
-        if (len < 2) {
-            throw new Error('Stack empty');
-        }
-
-        let a = this._stack[len - 2];
-        this._stack.push(a);
+        this.#userDefinedInstructions[definition] = operation;
     }
 }

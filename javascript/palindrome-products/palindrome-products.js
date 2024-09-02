@@ -1,66 +1,49 @@
 export class Palindromes {
-
-    static generate(range) {
-
-        let {maxFactor, minFactor} = range;
+    static generate({maxFactor, minFactor}) {
 
         if (minFactor > maxFactor) {
             throw new Error('min must be <= max');
         }
 
-        let palindromeProducts = [];
+        let minProd = minFactor * minFactor;
+        let maxProd = maxFactor * maxFactor;
 
-        for (let i = minFactor; i <= maxFactor; i++) {
-            for (let j = i; j <= maxFactor; j++) {
-                let productFactors = [i, j];
-                let product = i * j;
+        let allPossibleFactors = Array.from(new Array(maxFactor + 1 - minFactor), (x, i) => i + minFactor);
+        let palindromesInRange = 
+                Array.from(new Array(maxProd + 1 - minProd), (x, i) => i + minProd) 
+                .filter(num => Palindromes.isPalindrome(i));
 
-                if (Palindromes.isPalindrome(product)) {
+        let smallest = {value: null, factors: []};
+        let largest = {value: null, factors: []};
 
-                    let pos = palindromeProducts.findIndex(item => {
-                            return item.value === product;
-                            });
-                    if (pos >= 0) {
-                        let productEntry = palindromeProducts[pos];
-                        productEntry.factors.push(productFactors);
-                    } else {
-                        let productEntry = {value: product, factors: [productFactors]}
-                        palindromeProducts.push(productEntry);
-                    }
-
-                }
-            }
+        for (let i = 0; i < palindromesInRange.length; i++) {
+            let candidate = palindromesInRange[i];
+            
         }
-
-        palindromeProducts.sort((a, b) => a.value - b.value);
-
-        let first = palindromeProducts[0] 
-            ? palindromeProducts[0] 
-            : {value: null, factors: []};
-
-        let last = palindromeProducts[palindromeProducts.length - 1] 
-            ? palindromeProducts[palindromeProducts.length - 1] 
-            : {value: null, factors: []}
-
-        return {smallest : first, largest: last};
+    
+        return {
+            smallest: smallest,
+            largest: largest
+        };
 
     }
 
     static isPalindrome(number) {
 
-        // Transforma o número para string
-        let string = number.toString();
-
-        // Itera sobre a primeira metade da string
-        for (let i = 0; i < string.length / 2; i++) {
-
-            // Checa se os itens 'espelhados' nas duas
-            // metades da string são iguais
-            if (string[i] !== string[string.length - 1 - i]) {
-                return false;
-            }
+        if (number > 0 && number < 10) {
+            return true;
         }
-        return true;
+
+        let n = number;
+        let rev = 0;
+
+        while (n > 0) {
+            rev *= 10;
+            rev += n % 10;
+            n = Math.floor(n / 10);
+        }
+
+        return rev === number;
     }
 
 }

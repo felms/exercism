@@ -50,6 +50,10 @@ elixir/*/_build/*
 *.formatter.exs
 mix.exs
 
+# 8th
+8th/*/test.8th
+8th/*/libs/*
+
 # AWK
 awk/*/*.bash
 awk/*/*.bats

@@ -176,6 +176,10 @@ typescript/*/.pnp*
 wasm/*/.*rc
 wasm/*/*.js*
 
+# Wren
+wren/*/package.wren
+wren/*/*.spec.wren
+
 # Zig
 zig/*/test*.zig
 

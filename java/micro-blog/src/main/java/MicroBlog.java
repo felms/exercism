@@ -1,13 +1,9 @@
 class MicroBlog {
     public String truncate(String input) {
 
-        if (input.length() <= 5) {
-            return input;
-        }
+        int endPos = input.length() < 5 ? input.length()
+            : input.offsetByCodePoints(0, 5);
 
-        int i = input.offsetByCodePoints(0, 5);
-        
-
-        return input.substring(0, i);
+        return input.substring(0, endPos);
     }
 }

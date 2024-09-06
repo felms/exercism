@@ -1,40 +1,35 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
 
 class DiamondPrinter {
 
     List<String> printToList(char a) {
-        List<String> list = new ArrayList<>();
-        int size = (a - 'A') * 2 + 1;
 
-        char currentChar = 'A';
-        while(list.size() < size) {
-            list.add(getLine(currentChar, size));
 
-            if (list.size() > (size / 2)) {
-                currentChar--;
-            } else {
-                currentChar++;
-            }
+        int size = (a - 'A') * 2;
+        List<String> res = new ArrayList<>();
+        int delta = size / 2;
+
+
+        for (int i = 0; i <= delta; i++) {
+            char currentLetter = (char) ('A' + i);
+            char[] str = new char[size + 1];
+            Arrays.fill(str, ' ');
+
+            str[delta - i] = currentLetter;
+            str[delta + i] = currentLetter;
+
+            res.add(new String(str));
         }
 
-        return list;
+        List<String> secondHalf = new ArrayList(res.subList(0, delta));
+        Collections.reverse(secondHalf);
+        res.addAll(secondHalf);
+
+        return res;
     }
 
-    public String getLine(char currentChar, int stringSize) {
-        StringBuilder sb = new StringBuilder();
-
-        int middle = stringSize / 2;
-        int diff = currentChar - 'A';
-
-        for (int i = 0; i < stringSize; i++) {
-            if (i == middle - diff || i == middle + diff) {
-                sb.append(currentChar);
-            } else {
-                sb.append(' ');
-            }
-        }
-
-        return sb.toString();
-    }
 }

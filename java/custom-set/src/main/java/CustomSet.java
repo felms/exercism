@@ -1,111 +1,71 @@
+import java.util.Collection;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class CustomSet<T> {
+class CustomSet<T> {
 
-    private int size;
-    private final List<T> setItems;
+    private List<T> items;
 
-    public CustomSet() {
-        this(new ArrayList<>());
+    CustomSet() {
+        this.items = new ArrayList<>();
     }
 
-    public CustomSet(List<T> items) {
-        this.size = 0;
-        this.setItems = new ArrayList<>();
-        items.forEach(this::add);
+    CustomSet(Collection<T> data) {
+        this();
+        data.forEach(this::add);
     }
 
-    public boolean isEmpty() {
-        return this.size == 0;
+    boolean isEmpty() {
+        return this.items.size() == 0;
     }
 
-    public boolean contains(T item) {
-        return this.setItems.contains(item);
+    boolean contains(T element) {
+        return this.items.contains(element);
     }
 
-    public boolean add(T item) {
-        if (!this.setItems.contains(item)) {
-            this.setItems.add(item);
-            this.size++;
-            return true;
+    boolean isDisjoint(CustomSet<T> other) {
+        return this.items.stream().noneMatch(other::contains);
+    }
+
+    boolean add(T element) {
+        if (!this.contains(element)) {
+            return this.items.add(element);
         }
 
         return false;
     }
 
-    public List<T> getValues() {
-        return new ArrayList<>(this.setItems);
+    @Override
+    public boolean equals(Object obj) {
+        CustomSet<T> other = (CustomSet<T>) obj;
+
+        return other.items.size() == this.items.size()
+                && other.items.stream().allMatch(this::contains);
     }
 
-    public boolean isSubset(CustomSet<T> other) {
+    CustomSet<T> getIntersection(CustomSet<T> other) {
+        List<T> data = this.items.stream().filter(other::contains).toList();
+        return new CustomSet<T>(data);
+    }
 
+    CustomSet<T> getUnion(CustomSet<T> other) {
+        CustomSet<T> res = new CustomSet<>(new ArrayList<>(this.items));
+        other.items.forEach(res::add);
+        
+        return res;
+    }
+
+    CustomSet<T> getDifference(CustomSet<T> other) {
+        List<T> data = this.items.stream().filter(item -> !other.contains(item)).toList();
+        return new CustomSet<T>(data);
+    }
+
+    boolean isSubset(CustomSet<T> other) {
         if (other.isEmpty()) {
             return true;
         }
 
-        return other.getValues().stream()
-                    .allMatch(this::contains);
-    }
-
-    public CustomSet<T> getIntersection(CustomSet<T> other) {
-        return new CustomSet<>(
-            this.getValues().stream()
-                    .filter(other::contains)
-                    .collect(Collectors.toList())
-        );
-    }
-
-    public boolean isDisjoint(CustomSet<T> other) {
-        return this.getIntersection(other).isEmpty();
-    }
-
-    public CustomSet<T> getDifference(CustomSet<T> other) {
-        return new CustomSet<>(
-                this.getValues().stream()
-                        .filter(item -> !other.contains(item))
-                        .collect(Collectors.toList())
-        );
-    }
-
-    public CustomSet<T> getUnion(CustomSet<T> other) {
-        List<T> allItems = new ArrayList<>(this.getValues());
-        allItems.addAll(other.getValues());
-
-        return new CustomSet<>(allItems);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        @SuppressWarnings("unchecked")
-        CustomSet<T> other = (CustomSet<T>) o;
-        if (this.size != other.size) {
-            return false;
-        }
-
-        return this.isSubset(other) && other.isSubset(this);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(size, setItems);
-    }
-
-    @Override
-    public String toString() {
-        return "CustomSet{" +
-                "size=" + size +
-                ", Items=" + setItems +
-                '}';
+        return other.items.stream().allMatch(this::contains);
     }
 }

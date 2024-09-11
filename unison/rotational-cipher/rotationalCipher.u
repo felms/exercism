@@ -1,0 +1,14 @@
+rotationalCipher.rotate : Text -> Nat -> Text
+rotationalCipher.rotate text shiftKey = Text.map (rotationalCipher.translate shiftKey) text
+
+rotationalCipher.translate : Nat -> Char -> Char
+rotationalCipher.translate shift letter = match (Char.ascii.isLetter letter) with
+    true -> 
+        Char.toNat letter 
+            |> (l -> l - (if (Char.ascii.isUpper letter) then (Char.toNat ?A) else (Char.toNat ?a)))
+            |> (+) shift
+            |> (l -> Nat.mod l 26)
+            |> (+) (if (Char.ascii.isUpper letter) then (Char.toNat ?A) else (Char.toNat ?a))
+            |> Char.fromNat
+            |> Optional.getOrElse ?\s
+    false -> letter

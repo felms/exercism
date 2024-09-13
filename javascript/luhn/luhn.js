@@ -1,17 +1,12 @@
-export const valid = (candidate) => {
-  let input = candidate.trim();
+export const valid = (input) => {
 
-  if (input.match(/.*[^\d\s].*/) || input.length < 2) {
-      return false;
-  }
+    let sin = input.replaceAll(/\s+/g, '');
 
-  input = input.replace(/\s+/g, "");
-  let numbers = input.split("").map(a => parseInt(a));
+    let sum = [...sin].toReversed()
+            .map(Number)
+            .reduce((acc, num, index) => 
+                acc + (index % 2 === 0 ? num : 
+                        num * 2 <= 9 ? num * 2 : (num * 2 - 9)), 0);
 
-  for (let i = numbers.length - 2; i >= 0 ; i -= 2) {
-      let digit = numbers[i] * 2;
-      numbers[i] = digit > 9 ? digit - 9 : digit;
-  }
-
-  return numbers.reduce((a, b) => a + b, 0) % 10 === 0;
+    return sin.length >= 2 && sum % 10 === 0;
 };

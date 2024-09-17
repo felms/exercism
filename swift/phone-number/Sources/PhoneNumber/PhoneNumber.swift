@@ -12,34 +12,21 @@ class PhoneNumber {
     // 'var' to be mutable
     var num = self.number.replacing(cleaningRegex, with: "")
 
-    if (num.count < 10) {
-      throw PhoneNumberError.invalidPhoneNumber
+    if (num.count == 11 && num.first == "1") {
+      num.remove(at: num.startIndex)
     }
 
-    // Test for invalid 11 digits number (start with one)
-    let elevenDigitsRegex = try! Regex("[^1]\\d{10}")
-    if (num.firstMatch(of: elevenDigitsRegex) != nil) {
-      throw PhoneNumberError.invalidPhoneNumber
+    let validNumberRegex = #/^[2-9]\d{2}[2-9]\d{6}$/#
+    if (num.firstMatch(of: validNumberRegex) != nil) {
+      return num
     }
 
-    // Remove the first digit in a 11 digit number
-    let index = num.index(after: num.startIndex)
-    num = num.count == 11 ? String(num[index...]) : num
-
-    // Test for invalid area or exchange code
-    let invalidAreaAndExchangeCodeRegex = try! Regex("^[01]\\d{9}$|^\\d{3}[01]\\d{6}$")
-    if (num.firstMatch(of: invalidAreaAndExchangeCodeRegex) != nil) {
-      throw PhoneNumberError.invalidPhoneNumber
-    }
-
-    return num
+    throw PhoneNumberError.invalidPhoneNumber
   }
 }
 
 enum PhoneNumberError: Equatable, Error {
+
     // Throw when an invalid phone number is entered
     case invalidPhoneNumber
-
-    // Throw in all other cases
-    case unexpected(code: Int)
 }

@@ -6,6 +6,44 @@ class LedgerEntry {
         this.description = undefined;
         this.change = undefined;
     }
+
+    toString(locale, currency) {
+
+        const dateString = this.#getDateString(locale);
+
+        const truncatedDescription = this.description.length > 25 
+            ? `${this.description.substring(0, 22)}...` 
+            : this.description.padEnd(25, ' ');
+
+        const changeStr = this.#getChangeStr(locale, currency);
+
+        return `${dateString} | ${truncatedDescription} |${changeStr.padStart(14, ' ')}`;
+    }
+
+    #getDateString(locale) {
+
+        return (locale === 'en-US') 
+                ? `${(this.month).padStart(2, '0')}/${(this.day).padStart(2, '0')}/${this.year}`
+                : `${(this.day).padStart(2, '0')}-${(this.month).padStart(2, '0')}-${this.year}`;
+
+    }
+
+    #getChangeStr(locale, currency) {
+
+        let formatingOptions = {
+            style: 'currency',
+            currency: currency,
+            currencyDisplay: 'narrowSymbol',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        };
+
+        return locale === 'en-US' && this.change < 0
+            ? `(${(Math.abs(this.change / 100)).toLocaleString(locale, formatingOptions)})`
+            : `${(this.change / 100).toLocaleString(locale, formatingOptions)} `;
+
+    }
+
 }
 
 export function createEntry(date, description, change) {
@@ -20,131 +58,25 @@ export function createEntry(date, description, change) {
 }
 
 export function formatEntries(currency, locale, entries) {
+
     let table = '';
-    if (locale === 'en-US') {
-        // Generate Header Row
-        table +=
-        'Date'.padEnd(10, ' ') +
-            ' | ' +
-            'Description'.padEnd(25, ' ') +
-            ' | ' +
-            'Change'.padEnd(13, ' ') +
-            '\n';
+    let [dt, desc, ch] = (locale === 'en-US') 
+        ? ['Date', 'Description', 'Change'] : ['Datum', 'Omschrijving', 'Verandering'];
 
-        // Sort entries
-        entries.sort(
-            (a, b) =>
-                a.date - b.date ||
-                    a.change - b.change ||
-                    a.description.localeCompare(b.description),
-        );
+    // Generate Header Row
+        table += dt.padEnd(10, ' ') + ' | ' 
+                + desc.padEnd(25, ' ') + ' | ' + ch.padEnd(13, ' ') + '\n';
 
-        entries.forEach((entry) => {
-            // Write entry date to table
-            const dateStr = `${(entry.month)
-                                .toString()
-                                .padStart(2, '0')}/${(entry.day)
-                                .toString()
-                                .padStart(2, '0')}/${entry.year}`;
+    // Sort entries
+    entries.sort(
+        (a, b) =>
+            new Date(a.year, (a.month - 1), a.day) - new Date(b.year, (b.month - 1), b.day) ||
+                a.change - b.change ||
+                a.description.localeCompare(b.description),
+    );
 
-            console.log(dateStr);
-            table += `${dateStr} | `;
+    // Get the string representation of each entry
+    table += entries.map((entry) => entry.toString(locale, currency)).join('\n');
 
-            // Write entry description to table
-            const truncatedDescription =
-                entry.description.length > 25
-                    ? `${entry.description.substring(0, 22)}...`
-                    : entry.description.padEnd(25, ' ');
-            table += `${truncatedDescription} | `;
-
-            // Write entry change to table
-            let changeStr = '';
-            if (currency === 'USD') {
-                let formatingOptions = {
-                    style: 'currency',
-                    currency: 'USD',
-                    //currencySign: 'accounting',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                };
-                if (entry.change < 0) {
-                    changeStr = `(${Math.abs(entry.change / 100)
-                                    .toLocaleString('en-US', formatingOptions,)})`;
-                } else {
-                    changeStr = `${(entry.change / 100).toLocaleString('en-US', formatingOptions,)} `;
-                }
-            } else if (currency === 'EUR') {
-                let formatingOptions = {
-                    style: 'currency',
-                    currency: 'EUR',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                };
-                if (entry.change < 0) {
-                    changeStr = `(${Math.abs(entry.change / 100).toLocaleString('en-US', formatingOptions,)})`;
-                } else {
-                    changeStr = `${(entry.change / 100).toLocaleString( 'en-US', formatingOptions,)} `;
-                }
-            }
-            table += changeStr.padStart(13, ' ');
-            table += '\n';
-        });
-    } else if (locale === 'nl-NL') {
-        // Generate Header Row
-        table +=
-        'Datum'.padEnd(10, ' ') +
-            ' | ' +
-            'Omschrijving'.padEnd(25, ' ') +
-            ' | ' +
-            'Verandering'.padEnd(13, ' ') +
-            '\n';
-
-        // Sort entries
-        // entries.sort(
-        //     (a, b) =>
-        //         a.date - b.date ||
-        //             a.change - b.change ||
-        //             a.description.localeCompare(b.description),
-        // );
-
-        entries.forEach((entry) => {
-            // Write entry date to table
-            const dateStr = `${(entry.day).padStart(2, '0')}-${(
-                                entry.month).padStart(2, '0')}-${entry.year}`;
-
-            table += `${dateStr} | `;
-
-            // Write entry description to table
-            const truncatedDescription =
-                entry.description.length > 25
-                    ? `${entry.description.substring(0, 22)}...`
-                    : entry.description.padEnd(25, ' ');
-            table += `${truncatedDescription} | `;
-
-            // Write entry change to table
-            let changeStr = '';
-            if (currency === 'USD') {
-                let formatingOptions = {
-                    style: 'currency',
-                    currency: 'USD',
-                    currencyDisplay: 'narrowSymbol',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                };
-                changeStr = `${(entry.change / 100).toLocaleString( 'nl-NL', formatingOptions,)} `;
-            } else if (currency === 'EUR') {
-                let formatingOptions = {
-                    style: 'currency',
-                    currency: 'EUR',
-                    currencyDisplay: 'narrowSymbol',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                };
-                changeStr = `${(entry.change / 100).toLocaleString( 'nl-NL', formatingOptions,)} `;
-            }
-            table += changeStr.padStart(13, ' ');
-            table += '\n';
-        });
-    }
     return table.replace(/\n$/, '');
 }

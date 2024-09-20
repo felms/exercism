@@ -4,7 +4,7 @@ defmodule Anagram do
   """
   @spec match(String.t(), [String.t()]) :: [String.t()]
   def match(base, candidates) do
-    Enum.filter(candidates, fn item -> anagram?(base, item) end)
+    candidates |> Enum.filter(&anagram?(base, &1))
   end
 
   defp anagram?(base, candidate) do

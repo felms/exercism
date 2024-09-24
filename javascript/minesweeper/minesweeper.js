@@ -1,17 +1,15 @@
 export const annotate = (input) => {
     let grid = input.map(row => row.split(''));
 
-    for (let r = 0; r < grid.length; r++) {
-        for (let c = 0; c < grid[0].length; c++) {
-            if (grid[r][c] === ' ') {
-                grid[r][c] = getNeighbors(grid, [r, c])
-                                .filter(([rr, cc]) => grid[rr][cc] === '*').length || ' ';
-            }
-        }
-    }
-
-    return grid.map(row => row.join(''));
+    return grid.map((row, r) => row.map((item, c) => 
+        item === ' ' 
+            ? countMines(grid, [r, c]) || ' '
+            : grid[r][c]
+    )).map(row => row.join(''));
 };
+
+const countMines = (grid, [r, c]) => 
+    getNeighbors(grid, [r, c]).filter(([rr, cc]) => grid[rr][cc] === '*').length;
 
 const getNeighbors = (board, [r, c]) => {
     let rows = board.length;

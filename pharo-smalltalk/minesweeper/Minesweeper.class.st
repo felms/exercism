@@ -6,22 +6,15 @@ Class {
 
 Minesweeper >> annotateMinefield: theMinefield [
 
-    res := Array new: (theMinefield size).
+    res := theMinefield deepCopy.
 
-    1 to: (theMinefield size) do: [ :r |
-        row := (theMinefield at: r).
-        newRow := Array new: (row size).
-        1 to: (row size) do: [ :c |
-            ((row at: c) = (Character space))
-                ifTrue: [
-                    n := self countMines: theMinefield row:r col:c.
-                    (n = 0)
-                    ifTrue: [newRow at: c put: (Character space)]
-                    ifFalse: [newRow at: c put: (n asString)].
-                ]
-                ifFalse: [newRow at: c put: (row at: c)].
+    res withIndexDo: [ :row :r |
+        row withIndexDo: [ :item :c |
+            item isSpaceSeparator ifTrue: [
+                n := self countMines: theMinefield row:r col:c.
+                n > 0 ifTrue: [row at: c put: n asCharacterDigit]. 
+            ].
         ].
-        res at: r put: newRow.
     ].
 
     ^res

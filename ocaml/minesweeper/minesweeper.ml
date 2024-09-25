@@ -9,7 +9,7 @@ let count_mines (board : string list) (r : int) (c : int) =
     String.get 
         (List.length 
             (List.filter 
-                (fun (row, col) -> (String.get (List.nth board row) col) == '*') 
+                (fun (row, col) -> (List.nth board row).[col] == '*') 
                 (get_neighbors board r c)) 
             |> string_of_int) 
         0

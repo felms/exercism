@@ -1,12 +1,14 @@
 import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 class Etl {
     Map<String, Integer> transform(Map<Integer, List<String>> old) {
-        
-        Map<String, Integer> newScore = new HashMap<>();
-        old.forEach((key, value) -> value.forEach(letter -> newScore.put(letter.toLowerCase(), key)));
-        return newScore;
+
+        return old.entrySet().stream()
+                    .flatMap(entry -> entry.getValue().stream()
+                                .map(item -> Map.entry(item.toLowerCase(), entry.getKey())))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
     }
 }

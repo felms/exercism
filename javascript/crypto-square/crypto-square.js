@@ -1,68 +1,28 @@
 export class Crypto {
 
-    #normalizedInput;
-    #columns;
-    #rows;
+    #text;
 
     constructor(inputText) {
-        this.#normalizedInput = inputText.toLowerCase().replaceAll(/\W/g, '');
-        this.#columns = this.#numberOfColumns();
-        this.#rows = this.#numberOfRows();
+        this.#text = inputText.toLowerCase().replaceAll(/\W/g, '');
     }
 
     get ciphertext() {
-        
-        if (this.#normalizedInput.length === 0) {
+
+        if (!this.#text) {
             return '';
         }
 
-        // Adding padding to the string
-        let text = this.#normalizedInput;
-        while (text.length < this.#rows * this.#columns) {
-            text = text.concat(' ');
-        }
+        // finds the size of each word
+        let sqrt = Math.sqrt(this.#text.length);
+        let cols = Math.ceil(sqrt);
 
-        // Dividing the string in equal sized chunks
-        let chunks = [];
+        // splits the text into 'cols-sized' chunks
+        let regex = new RegExp(`.{1,${cols}}`, 'g');
+        let arr = this.#text.match(regex).map(w => w.padEnd(cols, ' '));
 
-        let begin = 0;
-        let end = this.#columns;
-
-        while (end <= text.length) {
-            chunks.push(text.substring(begin, end));
-            begin += this.#columns;
-            end += this.#columns;
-        }
-
-        // Create the encoded string
-        let esList = [];
-        for (let j = 0; j < this.#columns; j++) {
-            let cString = '';
-            for (let i = 0; i < this.#rows; i++) {
-                let c = chunks[i].charAt(j);
-                cString = cString.concat(c);
-            }
-            esList.push(cString);
-        }
-
-        return esList.join(' ');
+        // maps the current text to the 'encrypted' one
+        return [...Array(cols).keys()]
+            .map(col => arr.map(word => word.charAt(col)).join('')).join(' ');
     }
 
-    #numberOfColumns () {
-
-        let stringSize = this.#normalizedInput.length;
-        let i = 1;
-        while (i * i < stringSize) {
-            i++;
-        }
-
-        return i;
-    }
-
-    #numberOfRows() {
-
-        let i = this.#columns - 1;
-        let stringSize = this.#normalizedInput.length;
-        return i * this.#columns >= stringSize ? i : this.#columns;
-    }
 }

@@ -1,49 +1,17 @@
-export const score = (word) => {
-
-	let sum = 0;	
-	return word.split('')	
-		.map(letter => letterScore(letter.toUpperCase()))
-		.reduce((a, b) => a + b, sum);
+let scores = {
+    "AEIOULNRST": 1,
+    "DG": 2,
+    "BCMP": 3,
+    "FHVWY": 4,
+    "K": 5,
+    "JX": 8,
+    "QZ": 10
 };
 
-const letterScore = (letter) => {
+const scoreLetter = (letter) => 
+    Object.entries(scores)
+        .find(([key, _]) => key.includes(letter))[1];
 
-	switch (letter){
-		case 'A':
-		case 'E':
-		case 'I':
-		case 'O':
-		case 'U':
-		case 'L':
-		case 'N':
-		case 'R':
-		case 'S':
-		case 'T':
-			return 1;
-		case 'D':
-		case 'G':
-			return 2;
-		case 'B':
-		case 'C':
-		case 'M':
-		case 'P':
-			return 3;
-		case 'F':
-		case 'H':
-		case 'V':
-		case 'W':
-		case 'Y':
-			return 4;
-		case 'K':
-			return 5;
-		case 'J':
-		case 'X':
-			return 8;
-		case 'Q':
-		case 'Z':
-			return 10;
-
-	}
-}
-
+export const score = (word) => 
+    [...word.toUpperCase()].reduce((acc, letter) => scoreLetter(letter) + acc, 0);
 

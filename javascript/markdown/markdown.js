@@ -1,49 +1,75 @@
-export function parse(markdown) {
+let parsingList;
 
-    if (/^#.*/.test(markdown)) {
-        return parseHeader(markdown);
-    }
-
-    let text = parseBoldAndItalics(markdown);
-    return `<p>${text}</p>`;
+function wrap(text, tag) {
+    return `<${tag}>${text}</${tag}>`;
 }
 
-const parseHeader = (text) => {
+function parser(markdown, delimiter, tag) {
+    const pattern = new RegExp(`${delimiter}(.+)${delimiter}`);
+    const replacement = `<${tag}>$1</${tag}>`;
+    return markdown.replace(pattern, replacement);
+}
 
-    let [_, header] = /(\#+).*/.exec(text);
-    let len = header.length;
+function parseText(markdown) {
+    const parsedStrong = parser(markdown, '__', 'strong');
+    const parsedText = parser(parsedStrong, '_', 'em');
+    if (parsingList) {
+        return parsedText;
+    } else {
+        return wrap(parsedText, 'p');
+    }
+}
 
-    if (len > 6) {
-       return `<p>${text}</p>`;
+function parseHeader(markdown) {
+
+    let count = /^\#+/.exec(markdown)[0].length;
+    const headerTag = `h${count}`;
+    const headerHtml = wrap(markdown.substring(count + 1), headerTag);
+
+    return headerHtml;
+}
+
+function parseListItem(markdown) {
+    return wrap(parseText(markdown.substring(2)), 'li');
+}
+
+function parseParagraph(markdown) {
+    return parseText(markdown);
+}
+
+function parseLine(markdown, list) {
+
+    if (/^\#{1,6} /.test(markdown)) {
+        return parseHeader(markdown, list);
     }
 
-    let tag = `h${header.length}`;
-    return `<${tag}>${text.substring(header.length + 1)}</${tag}>`;
-    
-};
+    if (markdown.startsWith('*')) {
+        let tag = parsingList ? '' : '<ul>';
 
-const parseBoldAndItalics = (text) => {
+        if (!parsingList) {
+            parsingList = true;
+        }
 
-    if (/_{2}.*_{2}/.test(text)) {
-        let [matches] = [...text.matchAll(/(_{2}.*_{2})/g)];
+        return tag + parseListItem(markdown);
+    } 
 
-        matches.forEach(m => {
-            let [_, r] = [.../_{2}(.*)_{2}/.exec(m)];
-            r = `<strong>${r}</strong>`;
-            text = text.replace(m, r);
-        });
-    }
+    let tag = parsingList ? '</ul>' : '';
+    parsingList = false;
 
-    if (/_{1}.*_{1}/.test(text)) {
-        let [matches] = [...text.matchAll(/(_{1}.*_{1})/g)];
+    return tag + parseParagraph(markdown);
+}
 
-        matches.forEach(m => {
-            let [_, r] = [.../_{1}(.*)_{1}/.exec(m)];
-            r = `<em>${r}</em>`;
-            text = text.replace(m, r);
-        });
-    }
+export function parse(markdown) {
 
-    return text;
+    parsingList = false;
 
-};
+    let result = markdown.split('\n').map(parseLine).join('');
+
+    if (parsingList) {
+        result += '</ul>';
+    } 
+
+    parsingList = false;
+
+    return result;
+}

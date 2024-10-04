@@ -1,5 +1,3 @@
-let parsingList;
-
 function wrap(text, tag) {
     return `<${tag}>${text}</${tag}>`;
 }
@@ -12,21 +10,13 @@ function parser(markdown, delimiter, tag) {
 
 function parseText(markdown) {
     const parsedStrong = parser(markdown, '__', 'strong');
-    const parsedText = parser(parsedStrong, '_', 'em');
-    if (parsingList) {
-        return parsedText;
-    } else {
-        return wrap(parsedText, 'p');
-    }
+    return parser(parsedStrong, '_', 'em');
 }
 
 function parseHeader(markdown) {
-
     let count = /^\#+/.exec(markdown)[0].length;
     const headerTag = `h${count}`;
-    const headerHtml = wrap(markdown.substring(count + 1), headerTag);
-
-    return headerHtml;
+    return wrap(markdown.substring(count + 1), headerTag);
 }
 
 function parseListItem(markdown) {
@@ -34,42 +24,24 @@ function parseListItem(markdown) {
 }
 
 function parseParagraph(markdown) {
-    return parseText(markdown);
+    return wrap(parseText(markdown), 'p');
 }
 
-function parseLine(markdown, list) {
+function parseLine(markdown) {
 
     if (/^\#{1,6} /.test(markdown)) {
-        return parseHeader(markdown, list);
+        return parseHeader(markdown);
     }
 
     if (markdown.startsWith('*')) {
-        let tag = parsingList ? '' : '<ul>';
-
-        if (!parsingList) {
-            parsingList = true;
-        }
-
-        return tag + parseListItem(markdown);
+        return parseListItem(markdown);
     } 
 
-    let tag = parsingList ? '</ul>' : '';
-    parsingList = false;
-
-    return tag + parseParagraph(markdown);
+    return parseParagraph(markdown);
 }
 
 export function parse(markdown) {
-
-    parsingList = false;
-
-    let result = markdown.split('\n').map(parseLine).join('');
-
-    if (parsingList) {
-        result += '</ul>';
-    } 
-
-    parsingList = false;
-
-    return result;
+    return markdown.split('\n')
+            .map(parseLine).join('')
+            .replace(new RegExp('(<li>.+</li>)'), '<ul>$1</ul>');
 }

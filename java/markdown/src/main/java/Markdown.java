@@ -1,87 +1,44 @@
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 class Markdown {
 
     String parse(String markdown) {
-        String[] lines = markdown.split("\n");
-        String result = "";
-        boolean activeList = false;
+        return Arrays.stream(markdown.split("\\n"))
+                .map(this::parseLine)
+                .collect(Collectors.joining())
+                .replaceAll("</ul><ul>", "");
+    }
 
-        for (int i = 0; i < lines.length; i++) {
-
-            String theLine = parseHeader(lines[i]);
-
-            if (theLine == null) {
-              theLine = parseListItem(lines[i]);
-            }
-
-            if (theLine == null) {
-                theLine = parseParagraph(lines[i]);
-            }
-
-            if (theLine.matches("(<li>).*") 
-                    && !theLine.matches("(<h).*") 
-                    && !theLine.matches("(<p>).*") 
-                    && !activeList) {
-                activeList = true;
-                result = result + "<ul>";
-                result = result + theLine;
-            } else if (!theLine.matches("(<li>).*") 
-                                                && activeList) {
-                activeList = false;
-                result = result + "</ul>";
-                result = result + theLine;
-            } else {
-              result = result + theLine;
-            }
+    private String parseLine(String line) {
+        if (line.matches("^#{1,6}\\s.*")) {
+            return parseHeader(line);
         }
 
-        if (activeList) {
-            result = result + "</ul>";
+        String result = parseBoldAndItalics(line);
+
+        if (result.startsWith("*")) {
+            return parseListItem(result);
         }
 
-        return result;
+        return parseParagraph(result);
     }
 
     private String parseHeader(String markdown) {
-        
-        if (!markdown.matches("#+.+")) {
-            return null;
-        }
-
-        int count = 0;
-
-        while (count < markdown.length() 
-                    && markdown.charAt(count) == '#') {
-            count++;
-        }
-
-        return "<h" + Integer.toString(count) + ">" 
-                    + markdown.substring(count + 1) 
-                    + "</h" + Integer.toString(count)+ ">";
+        int count = markdown.split("\\s")[0].length();
+        return "<h" + count + ">" + markdown.substring(count + 1) + "</h" + count + ">";
     }
 
     private String parseListItem(String markdown) {
-        
-        if (!markdown.startsWith("*")) {
-            return null;
-        }
-
-        String skipAsterisk = markdown.substring(2);
-        String listItemString = parseInlineSymbols(skipAsterisk);
-        return "<li>" + listItemString + "</li>";
+        return "<ul><li>" + markdown.substring(2) + "</li></ul>";
     }
 
     private String parseParagraph(String markdown) {
-        return "<p>" + parseInlineSymbols(markdown) + "</p>";
+        return "<p>" + markdown + "</p>";
     }
 
-    private String parseInlineSymbols(String markdown) {
-
-        String lookingFor = "__(.+)__";
-        String update = "<strong>$1</strong>";
-        String workingOn = markdown.replaceAll(lookingFor, update);
-
-        lookingFor = "_(.+)_";
-        update = "<em>$1</em>";
-        return workingOn.replaceAll(lookingFor, update);
+    private String parseBoldAndItalics(String markdown) {
+        return markdown.replaceAll("__(.+)__", "<strong>$1</strong>")
+                .replaceAll("_(.*)_", "<em>$1</em>");
     }
 }

@@ -1,52 +1,42 @@
+const ALPHABET_LENGTH = 26;
+const FIRST_LETTER = 'a'.charCodeAt(0);
+
 export class Cipher {
-  constructor(key) {
-    this.alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-    this._key = key || this.generateKey();
-  }
 
-  encode(word) {
-    let result = word.split("");
-    let key = [];
-    while (key.length < result.length) {
-      key.push(this._key);
-    }
-    key = key.join("");
+    #key;
 
-    for (let i = 0; i < result.length; i++) {
-      let pos = this.alphabet.indexOf(result[i]) + this.alphabet.indexOf(key[i]);
-      pos = pos % 26;
-      result[i] = this.alphabet[pos];
-    }
-    return result.join("");
-  }
-
-  decode(word) {
-    let result = word.split("");
-    let key = [];
-    while (key.length < result.length) {
-      key.push(this._key);
-    }
-    key = key.join("");
-
-    for (let i = 0; i < result.length; i++) {
-      let pos = this.alphabet.indexOf(result[i]) - this.alphabet.indexOf(key[i]);
-      pos = pos >= 0 ? pos : pos + 26;
-      result[i] = this.alphabet[pos];
-    }
-    return result.join("");
-  }
-
-  get key() {
-    return this._key;
-  }
-
-  generateKey() {
-    let key = [];
-    for (let i = 0; i < 100; i++) {
-      let pos = Math.floor(Math.random() * 26);
-      key.push(this.alphabet[pos]);
+    constructor(key) {
+        this.#key = !key ? this.#generateKey() : key;
     }
 
-    return key.join("");
-  }
+    encode(plainText) {
+
+        return [...plainText].map((letter, i) => {
+            let shift = this.#key.charCodeAt(i % this.#key.length) - FIRST_LETTER;
+            let plainTextPos = letter.charCodeAt(0) - FIRST_LETTER;
+            let cipherPos = (shift + plainTextPos) % ALPHABET_LENGTH;
+            return String.fromCharCode(cipherPos + FIRST_LETTER);
+        }).join('');
+    }
+
+    decode(cipherText) {
+
+        return [...cipherText].map((letter, i) => {
+            let shift = this.#key.charCodeAt(i % this.#key.length) - FIRST_LETTER;
+            let cipherTextPos = letter.charCodeAt(0) - FIRST_LETTER;
+            let plainTextPos = cipherTextPos - shift;
+            plainTextPos = plainTextPos < 0 ? plainTextPos + ALPHABET_LENGTH : plainTextPos;
+            return String.fromCharCode(plainTextPos + FIRST_LETTER);
+        }).join('');
+    }
+
+    get key() {
+        return this.#key;
+    }
+
+    #generateKey() {
+        return [...Array(100).keys()]
+            .map(_ => String.fromCharCode(Math.floor(Math.random() * ALPHABET_LENGTH) + FIRST_LETTER))
+            .join('');
+    }
 }

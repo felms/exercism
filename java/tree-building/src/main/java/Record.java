@@ -1,6 +1,6 @@
 class Record {
-    private final int recordId;
-    private final int parentId;
+    private int recordId;
+    private int parentId;
 
     public Record(int recordId, int parentId) {
         this.recordId = recordId;

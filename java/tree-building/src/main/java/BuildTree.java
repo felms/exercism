@@ -1,46 +1,48 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 class BuildTree {
 
     TreeNode buildTree(ArrayList<Record> records) throws InvalidRecordsException {
-        records.sort(Comparator.comparing(Record::getRecordId));
 
-        if (records.size() == 0) {
+        if (records.isEmpty()) {
             return null;
         }
 
-        if (records.get(records.size() - 1).getRecordId() != records.size() - 1
-                || records.get(0).getRecordId() != 0) {
-            throw new InvalidRecordsException("Invalid Records");
-        }
+        records.sort(Comparator.comparing(Record::getRecordId));
+        checkRecords(records);
 
-        boolean invalidRecords = records.stream()
-                .anyMatch(record -> record.getRecordId() == 0 && record.getParentId() != 0
-                                    || record.getRecordId() < record.getParentId()
-                                    || record.getRecordId() == record.getParentId() && record.getRecordId() != 0);
-        if (invalidRecords) {
-            throw new InvalidRecordsException("Invalid Records");
-        }
+        TreeNode root = new TreeNode(records.removeFirst().getRecordId());
+        buildTheThree(root, records);
 
-        List<TreeNode> treeNodes = records.stream()
-                .map(record -> new TreeNode(record.getRecordId()))
-                .collect(Collectors.toList());
-
-        treeNodes.forEach(parent -> {
-            records.stream()
-                    .filter(record -> record.getParentId() == parent.getNodeId())
-                    .forEach(record -> {
-                        treeNodes.stream()
-                                .filter(node -> record.getRecordId() == node.getNodeId()
-                                        && node.getNodeId() != 0)
-                                .forEach(node -> parent.getChildren().add(node));
-                    });
-        });
-
-        return treeNodes.get(0);
+        return root;
     }
 
+    private void buildTheThree(TreeNode root, List<Record> records) {
+        root.getChildren().addAll(
+                records.stream()
+                        .filter(record -> record.getParentId() == root.getNodeId())
+                        .map(record -> new TreeNode(record.getRecordId())).toList());
+
+        for (TreeNode node: root.getChildren()) {
+            buildTheThree(node, records);
+        }
+    }
+
+    private void checkRecords(List<Record> records) throws InvalidRecordsException {
+
+        if (records.getFirst().getRecordId() != 0
+                || records.getFirst().getParentId() != 0
+                || records.getLast().getRecordId() != records.size() - 1) {
+            throw new InvalidRecordsException("Invalid Records");
+        }
+
+        boolean anyInvalid = records.stream()
+                .anyMatch(record -> record.getRecordId() != 0 && (record.getRecordId() <= record.getParentId()));
+
+        if (anyInvalid) {
+            throw new InvalidRecordsException("Invalid Records");
+        }
+    }
 }

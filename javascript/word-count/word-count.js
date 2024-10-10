@@ -1,13 +1,4 @@
-export const countWords = (phrase) => {
-    let regex = /[\.,\n:!@$%^&]/g;
-    let processedPhrase = phrase.replace(regex, " ").trim();
-    let words = processedPhrase.split(/\s+/g)
-                    .map(word => word.toLowerCase()
-                                    .replace(/^'|'$/g, " ").trim());
-
-    let wordCount = {};
-
-    words.forEach(word =>  wordCount[word] = wordCount[word] ? wordCount[word] + 1 : 1);
-    
-    return wordCount;
+export const countWords = (input) => {
+    return input.toLowerCase().match(/\w+('\w+)?/g)
+            .reduce((acc, word) => ({...acc, [word]: (acc[word] ?? 0) + 1}), {});
 };

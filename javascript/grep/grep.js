@@ -27,16 +27,16 @@ const path = require('path');
  * @returns {string[]} the lines
  */
 function readLines(file) {
-  const data = fs.readFileSync(path.resolve(file), { encoding: 'utf-8' });
-  return data.split(/\r?\n/);
+    const data = fs.readFileSync(path.resolve(file), { encoding: 'utf-8' });
+    return data.split(/\r?\n/);
 }
 
 const VALID_OPTIONS = [
-  'n', // add line numbers
-  'l', // print file names where pattern is found
-  'i', // ignore case
-  'v', // reverse files results
-  'x', // match entire line
+    'n', // add line numbers
+    'l', // print file names where pattern is found
+    'i', // ignore case
+    'v', // reverse files results
+    'x', // match entire line
 ];
 
 const ARGS = process.argv;
@@ -48,109 +48,69 @@ const ARGS = process.argv;
 // This file should *not* export a function. Use ARGS to determine what to grep
 // and use console.log(output) to write to the standard output.
 
+const processArgs = (input) => {
+    let [_a, _b, ...args] = input;
 
+    let flags = [];
+    let pattern = "";
+    let files = [];
 
-// Processando o input
+    while (args.length > 0) {
 
-let params = ARGS.slice(2); // Só essa parte dos argumentos me interessa
-let pattern = params.filter(item => !(/(.+\.txt$)|(^-.+)/g.test(item)));
-let flags = params.filter(item => /^-.+/g.test(item));
-let files = params.filter(item => /.+\.txt$/g.test(item));
+        let item = args.shift();
 
-let addLineNumbers = flags.includes('-n');
-let printFileNames = flags.includes('-l');
-let ignoreCase = flags.includes('-i');
-let reverseResults = flags.includes('-v');
-let matchEntireLine = flags.includes('-x');
-
-
-// Procurando pelos matches no arquivo
-const searchForMatches = (file, multipleFiles) => {
-  let match = '';
-  let lineNumber = 1;
-
-  let lines = readLines(file);
-  lines.forEach(line => {
-
-    let m = '';
-    if (ignoreCase) {
-      let p = matchEntireLine ? `^${pattern}$` : pattern;
-      let regex = new RegExp(p, 'i');
-
-      if (reverseResults) {
-        if (!regex.test(line)) {
-          if (printFileNames) {
-            m += file;
-          } else {
-            m += multipleFiles ? file + ':' : '';
-            if (addLineNumbers){
-              m += `${lineNumber}:`;
-            }
-            m += line;
-          }
-        }
-
-      } else if (regex.test(line)) {
-        if (printFileNames) {
-          m += file;
+        if (item.startsWith('-')) {
+            flags.push(item);
+        } else if (item.endsWith('.txt')) {
+            files.push(item);
         } else {
-          m += multipleFiles ? file + ':' : '';
-          if (addLineNumbers){
-            m += `${lineNumber}:`;
-          }
-          m += line;
-        }
-      }
-
-    } else {
-      let p = matchEntireLine ? `^${pattern}$` : pattern;
-      let regex = new RegExp(p);
-
-      if (reverseResults) {
-        if (!regex.test(line)){
-          if (printFileNames) {
-            m += file;
-          } else {
-            m += multipleFiles ? file + ':' : '';
-            if (addLineNumbers){
-              m += `${lineNumber}:`;
-            }
-            m += line;
-          }
+            pattern = item;
         }
 
-      } else if (regex.test(line)){
-        if (printFileNames) {
-          m += file;
-        } else {
-          m += multipleFiles ? file + ':' : '';
-          if (addLineNumbers){
-            m += `${lineNumber}:`;
-          }
-          m += line;
-        }
-      }
     }
 
-    lineNumber++;
-    let regex = new RegExp(m);
-    if (m.length > 0 && !regex.test(match)) {
-      match += m + '\n';
-    }
-
-  });
-
-  return match = match.trim();
+    return {flags, pattern, files};
 };
 
-// Gerando e formatando o output
-let multipleFiles = files.length > 1;
-let output = '';
-files.forEach(file => {
-  let result = searchForMatches(file, multipleFiles)
-  if (result.length > 0) {
-    output += result + '\n';
-  }
-});
-console.log(output);
+
+const processFile = (file, pattern, flags) => {
+
+    if (flags.includes('-x')) {
+        pattern = `^${pattern}$`;
+    }
+
+    const regex = flags.includes('-i') ? new RegExp(pattern, "i") 
+        : new RegExp(pattern);
+
+    let matches = [];
+
+    const predicate = (text) => flags.includes('-v') ? !regex.test(text) : regex.test(text);
+
+    matches = readLines(file)
+        .reduce((acc, line, lineNumber) => 
+            predicate(line) ? [...acc, `${lineNumber + 1}:${line}`] : acc, []);
+
+    if (flags.includes('-l') && matches.length > 0) {
+        return [file];
+    }
+
+    if (flags.length == 0 || !flags.includes('-n')) {
+        return matches.map(line => line.replace(/^\d+:/, ''));
+    }
+
+    return matches;
+};
+
+
+let arg = processArgs(ARGS);
+
+let res = arg.files.map(file => {
+    let lines = processFile(file, arg.pattern, arg.flags);
+    if (arg.files.length > 1 && !arg.flags.includes('-l')) {
+        return lines.map(line => `${file}:${line}`).join('\n');
+    }
+    return lines.join('\n');
+}).filter(r => r.length > 0).join('\n');
+
+console.log(res);
 

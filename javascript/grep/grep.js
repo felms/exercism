@@ -18,14 +18,6 @@
 const fs = require('fs');
 const path = require('path');
 
-/**
- * Reads the given file and returns lines.
- *
- * This function works regardless of POSIX (LF) or windows (CRLF) encoding.
- *
- * @param {string} file path to file
- * @returns {string[]} the lines
- */
 function readLines(file) {
     const data = fs.readFileSync(path.resolve(file), { encoding: 'utf-8' });
     return data.split(/\r?\n/);
@@ -41,76 +33,41 @@ const VALID_OPTIONS = [
 
 const ARGS = process.argv;
 
-//
-// This is only a SKELETON file for the 'Grep' exercise. It's been provided as a
-// convenience to get you started writing code faster.
-//
-// This file should *not* export a function. Use ARGS to determine what to grep
-// and use console.log(output) to write to the standard output.
+const processFile = (file, pattern, flags, searchMultipleFiles) => {
 
-const processArgs = (input) => {
-    let [_a, _b, ...args] = input;
-
-    let flags = [];
-    let pattern = "";
-    let files = [];
-
-    while (args.length > 0) {
-
-        let item = args.shift();
-
-        if (item.startsWith('-')) {
-            flags.push(item);
-        } else if (item.endsWith('.txt')) {
-            files.push(item);
-        } else {
-            pattern = item;
-        }
-
-    }
-
-    return {flags, pattern, files};
-};
-
-
-const processFile = (file, pattern, flags) => {
-
-    if (flags.includes('-x')) {
-        pattern = `^${pattern}$`;
-    }
-
-    const regex = flags.includes('-i') ? new RegExp(pattern, "i") 
-        : new RegExp(pattern);
+    const regex = new RegExp(
+        flags.includes('-x') ? `^${pattern}$` : pattern, 
+        flags.includes('-i') ? 'i' : '' );
 
     let matches = [];
 
     const predicate = (text) => flags.includes('-v') ? !regex.test(text) : regex.test(text);
+    const assemble = (line, lineNumber) => (searchMultipleFiles ? `${file}:` : '') 
+        + (flags.includes('-n') ? `${lineNumber}:${line}` : line);
 
     matches = readLines(file)
         .reduce((acc, line, lineNumber) => 
-            predicate(line) ? [...acc, `${lineNumber + 1}:${line}`] : acc, []);
+            predicate(line) ? [...acc, assemble(line, lineNumber + 1)] : acc, []);
 
     if (flags.includes('-l') && matches.length > 0) {
-        return [file];
+        return file;
     }
 
-    if (flags.length == 0 || !flags.includes('-n')) {
-        return matches.map(line => line.replace(/^\d+:/, ''));
-    }
-
-    return matches;
+    return matches.join('\n');
 };
 
+let args = ARGS.slice(2);
 
-let arg = processArgs(ARGS);
+const isFile = (item) => item.match(/\w+\.txt/);
+const isFlag = (item) => item.startsWith('-');
+const flags = args.filter(isFlag);
+const files = args.filter(isFile);
+const pattern = args.filter(item => !isFile(item) && !isFlag(item));
 
-let res = arg.files.map(file => {
-    let lines = processFile(file, arg.pattern, arg.flags);
-    if (arg.files.length > 1 && !arg.flags.includes('-l')) {
-        return lines.map(line => `${file}:${line}`).join('\n');
-    }
-    return lines.join('\n');
-}).filter(r => r.length > 0).join('\n');
+
+let res = files.map(file => 
+    processFile(file, pattern, flags, files.length > 1))
+               .filter(r => r.length > 0).join('\n');
 
 console.log(res);
 

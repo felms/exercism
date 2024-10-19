@@ -1,58 +1,27 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 class KindergartenGarden {
 
-	private final String[] garden;
+    private static final List<String> students = List.of(
+            "Alice", "Bob", "Charlie", "David", "Eve", "Fred",
+            "Ginny", "Harriet", "Ileana", "Joseph", "Kincaid", "Larry" );
 
-    public KindergartenGarden(String garden) {
-		this.garden = garden.split("\\s+");
+    private final String garden;
+
+    KindergartenGarden(String garden) {
+        this.garden = garden;
     }
 
-    public List<Plant> getPlantsOfStudent(String student) {
-		
-		int pos = getStudentPosition(student);
-		List<Plant> plants = new ArrayList<>();
-		plants.add(Plant.getPlant(this.garden[0].charAt(pos)));
-		plants.add(Plant.getPlant(this.garden[0].charAt(pos + 1)));
-		plants.add(Plant.getPlant(this.garden[1].charAt(pos)));
-		plants.add(Plant.getPlant(this.garden[1].charAt(pos + 1)));
-		
-		return plants;
-	}
-	
-	private int getStudentPosition(String student){
-		
-		switch(student) {
-			case "Alice":
-				return 0;
-			case "Bob":
-				return 2;
-			case "Charlie":
-				return 4;
-			case "David":
-				return 6;
-			case "Eve":
-				return 8;
-			case "Fred":
-				return 10;
-			case "Ginny":
-				return 12;
-			case "Harriet":
-				return 14;
-			case "Ileana":
-				return 16;
-			case "Joseph":
-				return 18;
-			case "Kincaid":
-				return 20;
-			case "Larry":
-				return 22;
-
-		}
-		
-		return -1;
-
+    List<Plant> getPlantsOfStudent(String student) {
+        int studentIndex = students.indexOf(student);
+        return Arrays.stream(this.garden.split("\n"))
+                .flatMap(row -> row.substring(studentIndex * 2, studentIndex * 2 + 2).chars().mapToObj(c -> Plant.getPlant((char) c)))
+                .toList();
     }
 
 }

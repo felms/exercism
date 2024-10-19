@@ -5,17 +5,12 @@ enum Plant {
     GRASS;
 
     static Plant getPlant(char plantCode) {
-        switch (plantCode) {
-            case 'G':
-                return GRASS;
-            case 'C':
-                return CLOVER;
-            case 'R':
-                return RADISHES;
-            case 'V':
-                return VIOLETS;
-        }
-
-        return null;
+        return switch (plantCode) {
+            case 'G' -> GRASS;
+            case 'C' -> CLOVER;
+            case 'R' -> RADISHES;
+            case 'V' -> VIOLETS;
+            default -> null;
+        };
     }
 }

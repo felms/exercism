@@ -1,57 +1,51 @@
 class CircularBuffer {
 
-  #capacity;
-  #buffer;
+    #capacity;
+    #elements;
 
-  constructor(capacity) {
-    this.#capacity = capacity;
-    this.#buffer = [];
-  }
-
-  write(item) {
-
-    if (this.#buffer.length === this.#capacity) {
-      throw new BufferFullError();
+    constructor(size) {
+        this.#capacity = size;
+        this.#elements = [];
     }
 
-    this.#buffer.push(item);
+    write(item) {
+        if (this.#elements.length === this.#capacity) {
+            throw new BufferFullError("Buffer is full.");
+        }
 
-  }
-
-  read() {
-    if (this.#buffer.length === 0) {
-      throw new BufferEmptyError();
+        this.#elements.push(item);
     }
 
-    return this.#buffer.shift();
+    read() {
+        if (this.#elements.length === 0) {
+            throw new BufferEmptyError("Can't read from empty buffer.");
+        }
 
-  }
+        return this.#elements.shift();
+    }
 
-  forceWrite(item) {
+    forceWrite(item) {
+        if (this.#elements.length === this.#capacity) {
+            this.#elements.shift();
+        }
+        this.#elements.push(item);
+    }
 
-    if (this.#buffer.length === this.#capacity) {
-      this.#buffer.shift();
-    } 
-
-    this.#buffer.push(item);
-
-  }
-
-  clear() {
-    this.#buffer = [];
-  }
+    clear() {
+        this.#elements = [];
+    }
 }
 
 export default CircularBuffer;
 
 export class BufferFullError extends Error {
-  constructor() {
-    super('Buffer Full');
-  }
+    constructor(message) {
+        super(message);
+    }
 }
 
 export class BufferEmptyError extends Error {
-  constructor() {
-    super('Buffer Empty');
-  }
+    constructor(message) {
+        super(message);
+    }
 }

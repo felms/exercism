@@ -1,14 +1,21 @@
+cache = {}
+
+
 def find_fewest_coins(coins, target):
 
     if target < 0:
         raise ValueError("target can't be negative")
 
-    res = calc_change(coins, target)
+    for i in range(target + 1):
+        cache[i] = []
 
-    if target != 0 and len(res) == 0:
+    for t in range(target + 1):
+        cache[t] = calc_change(coins, t)
+
+    if target != 0 and len(cache[target]) == 0:
         raise ValueError("can't make target with given coins")
 
-    return res
+    return cache[target]
 
 
 def calc_change(coins, target):
@@ -18,6 +25,9 @@ def calc_change(coins, target):
 
     if target == 0:
         return []
+
+    if len(cache[target]) != 0:
+        return cache[target]
 
     best_solution = []
 

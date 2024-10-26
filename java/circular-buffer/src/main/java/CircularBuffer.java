@@ -1,45 +1,40 @@
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.LinkedList;
 
-public class CircularBuffer<T> {
+class CircularBuffer<T> {
 
-    private final int bufferSize;
-    private final Queue<T> buffer;
+    private LinkedList<T> buffer;
+    private int capacity;
 
-
-    public CircularBuffer(int bufferSize) {
-       this.bufferSize = bufferSize;
-       this.buffer = new ArrayDeque<>();
+    CircularBuffer(final int size) {
+        this.buffer = new LinkedList<>();
+        this.capacity = size;
     }
 
-    public T read() throws BufferIOException {
-
+    T read() throws BufferIOException {
         if (this.buffer.isEmpty()) {
             throw new BufferIOException("Tried to read from empty buffer");
         }
 
-
         return this.buffer.poll();
     }
 
-    public void write(T item) throws BufferIOException {
-
-        if (this.buffer.size() == this.bufferSize) {
+    void write(T data) throws BufferIOException {
+        if (this.buffer.size() == this.capacity) {
             throw new BufferIOException("Tried to write to full buffer");
         }
 
-        this.buffer.offer(item);
+        this.buffer.add(data);
     }
 
-    public void overwrite(T item) {
-        if (this.buffer.size() == bufferSize) {
+    void overwrite(T data) {
+        if (this.buffer.size() == this.capacity) {
             this.buffer.poll();
         }
 
-        this.buffer.offer(item);
+        this.buffer.add(data);
     }
 
-    public void clear() {
+    void clear() {
         this.buffer.clear();
     }
 

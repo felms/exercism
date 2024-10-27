@@ -1,42 +1,40 @@
-export const prime = (nth) => {
-	
-	if (nth === 0) {
-		throw new Error('there is no zeroth prime');
-	}
-	
-	let primesList = [];
+export const prime = (nthPrime) => {
+    if (nthPrime === 0) {
+        throw new Error('there is no zeroth prime');
+    }
 
-	let i = 2;
-	while (primesList.length < nth) {
-		if (isPrime(i)) {
-			primesList.push(i);
-		}
-		i++;
-	}
+    let count = 1;
+    let currentPrime = 2;
 
-	return primesList.pop();
-	
+    while (count < nthPrime) {
+        currentPrime++;
+        if (isPrime(currentPrime)) {
+            count++;
+        }
+    }
+
+    return currentPrime;
 };
 
 const isPrime = (number) => {
-	
-	if (number < 2) {
-		return false;
-	}
 
-	if (number === 2) {
-		return true;
-	}
-	
-	if (number % 2 === 0) {
-		return false;
-	}
+    if (number < 2) {
+        return false;
+    }
 
-	for (let i = 3; i <= Math.sqrt(number); i += 2) {
-		if (number % i === 0){
-			return false;
-		}
-	}
+    if (number === 2 || number === 3) {
+        return true;
+    }
 
-	return true;
-}
+    if (number % 2 === 0) {
+        return false;
+    }
+
+    for (let i = 3; i * i <= number; i += 2) {
+        if (number % i === 0) {
+            return false;
+        }
+    }
+
+    return true;
+};

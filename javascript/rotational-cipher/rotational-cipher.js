@@ -1,30 +1,16 @@
-let lowerCaseAlphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-let upperCaseAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const LOWER_ALPHABET = 'abcdefghijklmnopqrstuvwxyz'; 
+const UPPER_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-export const rotate = (word, key) => {
+export const rotate = (input, key) => 
+    [...input].map(letter => translateLetter(letter, key)).join('');
 
-    return word.split('').map(letter => rotateBy(letter, key)).join('');
-};
+const translateLetter = (letter, key) => {
 
-const rotateBy = (letter, key) => {
-
-    if (!(/[a-zA-Z]/.test(letter))) {
+    if (!letter.match(/[a-zA-Z]/g)) {
         return letter;
     }
 
-    if (!isUpperCase(letter)) {
-        let letterPos = lowerCaseAlphabet.indexOf(letter);
-        let rot = (key + letterPos) % 26;
-        return lowerCaseAlphabet[rot];
-    } else {
-        let letterPos = upperCaseAlphabet.indexOf(letter);
-        let rot = (key + letterPos) % 26;
-        return upperCaseAlphabet[rot];
-    }
+    const ALPHABET = letter.match(/[a-z]/g) ? LOWER_ALPHABET : UPPER_ALPHABET;
 
-}
-
-const isUpperCase = (letter) => {
-
-    return letter === letter.toUpperCase();
-}
+    return ALPHABET[(ALPHABET.indexOf(letter) + key) % 26];
+};

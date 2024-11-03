@@ -1,53 +1,55 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class BaseConverter {
+class BaseConverter {
 
-    private int numberInBaseTen;
+    private final int numberBase10;
 
-    public BaseConverter(int base, int[] number) {
-
-        if (base < 2) {
+    BaseConverter(int originalBase, int[] originalDigits) {
+        if (originalBase < 2) {
             throw new IllegalArgumentException("Bases must be at least 2.");
         }
 
-        this.numberInBaseTen = 0;
-
-        int exponent = 0;
-        for (int i = number.length - 1; i >= 0; i--) {
-            if (number[i] < 0) {
-                throw new IllegalArgumentException("Digits may not be negative.");
-            }
-
-            if (number[i] >= base) {
-                throw new IllegalArgumentException("All digits must be strictly less than the base.");
-            }
-
-            numberInBaseTen += number[i] * Math.pow(base, exponent);
-            exponent++;
-        }
+        this.numberBase10 = convertToBase10(originalBase, originalDigits);
     }
 
-    public int[] convertToBase(int newBase) {
-
+    int[] convertToBase(int newBase) {
         if (newBase < 2) {
             throw new IllegalArgumentException("Bases must be at least 2.");
         }
 
-        List<Integer> digits = new ArrayList<>();
-
-        if (this.numberInBaseTen == 0) {
-            return new int[]{0};
+        if (this.numberBase10 == 0) {
+            return new int[] { 0 };
         }
 
-        int n = this.numberInBaseTen;
+        List<Integer> digits = new ArrayList<>();
+        int n = this.numberBase10;
+
         while (n > 0) {
             digits.add(n % newBase);
             n /= newBase;
         }
-        Collections.reverse(digits);
 
-        return digits.stream().mapToInt(Integer::intValue).toArray();
+        return digits.reversed().stream().mapToInt(i -> i).toArray();
+    }
+
+    private int convertToBase10(int originalBase, int[] number) {
+        int exponent = number.length - 1;
+        int sum = 0;
+
+        for (int n : number) {
+
+            if (n < 0) {
+                throw new IllegalArgumentException("Digits may not be negative.");
+            }
+
+            if (n >= originalBase) {
+                throw new IllegalArgumentException("All digits must be strictly less than the base.");
+            }
+
+            sum += (int) (n * Math.pow(originalBase, exponent--));
+        }
+
+        return sum;
     }
 }

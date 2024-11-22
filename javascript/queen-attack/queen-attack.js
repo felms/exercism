@@ -1,90 +1,32 @@
 export class QueenAttack {
+    constructor({
+        black: [blackRow, blackColumn] = [0, 3],
+        white: [whiteRow, whiteColumn] = [7, 3],
+    } = {}) {
+        if ([blackRow, blackColumn, whiteRow, whiteColumn].some(n => n < 0 || n > 7)) {
+            throw new Error('Queen must be placed on the board');
+        }
 
-  constructor({
-    black: [blackRow, blackColumn] = [],
-    white: [whiteRow, whiteColumn] = [],
-  } = {}) {
-    
-    if (blackRow === undefined) {
-      blackRow = 0;
-      blackColumn = 3;
+        if (blackRow === whiteRow && blackColumn === whiteColumn) {
+            throw new Error('Queens cannot share the same space')
+        }
+
+        this.black = [blackRow, blackColumn]
+        this.white = [whiteRow, whiteColumn]
     }
 
-    if (whiteRow === undefined) {
-      whiteRow = 7;
-      whiteColumn = 3;
+    toString() {
+        let board = [...Array(8)].map(() => Array(8).fill('_'));
+        board[this.black[0]][this.black[1]] = 'B';
+        board[this.white[0]][this.white[1]] = 'W';
+
+        return board.map(row => row.join(' ')).join('\n');
+
     }
 
-    let blackQueen = [blackRow, blackColumn];
-    let whiteQueen = [whiteRow, whiteColumn];
-
-    this.#validateQueens(blackQueen, whiteQueen);
-    
-    
-    this.black = blackQueen;
-    this.white = whiteQueen;
-
-    this.board = [];
-
-    for (let i = 0; i < 8; i++) {
-      let row = [];
-      for (let j = 0; j < 8; j++) {
-        row.push('_');
-      }
-      this.board.push(row);
+    get canAttack() {
+        return this.black[0] === this.white[0] || this.black[1] === this.white[1]
+            || this.black[0] + this.black[1] === this.white[0] + this.white[1]
+            || Math.abs(this.black[0] - this.black[1]) === Math.abs(this.white[0] - this.white[1]);
     }
-
-    this.board[blackRow][blackColumn] = 'B';
-    this.board[whiteRow][whiteColumn] = 'W';
-
-  }
-
-  toString() {
-    let str = '';
-
-    this.board.forEach(row => {
-      str += row.join(' ').trim();
-      str += '\n';
-    });
-
-    return str.trim();
-  }
-
-  get canAttack() {
-
-    // test rows and columns
-    if (this.black[0] === this.white[0]
-      || this.black[1] === this.white[1]) {
-      return true;
-    }
-
-    // secondary diagonal
-    if (this.black[0] + this.black[1] === this.white[0] + this.white[1]) {
-      return true;
-    }
-
-    // main diagonal
-    if (this.black[0] - this.black[1] === this.white[0] - this.white[1]) {
-      return true;
-    }
-
-    return false;
-  }
-
-  #validateQueens (blackQueen, whiteQueen) {
-
-    let [blackRow, blackColumn] = blackQueen;
-    let [whiteRow, whiteColumn] = whiteQueen;
-
-    if (blackRow < 0 || blackRow > 7 
-      || blackColumn < 0 || blackColumn > 7 
-      || whiteRow < 0 || whiteRow > 7 
-      || whiteColumn < 0 || whiteColumn > 7) {
-      throw new Error('Queen must be placed on the board');
-    }
-
-    if (JSON.stringify(whiteQueen) === JSON.stringify(blackQueen)) {
-      throw new Error('Queens cannot share the same space');
-    }
-  }
 }

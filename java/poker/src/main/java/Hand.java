@@ -56,19 +56,13 @@ public  class Hand implements Comparable<Hand>{
             return HandCategory.STRAIGHT;
         }
 
-        if (freq.equals("311")) {
-            return HandCategory.THREE_OF_A_KIND;
-        }
+        return switch (freq) {
+            case "311" -> HandCategory.THREE_OF_A_KIND;
+            case "221" -> HandCategory.TWO_PAIR;
+            case "2111" -> HandCategory.ONE_PAIR;
+            default -> HandCategory.HIGH_CARD;
+        };
 
-        if (freq.equals("221")) {
-            return HandCategory.TWO_PAIR;
-        }
-
-        if (freq.equals("2111")) {
-            return HandCategory.ONE_PAIR;
-        }
-
-        return HandCategory.HIGH_CARD;
     }
 
     @Override

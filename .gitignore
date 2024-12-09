@@ -19,6 +19,8 @@ javascript/*/package.json
 javascript/*/config.json
 javascript/*/metadata.json
 javascript/*/.gitignore
+javascript/*/eslint.config.mjs
+javascript/*/pnpm-lock.yaml
 
 # Java
 *.gradle
